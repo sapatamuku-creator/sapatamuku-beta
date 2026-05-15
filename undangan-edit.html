@@ -165,20 +165,10 @@
         <!-- LIVE PREVIEW AREA -->
         <aside class="flex-1 bg-slate-100 flex items-center justify-center p-8 border-l overflow-hidden">
             <div class="preview-frame relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)]">
-                <div id="pv_bg" class="w-full h-full bg-stone-200 bg-cover bg-center transition-all duration-700 relative">
-                    <div class="absolute inset-0 bg-black/40"></div>
-                    <div class="relative z-10 w-full h-full p-8 text-center flex flex-col items-center justify-center text-white">
-                        <p id="pv_hashtag" class="text-[9px] text-rose-300 font-bold mb-8 tracking-[0.5em] uppercase">#SatuBINTANGuntukANISA</p>
-                        <h2 id="pv_header" class="text-xs tracking-[0.4em] uppercase font-bold mb-4 text-white/70">The Wedding of</h2>
-                        <div class="flex flex-col items-center gap-2 mb-8">
-                            <span id="pv_pria" class="text-5xl font-serif italic drop-shadow-lg">Bintang</span>
-                            <span class="text-rose-300 font-serif italic text-3xl">&</span>
-                            <span id="pv_wanita" class="text-5xl font-serif italic drop-shadow-lg">Anisa</span>
-                        </div>
-                        <p class="text-rose-300 text-[10px] tracking-[0.3em] font-bold uppercase drop-shadow-sm">Save the Date</p>
-                    </div>
-                </div>
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-4 py-1.5 rounded-full font-bold tracking-widest backdrop-blur">LIVE PREVIEW</div>
+                <!-- IFRAME NYATA -->
+                <iframe id="preview-iframe" src="about:blank" class="w-full h-full border-none"></iframe>
+                
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-4 py-1.5 rounded-full font-bold tracking-widest backdrop-blur pointer-events-none">LIVE PREVIEW</div>
             </div>
         </aside>
     </div>
@@ -256,6 +246,14 @@
         }
 
         // SUPABASE OPS
+        // REFRESH PREVIEW IFRAME
+        function refreshPreview() {
+            const iframe = document.getElementById('preview-iframe');
+            if (iframe) {
+                iframe.src = `undangan-preview.html?clientId=${clientId}&t=${new Date().getTime()}`;
+            }
+        }
+
         async function saveChanges() {
             const btn = document.getElementById('save-btn');
             btn.innerHTML = '⏳ Menyimpan...';
@@ -298,7 +296,10 @@
                     .eq('client_id', clientId);
 
                 if (error) throw error;
-                alert("Berhasil disimpan! 🎉");
+                
+                // REFRESH PREVIEW SETELAH SIMPAN
+                refreshPreview();
+                alert("Berhasil disimpan! Tampilan preview telah diperbarui. 🎉");
             } catch (err) {
                 alert("Gagal: " + err.message);
             } finally {
@@ -311,6 +312,9 @@
             const session = getSessionData();
             if (!session) return window.location.href = 'login.html';
             clientId = session.username;
+
+            // Load Preview Pertama Kali
+            refreshPreview();
 
             try {
                 const { data, error } = await _supabase
