@@ -207,11 +207,15 @@
                         updated_at: new Date()
                     }, { onConflict: 'client_id' });
 
-                if (error) throw error;
+                if (error) {
+                    console.error("Supabase Error Details:", error);
+                    throw new Error(error.message || "Unknown database error");
+                }
+                
                 window.location.href = `undangan-edit.html?theme=${themeId}`;
             } catch (err) {
-                console.error("Gagal menyimpan ke Supabase:", err);
-                alert("Gagal terhubung ke database. Pastikan tabel 'invitations' sudah dibuat di Supabase.");
+                console.error("Detailed Catch Error:", err);
+                alert("Gagal terhubung ke database: " + err.message);
             }
         }
 
