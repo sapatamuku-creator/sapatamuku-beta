@@ -52,8 +52,14 @@ function handleSaveInvitation(data) {
       const masterSs = SpreadsheetApp.openById(MASTER_SS_ID);
       const masterSheet = masterSs.getSheetByName(MASTER_SHEET_NAME);
       const masterData = masterSheet.getDataRange().getValues();
+      const targetId = String(data.clientId || "").toLowerCase().trim();
+      
       for (let i = 1; i < masterData.length; i++) {
-        if (masterData[i][0] == data.clientId || masterData[i][9] == data.clientId) {
+        const colA = String(masterData[i][0] || "").toLowerCase().trim();
+        const colJ = String(masterData[i][9] || "").toLowerCase().trim();
+        
+        // Prioritas Kolom J (Subdomain), fallback Kolom A (Username lama)
+        if (colJ === targetId || colA === targetId) {
           ssId = masterData[i][1]; // Kolom B adalah ID Spreadsheet
           break;
         }
@@ -174,10 +180,14 @@ function handleForgotPassword(data) {
     const values = sheet.getDataRange().getValues();
     let userData = null;
 
+    const targetUser = String(data.username || "").toLowerCase().trim();
     for (let i = 1; i < values.length; i++) {
-      if (values[i][0] == data.username && (values[i][3] == data.contact || values[i][6] == data.contact)) {
+      const colA = String(values[i][0] || "").toLowerCase().trim();
+      const colJ = String(values[i][9] || "").toLowerCase().trim();
+      
+      if ((colA === targetUser || colJ === targetUser) && (values[i][3] == data.contact || values[i][6] == data.contact)) {
         userData = {
-          name: values[i][0],
+          name: values[i][10] || values[i][0], // Nama Klien atau Username
           pass: values[i][2],
           wa: values[i][3],
           email: values[i][6]
@@ -386,24 +396,22 @@ function handleResolveSubdomain(data) {
     for (let i = 1; i < values.length; i++) {
       const colJ = String(values[i][9] || "").toLowerCase().trim();
       const colA = String(values[i][0] || "").toLowerCase().replace(/\s+/g, '').trim();
-      
-      // LOGIKA: Cek Kolom J dulu, jika kosong baru cek Kolom A (Akun Lama)
-      const dbSub = colJ || colA; 
       const status = String(values[i][7] || "").toLowerCase().trim(); // Kolom H (Index 7)
 
-      if (dbSub === sub) {
+      // LOGIKA: Prioritas Kolom J (Subdomain), jika kosong baru cek Kolom A
+      if (colJ === sub || colA === sub) {
         if (status !== "active") {
           return createResponse({ 
             status: "error", 
-            message: "Akun ini telah dinonaktifkan oleh Admin. Silakan hubungi pusat." 
+            message: "Akun ini telah dinonaktifkan oleh Admin." 
           });
         }
 
         return createResponse({ 
           status: "success", 
           ssId: values[i][1],
-          clientName: values[i][10] || values[i][0], // Nama Klien di Kolom K (Index 10) atau Kolom A
-          category: values[i][8] || "wedding" // Kolom I (Index 8)
+          clientName: values[i][10] || values[i][0], 
+          category: values[i][8] || "wedding"
         });
       }
     }
