@@ -1,0 +1,13 @@
+# Backup folders
+backup_undangan/
+
+# Temporary scripts
+apply_beta_config.ps1
+update_to_beta_domain.ps1
+
+# Windows files
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
