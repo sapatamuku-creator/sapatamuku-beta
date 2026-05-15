@@ -422,8 +422,12 @@
             try {
                 // 1. Simpan ke Supabase (Utama untuk Preview)
                 console.log("Simpan ke Supabase untuk:", clientId);
+                const urlParams = new URLSearchParams(window.location.search);
+                const themeId = urlParams.get('theme') || 'classic-minimalist';
+
                 const { error } = await _supabase.from('invitations').upsert({ 
                     client_id: clientId, 
+                    theme_id: themeId,
                     theme_config: config,
                     config: config, // Simpan di kedua kolom untuk keamanan transisi
                     updated_at: new Date()

@@ -278,6 +278,7 @@
 
                     if (c.music_url) audio.src = c.music_url;
                     eventDate = c.event_date ? new Date(c.event_date).getTime() : null;
+                    }
                 }
             } catch (err) { console.error("Init error:", err); }
             finally {
