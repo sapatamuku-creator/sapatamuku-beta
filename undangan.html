@@ -162,12 +162,19 @@
         let _supabase;
         try {
             if (window.supabase) {
-                _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                // Menambahkan konfigurasi fetch agar lebih aman dari blokir browser
+                _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true
+                    }
+                });
+                console.log("Supabase Client Berhasil Dibuat");
             } else {
-                console.error("Supabase SDK gagal dimuat dari CDN");
+                console.error("Supabase SDK tidak ditemukan!");
             }
         } catch (e) {
-            console.error("Gagal inisialisasi client:", e);
+            console.error("Gagal inisialisasi:", e);
         }
 
         // Helper untuk ambil cookie
