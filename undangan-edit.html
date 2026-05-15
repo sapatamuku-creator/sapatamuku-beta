@@ -425,6 +425,7 @@
                 const { error } = await _supabase.from('invitations').upsert({ 
                     client_id: clientId, 
                     theme_config: config,
+                    config: config, // Simpan di kedua kolom untuk keamanan transisi
                     updated_at: new Date()
                 }, { onConflict: 'client_id' });
                 if (error) throw error;
@@ -497,38 +498,44 @@
                     return;
                 }
 
-                if (data && data.theme_config) {
-                    const c = data.theme_config;
-                    document.getElementById('in_title').value = c.title || "";
-                    document.getElementById('in_pria_short').value = c.pria_short || "";
-                    document.getElementById('in_wanita_short').value = c.wanita_short || "";
-                    document.getElementById('in_hashtag').value = c.hashtag || "";
-                    document.getElementById('in_music').value = c.music_url || "";
-                    document.getElementById('in_date').value = c.event_date || "";
-                    if (c.gallery) { galleryImages = c.gallery; renderGallery(); }
-                    if (c.banking) { bankAccounts = c.banking; renderBanks(); }
-                    if (c.groom) { 
-                        document.getElementById('in_pria_full').value = c.groom.full_name || ""; 
-                        document.getElementById('in_pria_desc').value = c.groom.desc || ""; 
-                        document.getElementById('in_pria_ig').value = c.groom.ig || ""; 
+                if (data) {
+                    // Cek di kedua kolom (theme_config atau config)
+                    const c = data.theme_config || data.config;
+                    
+                    if (c) {
+                        document.getElementById('in_title').value = c.title || "";
+                        document.getElementById('in_pria_short').value = c.pria_short || "";
+                        document.getElementById('in_wanita_short').value = c.wanita_short || "";
+                        document.getElementById('in_hashtag').value = c.hashtag || "";
+                        document.getElementById('in_music').value = c.music_url || "";
+                        document.getElementById('in_date').value = c.event_date || "";
+                        if (c.gallery) { galleryImages = c.gallery; renderGallery(); }
+                        if (c.banking) { bankAccounts = c.banking; renderBanks(); }
+                        if (c.groom) { 
+                            document.getElementById('in_pria_full').value = c.groom.full_name || ""; 
+                            document.getElementById('in_pria_desc').value = c.groom.desc || ""; 
+                            document.getElementById('in_pria_ig').value = c.groom.ig || ""; 
+                        }
+                        if (c.bride) { 
+                            document.getElementById('in_wanita_full').value = c.bride.full_name || ""; 
+                            document.getElementById('in_wanita_desc').value = c.bride.desc || ""; 
+                            document.getElementById('in_wanita_ig').value = c.bride.ig || ""; 
+                        }
+                        if (c.ev1) { 
+                            document.getElementById('in_ev1_time').value = c.ev1.time || ""; 
+                            document.getElementById('in_ev1_loc').value = c.ev1.loc || ""; 
+                            document.getElementById('in_ev1_maps').value = c.ev1.maps || ""; 
+                        }
+                        if (c.ev2) { 
+                            document.getElementById('in_ev2_time').value = c.ev2.time || ""; 
+                            document.getElementById('in_ev2_loc').value = c.ev2.loc || ""; 
+                            document.getElementById('in_ev2_maps').value = c.ev2.maps || ""; 
+                        }
+                        if (c.bg_image) currentBgImage = c.bg_image;
+                        syncPreview(); // Pastikan preview terisi setelah load
+                    } else {
+                        console.warn("Kolom theme_config dan config kosong.");
                     }
-                    if (c.bride) { 
-                        document.getElementById('in_wanita_full').value = c.bride.full_name || ""; 
-                        document.getElementById('in_wanita_desc').value = c.bride.desc || ""; 
-                        document.getElementById('in_wanita_ig').value = c.bride.ig || ""; 
-                    }
-                    if (c.ev1) { 
-                        document.getElementById('in_ev1_time').value = c.ev1.time || ""; 
-                        document.getElementById('in_ev1_loc').value = c.ev1.loc || ""; 
-                        document.getElementById('in_ev1_maps').value = c.ev1.maps || ""; 
-                    }
-                    if (c.ev2) { 
-                        document.getElementById('in_ev2_time').value = c.ev2.time || ""; 
-                        document.getElementById('in_ev2_loc').value = c.ev2.loc || ""; 
-                        document.getElementById('in_ev2_maps').value = c.ev2.maps || ""; 
-                    }
-                    if (c.bg_image) currentBgImage = c.bg_image;
-                    syncPreview(); // Pastikan preview terisi setelah load
                 }
             } catch (err) { console.warn("Load error", err); }
         }
