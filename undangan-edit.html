@@ -219,6 +219,7 @@
 
         let currentBgImage = "";
         let clientId = "";
+        let clientSsId = "";
         let galleryImages = [];
         let bankAccounts = [];
 
@@ -427,6 +428,7 @@
                     body: JSON.stringify({
                         action: 'saveInvitation',
                         clientId: clientId,
+                        ssId: clientSsId,
                         config: config
                     })
                 });
@@ -441,6 +443,7 @@
             const session = getSessionData();
             if (!session) return window.location.href = 'login.html';
             clientId = session.username;
+            clientSsId = session.ssId; // Ambil ID Spreadsheet dari session
             refreshPreview();
 
             try {

@@ -32,8 +32,40 @@ function handleCentralPost(request) {
     case 'updateClientData': return handleUpdateClientData(request);  
     case 'resolveSubdomain': return handleResolveSubdomain(request);
     case 'checkSubdomain': return handleCheckSubdomain(request); // Aksi Baru
+    case 'saveInvitation': return handleSaveInvitation(request); // Sinkronisasi Undangan
     case 'uploadFile': return handleUploadFile(request);
     default: return createResponse({ status: "error", message: "Action tidak dikenali" });
+  }
+}
+
+/**
+ * FUNGSI SIMPAN DATA UNDANGAN KE SHEET Config_Invitation
+ * Otomatis membuat sheet jika belum ada
+ */
+function handleSaveInvitation(data) {
+  try {
+    if (!data.ssId) return createResponse({ status: "error", message: "ID Spreadsheet tidak ditemukan" });
+    
+    const ss = SpreadsheetApp.openById(data.ssId);
+    const sheetName = "Config_Invitation";
+    let inviteSheet = ss.getSheetByName(sheetName);
+    
+    // Auto-create sheet jika belum ada
+    if (!inviteSheet) {
+      inviteSheet = ss.insertSheet(sheetName);
+      inviteSheet.appendRow(["Key", "Value", "Last Updated"]);
+      inviteSheet.getRange("A1:C1").setFontWeight("bold").setBackground("#f8fafc").setFontColor("#1e293b");
+      inviteSheet.setFrozenRows(1);
+    }
+    
+    // Update data di Baris 2
+    inviteSheet.getRange("A2").setValue("theme_config");
+    inviteSheet.getRange("B2").setValue(JSON.stringify(data.config));
+    inviteSheet.getRange("C2").setValue(new Date());
+    
+    return createResponse({ status: "success", message: "Sheet Config_Invitation berhasil diperbarui" });
+  } catch (err) {
+    return createResponse({ status: "error", message: "Gagal sinkron Sheet: " + err.toString() });
   }
 }
 
