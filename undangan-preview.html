@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Digital - SapaTamu.Ku</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #E07B7B; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.5s ease; }
+        .font-serif-elegant { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Great Vibes', cursive; }
+        
+        /* Animasi Loading */
+        #loader {
+            position: fixed; inset: 0; background: white; z-index: 999;
+            display: flex; flex-direction: column; items-center justify-center;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+</head>
+<body class="bg-stone-50 overflow-x-hidden">
+
+    <!-- LOADING SCREEN -->
+    <div id="loader" class="flex flex-col items-center justify-center h-screen">
+        <div class="w-12 h-12 border-4 border-stone-100 border-t-rose-400 rounded-full animate-spin mb-4"></div>
+        <p class="text-stone-400 font-bold tracking-widest text-[10px] uppercase animate-pulse">Memuat Undangan...</p>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="hidden min-h-screen relative">
+        
+        <!-- HERO SECTION -->
+        <section id="hero" class="min-h-screen w-full relative flex items-center justify-center text-center p-8 bg-cover bg-center">
+            <!-- Overlay -->
+            <div id="hero-overlay" class="absolute inset-0 bg-black/40"></div>
+            
+            <div class="relative z-10 text-white">
+                <p id="pv_theme_label" class="badge text-[10px] tracking-[0.3em] uppercase mb-6 opacity-80">Rose Gold Edition</p>
+                <h2 id="pv_title" class="text-xl md:text-3xl font-serif-elegant italic mb-8 drop-shadow-lg">The Wedding of</h2>
+                
+                <div class="flex flex-col items-center gap-4 mb-12">
+                    <h1 id="pv_pria" class="text-6xl md:text-7xl font-script drop-shadow-2xl">Gildan</h1>
+                    <span class="text-2xl md:text-3xl font-serif-elegant italic text-rose-300">&</span>
+                    <h1 id="pv_wanita" class="text-6xl md:text-7xl font-script drop-shadow-2xl">Mita</h1>
+                </div>
+
+                <div class="mt-8">
+                    <div class="w-12 h-0.5 bg-white/30 mx-auto mb-4"></div>
+                    <p id="pv_date" class="text-sm tracking-[0.2em] uppercase font-light">25 . 12 . 2026</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MUSIC PLAYER (FLOATING) -->
+        <div id="music-player" class="fixed bottom-6 right-6 z-50">
+            <button class="w-12 h-12 bg-white/80 backdrop-blur rounded-full shadow-xl flex items-center justify-center text-rose-500 border border-white">
+                <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        // INISIALISASI SUPABASE
+        const SUPABASE_URL = "https://cikptujrzdfvyfihwamh.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY";
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // DETEKSI CLIENT ID
+        function getClientId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramId = urlParams.get('clientId');
+            if (paramId) return paramId;
+
+            const host = window.location.hostname;
+            const parts = host.split('.');
+            if (parts.length >= 4) return parts[0]; 
+
+            return null;
+        }
+
+        async function loadInvitation() {
+            const clientId = getClientId();
+            if (!clientId) {
+                document.getElementById('loader').innerHTML = "<div class='p-20 text-center font-bold'>Error: Client ID tidak ditemukan.</div>";
+                return;
+            }
+
+            const { data, error } = await _supabase
+                .from('invitations')
+                .select('*')
+                .eq('client_id', clientId)
+                .single();
+
+            if (error || !data) {
+                document.getElementById('loader').innerHTML = "<div class='p-10 text-center text-stone-400'>Undangan belum diatur oleh pemilik.</div>";
+                return;
+            }
+
+            renderInvitation(data);
+        }
+
+        function renderInvitation(data) {
+            const config = data.config || {};
+            const theme = data.theme_id;
+
+            document.getElementById('pv_title').innerText = config.title || "The Wedding of";
+            document.getElementById('pv_pria').innerText = config.pria || "Pria";
+            document.getElementById('pv_wanita').innerText = config.wanita || "Wanita";
+            
+            if (config.bg_image) {
+                document.getElementById('hero').style.backgroundImage = `url('${config.bg_image}')`;
+            }
+
+            if (theme === 'midnight') {
+                document.getElementById('hero-overlay').className = "absolute inset-0 bg-slate-950/70";
+                document.getElementById('pv_theme_label').innerText = "Midnight Sapphire";
+            } else if (theme === 'jawa') {
+                document.getElementById('pv_theme_label').innerText = "Javanese Heritage";
+                document.getElementById('hero-overlay').className = "absolute inset-0 bg-amber-950/60";
+            }
+
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadInvitation);
+
+        // Window message listener agar editor bisa kirim data real-time ke iframe
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'UPDATE_INVITATION') {
+                renderInvitation({ config: event.data.config, theme_id: event.data.themeId });
+            }
+        });
+    </script>
+</body>
+</html>
