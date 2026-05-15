@@ -37,6 +37,10 @@
             <h1 class="font-bold text-lg">Editor Undangan: <span id="theme-name" class="text-rose-500">Classic Minimalist</span></h1>
         </div>
         <div class="flex items-center gap-3">
+            <a id="btn-view-live" href="#" target="_blank" class="hidden md:flex items-center gap-2 px-5 py-2.5 bg-white border border-stone-200 text-stone-600 rounded-full text-sm font-bold hover:bg-stone-50 transition shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Lihat Live
+            </a>
             <button id="save-btn" onclick="saveChanges()" class="bg-[#E07B7B] text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-rose-100 hover:bg-rose-600 transition flex items-center">
                 Simpan Perubahan
             </button>
@@ -457,6 +461,20 @@
             
             clientId = session.username;
             clientSsId = session.ssId || session.fileId; // Kadang tersimpan sebagai fileId di sistem Anda
+            
+            // Set Link Live
+            const liveBtn = document.getElementById('btn-view-live');
+            if (liveBtn) {
+                const host = window.location.hostname;
+                if (host.includes('beta.sapatamu.id')) {
+                    // Jika di beta, arahkan ke subdomain beta
+                    liveBtn.href = `https://${clientId}.beta.sapatamu.id`;
+                } else {
+                    // Jika di production
+                    liveBtn.href = `https://${clientId}.sapatamu.id`;
+                }
+                liveBtn.classList.remove('hidden');
+            }
             
             console.log("Current Client:", clientId, "Target ssId:", clientSsId);
             
