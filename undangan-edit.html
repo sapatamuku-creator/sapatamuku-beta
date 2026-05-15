@@ -142,9 +142,25 @@
         
         const SUPABASE_URL = "https://cikptujrzdfvyfihwamh.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentBgImage = "";
+
+        // Helper untuk ambil cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function getSessionData() {
+            let data = localStorage.getItem('sapatamu_db');
+            if (!data) {
+                const cookieData = getCookie('sapatamu_session');
+                if (cookieData) data = decodeURIComponent(cookieData);
+            }
+            return data ? JSON.parse(data) : null;
+        }
 
         // FUNGSI UPLOAD KE CLOUDINARY
         async function handleUpload(event) {
@@ -170,11 +186,13 @@
                     currentBgImage = data.secure_url;
                     document.getElementById('pv_bg').style.backgroundImage = `url('${currentBgImage}')`;
                     statusText.innerText = "✅ Berhasil Diunggah!";
+                    statusText.classList.remove('text-red-500');
                     statusText.classList.add('text-green-500');
                 }
             } catch (err) {
                 console.error("Upload gagal:", err);
                 statusText.innerText = "❌ Gagal mengunggah.";
+                statusText.classList.remove('text-green-500');
                 statusText.classList.add('text-red-500');
             }
         }
@@ -192,9 +210,9 @@
 
         // FUNGSI SIMPAN KE SUPABASE
         async function saveToSupabase(event) {
-            const session = localStorage.getItem('sapatamu_db');
-            if (!session) return alert("Sesi habis, silakan login ulang.");
-            const clientId = JSON.parse(session).username;
+            const data = getSessionData();
+            if (!data) return alert("Sesi habis, silakan login ulang.");
+            const clientId = data.username;
 
             const configData = {
                 title: document.getElementById('in_title').value,
@@ -227,24 +245,29 @@
 
         // LOAD DATA AWAL JIKA ADA
         async function loadInitialData() {
-            const session = localStorage.getItem('sapatamu_db');
-            if (!session) return;
-            const clientId = JSON.parse(session).username;
+            // Ambil Theme dari URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const themeId = urlParams.get('theme') || 'rose-gold';
+            document.getElementById('theme-name').innerText = themeId.toUpperCase();
 
-            const { data, error } = await _supabase
+            const data = getSessionData();
+            if (!data) return;
+            const clientId = data.username;
+
+            const { data: invData, error } = await _supabase
                 .from('invitations')
                 .select('config')
                 .eq('client_id', clientId)
                 .single();
 
-            if (data && data.config) {
-                document.getElementById('in_title').value = data.config.title || "";
-                document.getElementById('in_pria').value = data.config.pria || "";
-                document.getElementById('in_wanita').value = data.config.wanita || "";
-                document.getElementById('in_music').value = data.config.music || "";
+            if (invData && invData.config) {
+                document.getElementById('in_title').value = invData.config.title || "";
+                document.getElementById('in_pria').value = invData.config.pria || "";
+                document.getElementById('in_wanita').value = invData.config.wanita || "";
+                document.getElementById('in_music').value = invData.config.music || "";
                 
-                if (data.config.bg_image) {
-                    currentBgImage = data.config.bg_image;
+                if (invData.config.bg_image) {
+                    currentBgImage = invData.config.bg_image;
                     document.getElementById('pv_bg').style.backgroundImage = `url('${currentBgImage}')`;
                 }
                 updatePreview();

@@ -158,32 +158,47 @@
         // INISIALISASI SUPABASE
         const SUPABASE_URL = "https://cikptujrzdfvyfihwamh.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Perbaikan inisialisasi: Gunakan window.supabase jika menggunakan CDN
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Helper untuk ambil cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function getSessionData() {
+            let data = localStorage.getItem('sapatamu_db');
+            if (!data) {
+                // Fallback ke cookie jika localStorage kosong (untuk subdomain)
+                const cookieData = getCookie('sapatamu_session');
+                if (cookieData) data = decodeURIComponent(cookieData);
+            }
+            return data ? JSON.parse(data) : null;
+        }
 
         // CEK SESI USER
         function checkSession() {
-            const session = localStorage.getItem('sapatamu_db');
-            if (session) {
-                const data = JSON.parse(session);
+            const data = getSessionData();
+            if (data) {
                 document.getElementById('user-avatar').innerText = data.username[0].toUpperCase();
             }
         }
 
         window.selectTheme = async function(themeId) {
-            const session = localStorage.getItem('sapatamu_db');
-            if (!session) {
+            const data = getSessionData();
+            if (!data) {
                 alert("Silakan login terlebih dahulu untuk memilih tema.");
                 window.location.href = "login.html";
                 return;
             }
             
-            const data = JSON.parse(session);
             const clientId = data.username;
-
-            console.log("Menyimpan pilihan tema ke Supabase...");
+            console.log("Menyimpan pilihan tema untuk:", clientId);
 
             try {
-                // Gunakan upsert: Jika sudah ada update, jika belum ada buat baru
                 const { error } = await _supabase
                     .from('invitations')
                     .upsert({ 
@@ -193,12 +208,10 @@
                     }, { onConflict: 'client_id' });
 
                 if (error) throw error;
-
-                // Redireksi ke Editor
                 window.location.href = `undangan-edit.html?theme=${themeId}`;
             } catch (err) {
                 console.error("Gagal menyimpan ke Supabase:", err);
-                alert("Terjadi kesalahan saat menyiapkan editor. Silakan coba lagi.");
+                alert("Gagal terhubung ke database. Pastikan tabel 'invitations' sudah dibuat di Supabase.");
             }
         }
 
