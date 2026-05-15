@@ -335,6 +335,65 @@
         }
 
         setInterval(updateCountdown, 1000);
+        // REAL-TIME SYNC FROM EDITOR
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'UPDATE_PREVIEW') {
+                const c = event.data.config;
+                if (!c) return;
+
+                // Update Header & Hero
+                if (c.pria_short || c.wanita_short) {
+                    const names = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
+                    document.getElementById('cv_names').innerText = names;
+                    document.getElementById('hero_names').innerText = names;
+                }
+                if (c.hashtag) document.getElementById('hero_hashtag').innerText = c.hashtag;
+                if (c.event_date) {
+                    document.getElementById('hero_date').innerText = new Date(c.event_date).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    eventDate = new Date(c.event_date).getTime();
+                }
+
+                // Update Mempelai
+                if (c.groom) {
+                    document.getElementById('groom_name').innerText = c.groom.full_name || "Mempelai Pria";
+                    document.getElementById('groom_desc').innerText = c.groom.desc || "";
+                }
+                if (c.bride) {
+                    document.getElementById('bride_name').innerText = c.bride.full_name || "Mempelai Wanita";
+                    document.getElementById('bride_desc').innerText = c.bride.desc || "";
+                }
+
+                // Update Acara
+                if (c.ev1) {
+                    document.getElementById('ev1_time').innerText = c.ev1.time || "-";
+                    document.getElementById('ev1_loc').innerText = c.ev1.loc || "-";
+                }
+                if (c.ev2) {
+                    document.getElementById('ev2_time').innerText = c.ev2.time || "-";
+                    document.getElementById('ev2_loc').innerText = c.ev2.loc || "-";
+                }
+
+                // Render Banking (Real-time)
+                const giftContainer = document.getElementById('gift-list');
+                if (c.banking && c.banking.length > 0) {
+                    document.getElementById('gift-section').classList.remove('hidden');
+                    giftContainer.innerHTML = "";
+                    c.banking.forEach(acc => {
+                        const logo = BANK_LOGOS[acc.type.toLowerCase()] || "";
+                        const div = document.createElement('div');
+                        div.className = "max-w-sm mx-auto gift-card shadow-xl mb-6";
+                        div.innerHTML = `
+                            ${logo ? `<img src="${logo}" class="h-6 mx-auto mb-6 grayscale opacity-70">` : ""}
+                            <p class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK ${acc.type.toUpperCase()}</p>
+                            <h4 class="text-2xl font-serif mb-1 tracking-wider">${acc.rekening}</h4>
+                            <p class="text-[11px] uppercase tracking-widest opacity-60 mb-8">A/N ${acc.owner}</p>
+                        `;
+                        giftContainer.appendChild(div);
+                    });
+                }
+            }
+        });
+
         init();
     </script>
 </body>
