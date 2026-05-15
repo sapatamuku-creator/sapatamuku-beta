@@ -10,6 +10,19 @@
         const LOCAL_DB = 'sapatamu_db';
 
         document.addEventListener('DOMContentLoaded', function() {
+            const hostname = window.location.hostname;
+            const parts = hostname.split('.');
+            const isMainDomain = (hostname === "beta.sapatamu.id" || hostname === "www.beta.sapatamu.id");
+
+            // LOGIKA SUBDOMAIN (UNTUK TAMU / CLIENT LIVE VIEW)
+            if (!isMainDomain && parts.length >= 4) {
+                // Redirect ke mesin preview dengan membawa semua parameter (seperti ?to=Nama)
+                const searchParams = window.location.search;
+                window.location.replace("undangan-preview.html" + searchParams);
+                return;
+            }
+
+            // LOGIKA MAIN DOMAIN (UNTUK ADMIN/USER)
             const session = sessionStorage.getItem(SESSION_KEY);
             const localData = localStorage.getItem(LOCAL_DB);
 
@@ -28,7 +41,7 @@
                 }
             }
             
-            // Fallback ke login jika tidak ada sesi
+            // Fallback ke login jika tidak ada sesi di main domain
             window.location.replace("login.html");
         });
     </script>

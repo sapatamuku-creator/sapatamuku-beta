@@ -52,7 +52,7 @@
             <img id="cv_bg" src="" class="w-full h-full object-cover opacity-30" alt="Cover BG">
         </div>
         <div class="relative z-10 px-8">
-            <p class="text-[9px] tracking-[0.5em] uppercase mb-6 text-neutral-400 font-bold">The Wedding Celebration</p>
+            <p id="cv_header" class="text-[9px] tracking-[0.5em] uppercase mb-6 text-neutral-400 font-bold">The Wedding Celebration</p>
             <h1 id="cv_names" class="text-5xl font-serif text-neutral-900 mb-12">Loading...</h1>
             <div class="mb-12">
                 <p class="text-[9px] tracking-[0.2em] text-neutral-400 uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
@@ -214,6 +214,7 @@
                 if (data && data.theme_config) {
                     const c = data.theme_config;
                     
+                    document.getElementById('cv_header').innerText = c.title || "The Wedding Celebration";
                     document.getElementById('cv_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
                     document.getElementById('hero_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
                     document.getElementById('cv_bg').src = c.bg_image || "";
@@ -342,6 +343,7 @@
                 if (!c) return;
 
                 // Update Header & Hero
+                if (c.title) document.getElementById('cv_header').innerText = c.title;
                 if (c.pria_short || c.wanita_short) {
                     const names = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
                     document.getElementById('cv_names').innerText = names;
