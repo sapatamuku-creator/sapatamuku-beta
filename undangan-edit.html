@@ -215,6 +215,7 @@
         const SUPABASE_URL = "https://cikptujrdfvxyfihwamh.supabase.co";
         const SUPABASE_KEY = "sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B";
         const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJDudzlgXTS9_zPM0QJw5D7My40pOZ-ATWxGlpay7gtosgGMyBGxyEkAck1JE30q6_6w/exec";
 
         let currentBgImage = "";
         let clientId = "";
@@ -414,10 +415,24 @@
             };
 
             try {
+                // 1. Simpan ke Supabase (Utama untuk Preview)
                 const { error } = await _supabase.from('invitations').update({ theme_config: config }).eq('client_id', clientId);
                 if (error) throw error;
+
+                // 2. Simpan ke Google Sheets (Untuk Welcome Sign & Backup)
+                // Kita tambahkan action: 'saveInvitation' agar GAS tahu harus membuat sheet Config_Invitation
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        action: 'saveInvitation',
+                        clientId: clientId,
+                        config: config
+                    })
+                });
+
                 refreshPreview();
-                alert("Berhasil disimpan! 🎉");
+                alert("Berhasil disimpan ke Supabase & Google Sheets! 🎉");
             } catch (err) { alert("Gagal: " + err.message); }
             finally { btn.innerHTML = 'Simpan Perubahan'; btn.disabled = false; }
         }
