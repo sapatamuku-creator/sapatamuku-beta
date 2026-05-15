@@ -175,8 +175,20 @@
 
         function getClientId() {
             const host = window.location.hostname;
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Priority 1: URL Parameter (for editor preview)
+            if (urlParams.has('clientId')) return urlParams.get('clientId');
+            
+            // Priority 2: Subdomain
             const parts = host.split('.');
-            return parts.length >= 4 ? parts[0] : new URLSearchParams(window.location.search).get('clientId');
+            if (parts.length >= 3) {
+                // Handle: subdomain.beta.sapatamu.id (4 parts) or subdomain.sapatamu.id (3 parts)
+                if (parts[parts.length-2] === 'sapatamu') {
+                    return parts[0];
+                }
+            }
+            return null;
         }
 
         const BANK_LOGOS = {
@@ -212,8 +224,11 @@
                     .single();
 
                 if (data) {
-                    const c = data.theme_config || data.config;
-                    if (c) {
+                    // Ambil data yang tidak kosong
+                    let c = data.theme_config;
+                    if (!c || Object.keys(c).length === 0) c = data.config;
+                    
+                    if (c && Object.keys(c).length > 0) {
                     
                     document.getElementById('cv_header').innerText = c.title || "The Wedding Celebration";
                     document.getElementById('cv_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
