@@ -129,33 +129,48 @@
                         <h3 class="text-xl font-bold text-stone-800">Akad Nikah / Pemberkatan</h3>
                         <input type="text" id="in_ev1_time" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Contoh: Senin, 25 Mei 2026 | 08.00 WIB">
                         <textarea id="in_ev1_loc" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-sm" placeholder="Alamat Lengkap & Nama Gedung"></textarea>
-                        <input type="text" id="in_ev1_maps" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps (PENTING!)">
+                        <input type="text" id="in_ev1_maps" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps">
                     </div>
                     <div class="pt-10 border-t border-stone-100 space-y-6">
                         <h3 class="text-xl font-bold text-stone-800">Resepsi Pernikahan</h3>
                         <input type="text" id="in_ev2_time" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Contoh: Senin, 25 Mei 2026 | 12.30 WIB">
                         <textarea id="in_ev2_loc" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-sm" placeholder="Alamat Lengkap & Nama Gedung"></textarea>
-                        <input type="text" id="in_ev2_maps" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps (PENTING!)">
+                        <input type="text" id="in_ev2_maps" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps">
+                    </div>
+                    <div class="pt-10 border-t border-stone-100 space-y-6">
+                        <h3 class="text-xl font-bold text-stone-800">Hadiah Digital (Banking)</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="in_bank_name" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Nama Bank (BCA/Mandiri)">
+                            <input type="text" id="in_bank_rekening" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Nomor Rekening">
+                        </div>
+                        <input type="text" id="in_bank_owner" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Atas Nama (Pemilik Rekening)">
                     </div>
                 </div>
 
                 <!-- TAB: GALERI -->
                 <div id="tab-galeri" class="tab-pane hidden space-y-8">
-                    <p class="text-sm text-stone-500 bg-stone-50 p-4 rounded-xl border border-stone-100">Fitur Galeri sedang dalam pengembangan untuk mendukung multiple upload. Silakan simpan foto background utama terlebih dahulu.</p>
+                    <h3 class="text-xl font-bold text-stone-800">Galeri Foto (Max 6 Foto)</h3>
+                    <div class="grid grid-cols-3 gap-4" id="gallery-container">
+                        <!-- Preview Gallery akan muncul di sini -->
+                    </div>
+                    <input type="file" id="in_gallery" onchange="handleGalleryUpload(event)" class="hidden" multiple accept="image/*">
+                    <label for="in_gallery" class="cursor-pointer w-full p-10 border-2 border-dashed border-stone-200 rounded-[40px] flex flex-col items-center justify-center hover:border-rose-300 hover:bg-rose-50 transition group">
+                        <span class="text-sm font-bold text-stone-500">Klik untuk Tambah Foto Galeri</span>
+                    </label>
                 </div>
 
                 <!-- TAB: MUSIK & FITUR -->
                 <div id="tab-musik" class="tab-pane hidden space-y-8">
                     <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Background Musik (Link MP3)</label>
-                        <input type="text" id="in_music" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="https://domain.com/lagu-nikah.mp3">
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Background Musik (MP3 Link)</label>
+                        <input type="text" id="in_music" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="https://domain.com/musik.mp3">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-stone-700 mb-2">Hashtag Acara</label>
-                        <input type="text" id="in_hashtag" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="#SatuBINTANGuntukANISA">
+                        <input type="text" id="in_hashtag" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="#HashtagAcara">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Tanggal Target (Countdown)</label>
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Tanggal Countdown</label>
                         <input type="datetime-local" id="in_date" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl">
                     </div>
                 </div>
@@ -211,42 +226,74 @@
             document.getElementById('section-title').innerText = titles[tabId];
         }
 
-        // IMAGE UPLOAD
+        let galleryImages = [];
+
+        // IMAGE UPLOAD (MAIN BACKGROUND)
         async function handleUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const label = document.getElementById('upload-label');
             label.innerText = "⏳ Mengunggah...";
-
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', CLOUDINARY_PRESET);
-
             try {
                 const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.secure_url) {
                     currentBgImage = data.secure_url;
-                    document.getElementById('pv_bg').style.backgroundImage = `url('${currentBgImage}')`;
                     label.innerText = "✅ Berhasil Diunggah!";
                     label.classList.add('text-green-500');
                 }
-            } catch (err) {
-                label.innerText = "❌ Gagal mengunggah";
+            } catch (err) { label.innerText = "❌ Gagal mengunggah"; }
+        }
+
+        // GALLERY UPLOAD (MULTIPLE)
+        async function handleGalleryUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            const container = document.getElementById('gallery-container');
+            
+            for (let file of files) {
+                if (galleryImages.length >= 6) break;
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_PRESET);
+
+                try {
+                    const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.secure_url) {
+                        galleryImages.push(data.secure_url);
+                        renderGallery();
+                    }
+                } catch (err) { console.error("Gallery upload failed", err); }
             }
         }
 
-        // PREVIEW SYNC
-        function updatePreview() {
-            document.getElementById('pv_header').innerText = document.getElementById('in_title').value || "The Wedding of";
-            document.getElementById('pv_pria').innerText = document.getElementById('in_pria_short').value || "Bintang";
-            document.getElementById('pv_wanita').innerText = document.getElementById('in_wanita_short').value || "Anisa";
-            document.getElementById('pv_hashtag').innerText = document.getElementById('in_hashtag').value || "#BintangAnisa";
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = "";
+            galleryImages.forEach((src, index) => {
+                const div = document.createElement('div');
+                div.className = "relative aspect-square rounded-xl overflow-hidden border border-stone-100 group";
+                div.innerHTML = `
+                    <img src="${src}" class="w-full h-full object-cover">
+                    <button onclick="removeGallery(${index})" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeGallery(index) {
+            galleryImages.splice(index, 1);
+            renderGallery();
         }
 
         // SUPABASE OPS
-        // REFRESH PREVIEW IFRAME
         function refreshPreview() {
             const iframe = document.getElementById('preview-iframe');
             if (iframe) {
@@ -267,6 +314,12 @@
                 hashtag: document.getElementById('in_hashtag').value,
                 music_url: document.getElementById('in_music').value,
                 event_date: document.getElementById('in_date').value,
+                gallery: galleryImages,
+                banking: {
+                    name: document.getElementById('in_bank_name').value,
+                    rekening: document.getElementById('in_bank_rekening').value,
+                    owner: document.getElementById('in_bank_owner').value
+                },
                 groom: {
                     full_name: document.getElementById('in_pria_full').value,
                     desc: document.getElementById('in_pria_desc').value,
@@ -296,10 +349,8 @@
                     .eq('client_id', clientId);
 
                 if (error) throw error;
-                
-                // REFRESH PREVIEW SETELAH SIMPAN
                 refreshPreview();
-                alert("Berhasil disimpan! Tampilan preview telah diperbarui. 🎉");
+                alert("Berhasil disimpan! 🎉");
             } catch (err) {
                 alert("Gagal: " + err.message);
             } finally {
@@ -312,8 +363,6 @@
             const session = getSessionData();
             if (!session) return window.location.href = 'login.html';
             clientId = session.username;
-
-            // Load Preview Pertama Kali
             refreshPreview();
 
             try {
@@ -332,6 +381,15 @@
                     document.getElementById('in_music').value = c.music_url || "";
                     document.getElementById('in_date').value = c.event_date || "";
                     
+                    if (c.gallery) {
+                        galleryImages = c.gallery;
+                        renderGallery();
+                    }
+                    if (c.banking) {
+                        document.getElementById('in_bank_name').value = c.banking.name || "";
+                        document.getElementById('in_bank_rekening').value = c.banking.rekening || "";
+                        document.getElementById('in_bank_owner').value = c.banking.owner || "";
+                    }
                     if (c.groom) {
                         document.getElementById('in_pria_full').value = c.groom.full_name || "";
                         document.getElementById('in_pria_desc').value = c.groom.desc || "";
@@ -352,16 +410,10 @@
                         document.getElementById('in_ev2_loc').value = c.ev2.loc || "";
                         document.getElementById('in_ev2_maps').value = c.ev2.maps || "";
                     }
-
-                    if (c.bg_image) {
-                        currentBgImage = c.bg_image;
-                        document.getElementById('pv_bg').style.backgroundImage = `url('${currentBgImage}')`;
-                    }
-                    updatePreview();
+                    if (c.bg_image) currentBgImage = c.bg_image;
                 }
             } catch (err) { console.warn("Load error:", err); }
         }
-
         init();
     </script>
 </body>
