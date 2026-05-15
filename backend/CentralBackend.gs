@@ -44,9 +44,25 @@ function handleCentralPost(request) {
  */
 function handleSaveInvitation(data) {
   try {
-    if (!data.ssId) return createResponse({ status: "error", message: "ID Spreadsheet tidak ditemukan" });
+    let ssId = data.ssId;
     
-    const ss = SpreadsheetApp.openById(data.ssId);
+    // FAIL-SAFE: Jika ssId tidak dikirim dari browser, cari di Master Spreadsheet
+    if (!ssId && data.clientId) {
+      console.log("ssId missing, performing lookup for clientId: " + data.clientId);
+      const masterSs = SpreadsheetApp.openById(MASTER_SS_ID);
+      const masterSheet = masterSs.getSheetByName(MASTER_SHEET_NAME);
+      const masterData = masterSheet.getDataRange().getValues();
+      for (let i = 1; i < masterData.length; i++) {
+        if (masterData[i][0] == data.clientId || masterData[i][9] == data.clientId) {
+          ssId = masterData[i][1]; // Kolom B adalah ID Spreadsheet
+          break;
+        }
+      }
+    }
+
+    if (!ssId) return createResponse({ status: "error", message: "ID Spreadsheet tidak ditemukan (Lookup Gagal)" });
+    
+    const ss = SpreadsheetApp.openById(ssId);
     const sheetName = "Config_Invitation";
     let inviteSheet = ss.getSheetByName(sheetName);
     

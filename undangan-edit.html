@@ -417,33 +417,49 @@
 
             try {
                 // 1. Simpan ke Supabase (Utama untuk Preview)
+                console.log("Simpan ke Supabase untuk:", clientId);
                 const { error } = await _supabase.from('invitations').update({ theme_config: config }).eq('client_id', clientId);
                 if (error) throw error;
 
                 // 2. Simpan ke Google Sheets (Untuk Welcome Sign & Backup)
-                // Kita tambahkan action: 'saveInvitation' agar GAS tahu harus membuat sheet Config_Invitation
-                fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({
-                        action: 'saveInvitation',
-                        clientId: clientId,
-                        ssId: clientSsId,
-                        config: config
-                    })
-                });
+                console.log("Sinkron ke Google Sheets. ssId:", clientSsId);
+                
+                if (!clientSsId) {
+                    console.warn("ssId tidak ditemukan di session, sinkron ke Sheet dibatalkan.");
+                } else {
+                    fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // Tetap no-cors untuk menghindari preflight OPTIONS yang sering gagal di GAS
+                        headers: { 'Content-Type': 'text/plain' }, // Gunakan text/plain agar GAS mudah membacanya
+                        body: JSON.stringify({
+                            action: 'saveInvitation',
+                            clientId: clientId,
+                            ssId: clientSsId,
+                            config: config
+                        })
+                    });
+                }
 
                 refreshPreview();
                 alert("Berhasil disimpan ke Supabase & Google Sheets! 🎉");
-            } catch (err) { alert("Gagal: " + err.message); }
+            } catch (err) { 
+                console.error("Save error:", err);
+                alert("Gagal Simpan: " + err.message); 
+            }
             finally { btn.innerHTML = 'Simpan Perubahan'; btn.disabled = false; }
         }
 
         async function init() {
             const session = getSessionData();
+            console.log("Session Data Found:", session);
+            
             if (!session) return window.location.href = 'login.html';
+            
             clientId = session.username;
-            clientSsId = session.ssId; // Ambil ID Spreadsheet dari session
+            clientSsId = session.ssId || session.fileId; // Kadang tersimpan sebagai fileId di sistem Anda
+            
+            console.log("Current Client:", clientId, "Target ssId:", clientSsId);
+            
             refreshPreview();
 
             try {
