@@ -223,7 +223,13 @@
                     .eq('client_id', clientId)
                     .single();
 
+                if (error) {
+                    console.error("Supabase Error:", error);
+                    alert("Debug: Gagal ambil data untuk " + clientId + ". Error: " + error.message);
+                }
+
                 if (data) {
+                    // alert("Debug: Data ditemukan untuk " + clientId);
                     // Ambil data yang tidak kosong
                     let c = data.theme_config;
                     if (!c || Object.keys(c).length === 0) c = data.config;
