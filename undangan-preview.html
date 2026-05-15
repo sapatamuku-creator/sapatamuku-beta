@@ -220,12 +220,11 @@
                 const { data, error } = await _supabase
                     .from('invitations')
                     .select('*')
-                    .eq('client_id', clientId)
-                    .single();
+                    .ilike('client_id', clientId) // Gunakan ilike agar case-insensitive
+                    .maybeSingle(); // Gunakan maybeSingle agar tidak error jika kosong
 
                 if (error) {
                     console.error("Supabase Error:", error);
-                    alert("Debug: Gagal ambil data untuk " + clientId + ". Error: " + error.message);
                 }
 
                 if (data) {
