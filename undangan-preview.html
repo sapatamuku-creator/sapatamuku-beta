@@ -207,12 +207,12 @@
             try {
                 const { data, error } = await _supabase
                     .from('invitations')
-                    .select('Config')
+                    .select('theme_config')
                     .eq('client_id', clientId)
                     .single();
 
-                if (data && data.Config) {
-                    const c = data.Config;
+                if (data && data.theme_config) {
+                    const c = data.theme_config;
                     
                     document.getElementById('cv_header').innerText = c.title || "The Wedding Celebration";
                     document.getElementById('cv_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
