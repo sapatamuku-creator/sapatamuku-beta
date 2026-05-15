@@ -216,7 +216,7 @@
     <script>
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvygmpmir/image/upload";
         const CLOUDINARY_PRESET = "sapatamu_preset";
-        const SUPABASE_URL = "https://cikptujrdfvxyfihwamh.supabase.co";
+        const SUPABASE_URL = "https://cikptujrzdfvyfihwamh.supabase.co";
         const SUPABASE_KEY = "sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B";
         const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJDudzlgXTS9_zPM0QJw5D7My40pOZ-ATWxGlpay7gtosgGMyBGxyEkAck1JE30q6_6w/exec";
@@ -422,7 +422,11 @@
             try {
                 // 1. Simpan ke Supabase (Utama untuk Preview)
                 console.log("Simpan ke Supabase untuk:", clientId);
-                const { error } = await _supabase.from('invitations').update({ theme_config: config }).eq('client_id', clientId);
+                const { error } = await _supabase.from('invitations').upsert({ 
+                    client_id: clientId, 
+                    Config: config,
+                    updated_at: new Date()
+                }, { onConflict: 'client_id' });
                 if (error) throw error;
 
                 // 2. Simpan ke Google Sheets (Untuk Welcome Sign & Backup)
@@ -482,15 +486,19 @@
 
             try {
                 // Tambahkan select('*') untuk melihat semua kolom jika theme_config bermasalah
-                const { data, error } = await _supabase.from('invitations').select('*').eq('client_id', clientId).single();
+                const { data, error } = await _supabase
+                    .from('invitations')
+                    .select('Config')
+                    .eq('client_id', clientId)
+                    .single();
                 
                 if (error) {
                     console.warn("Data belum ada atau kolom salah:", error.message);
                     return;
                 }
 
-                if (data && data.theme_config) {
-                    const c = data.theme_config;
+                if (data && data.Config) {
+                    const c = data.Config;
                     document.getElementById('in_title').value = c.title || "";
                     document.getElementById('in_pria_short').value = c.pria_short || "";
                     document.getElementById('in_wanita_short').value = c.wanita_short || "";
