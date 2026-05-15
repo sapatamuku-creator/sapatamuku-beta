@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor Undangan - SapaTamu.Ku</title>
+    <title>Editor Undangan Premium - SapaTamu.Ku</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; }
         .editor-container { height: calc(100vh - 64px); }
@@ -21,132 +21,179 @@
         }
         .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .tab-active { border-left: 4px solid #E07B7B; background: #FFF1F1; color: #E07B7B; }
+        .tab-link { cursor: pointer !important; transition: all 0.3s ease; }
+        .tab-link:hover { background: #F8FAFC; }
+        .tab-active { border-left: 4px solid #E07B7B; background: #FFF1F1; color: #E07B7B !important; }
     </style>
 </head>
 <body class="overflow-hidden">
 
     <!-- NAVBAR -->
-    <nav class="h-16 bg-white border-b flex items-center justify-between px-6">
+    <nav class="h-16 bg-white border-b flex items-center justify-between px-6 z-50 relative">
         <div class="flex items-center gap-4">
             <a href="undangan.html" class="p-2 hover:bg-stone-100 rounded-full transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             </a>
-            <h1 class="font-bold text-lg">Editor Undangan: <span id="theme-name" class="text-stone-400">Loading...</span></h1>
+            <h1 class="font-bold text-lg">Editor Undangan: <span id="theme-name" class="text-rose-500">Classic Minimalist</span></h1>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="saveToSupabase(event)" class="bg-[#E07B7B] text-white px-6 py-2 rounded-xl font-bold text-sm shadow-lg shadow-rose-100 hover:bg-rose-500 transition">Simpan Perubahan</button>
+            <button id="save-btn" onclick="saveChanges()" class="bg-[#E07B7B] text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-rose-100 hover:bg-rose-600 transition flex items-center">
+                Simpan Perubahan
+            </button>
         </div>
     </nav>
 
     <div class="flex editor-container">
         <!-- SIDEBAR NAV -->
-        <aside class="w-64 bg-white border-r flex flex-col p-4 gap-2">
-            <button class="flex items-center gap-3 p-3 rounded-xl font-semibold text-sm text-stone-500 tab-active">
-                <span>💍</span> Informasi Dasar
+        <aside class="w-72 bg-white border-r flex flex-col p-4 gap-2 z-40">
+            <button onclick="switchTab('informasi', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 tab-active transition-all">
+                <span class="text-lg">💍</span> Informasi Dasar
             </button>
-            <button class="flex items-center gap-3 p-3 rounded-xl font-semibold text-sm text-stone-500 hover:bg-stone-50">
-                <span>👩‍❤️‍👨</span> Data Mempelai
+            <button onclick="switchTab('mempelai', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
+                <span class="text-lg">👩‍❤️‍👨</span> Data Mempelai
             </button>
-            <button class="flex items-center gap-3 p-3 rounded-xl font-semibold text-sm text-stone-500 hover:bg-stone-50">
-                <span>📍</span> Detail Acara
+            <button onclick="switchTab('acara', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
+                <span class="text-lg">📍</span> Detail Acara
             </button>
-            <button class="flex items-center gap-3 p-3 rounded-xl font-semibold text-sm text-stone-500 hover:bg-stone-50">
-                <span>🖼️</span> Galeri Foto
+            <button onclick="switchTab('galeri', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
+                <span class="text-lg">🖼️</span> Galeri Foto
             </button>
-            <button class="flex items-center gap-3 p-3 rounded-xl font-semibold text-sm text-stone-500 hover:bg-stone-50">
-                <span>🎵</span> Musik & Fitur
+            <button onclick="switchTab('musik', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
+                <span class="text-lg">🎵</span> Musik & Fitur
             </button>
+            
+            <div class="mt-auto p-6 bg-rose-50 rounded-3xl border border-rose-100">
+                <h4 class="font-bold text-rose-800 mb-1 text-xs uppercase tracking-wider">Status Preview</h4>
+                <p class="text-rose-600 text-[10px] leading-relaxed">Preview di kanan diperbarui secara otomatis saat Anda mengetik.</p>
+            </div>
         </aside>
 
         <!-- FORM EDITOR -->
-        <main class="flex-1 bg-white overflow-y-auto p-8 custom-scroll">
-            <div class="max-w-xl mx-auto">
-                <section id="section-basic">
-                    <h2 class="text-2xl font-extrabold mb-6">Informasi Dasar</h2>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-2">Judul Undangan</label>
-                            <input type="text" id="in_title" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none transition" placeholder="The Wedding of...">
-                        </div>
-                        
+        <main class="flex-1 bg-white overflow-y-auto p-12 custom-scroll">
+            <div class="max-w-2xl mx-auto">
+                <h2 id="section-title" class="text-3xl font-extrabold mb-10 text-stone-800">Informasi Dasar</h2>
+                
+                <!-- TAB: INFORMASI DASAR -->
+                <div id="tab-informasi" class="tab-pane space-y-8">
+                    <div>
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Judul Undangan (Header)</label>
+                        <input type="text" id="in_title" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none transition" placeholder="The Wedding of...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Nama Panggilan (Pria & Wanita)</label>
                         <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-stone-700 mb-2">Nama Panggilan Pria</label>
-                                <input type="text" id="in_pria" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none" placeholder="Gildan">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-stone-700 mb-2">Nama Panggilan Wanita</label>
-                                <input type="text" id="in_wanita" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none" placeholder="Mita">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-2">Background Musik (URL)</label>
-                            <input type="text" id="in_music" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none" placeholder="https://youtube.com/...">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-2">Foto Background Utama</label>
-                            <div class="flex flex-col gap-3">
-                                <input type="file" id="in_file" onchange="handleUpload(event)" class="hidden" accept="image/*">
-                                <label for="in_file" class="cursor-pointer w-full p-8 border-2 border-dashed border-stone-200 rounded-[32px] flex flex-col items-center justify-center hover:border-rose-300 hover:bg-rose-50 transition group">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover:text-rose-400 transition mb-2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                                    <span class="text-sm font-bold text-stone-500 group-hover:text-rose-600">Klik untuk Ganti Foto</span>
-                                    <span class="text-[10px] text-stone-400 mt-1">Saran: Portrait (9:16), Max 2MB</span>
-                                </label>
-                                <p id="upload-status" class="text-center text-xs font-bold hidden"></p>
-                            </div>
-                        </div>
-
-                        <div class="p-6 bg-rose-50 border border-rose-100 rounded-[32px]">
-                            <h4 class="font-bold text-rose-800 mb-2 text-sm uppercase tracking-wider">Tips Design</h4>
-                            <p class="text-rose-600 text-xs leading-relaxed">Gunakan foto dengan orientasi portrait agar terlihat pas di layar smartphone tamu Anda.</p>
+                            <input type="text" id="in_pria_short" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Bintang">
+                            <input type="text" id="in_wanita_short" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Anisa">
                         </div>
                     </div>
-                </section>
+                    <div>
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Foto Background Utama</label>
+                        <input type="file" id="in_file" onchange="handleUpload(event)" class="hidden" accept="image/*">
+                        <label for="in_file" class="cursor-pointer w-full p-10 border-2 border-dashed border-stone-200 rounded-[40px] flex flex-col items-center justify-center hover:border-rose-300 hover:bg-rose-50 transition group">
+                            <div id="upload-icon" class="mb-3 text-stone-300 group-hover:text-rose-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                            </div>
+                            <span id="upload-label" class="text-sm font-bold text-stone-500 group-hover:text-rose-600">Klik untuk Ganti Foto</span>
+                            <span class="text-[10px] text-stone-400 mt-1 uppercase tracking-widest">Portrait (9:16) Recommended</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB: DATA MEMPELAI -->
+                <div id="tab-mempelai" class="tab-pane hidden space-y-10">
+                    <div class="p-8 bg-blue-50/30 rounded-[40px] border border-blue-100/50">
+                        <h3 class="font-bold text-blue-900 mb-6 flex items-center gap-3">
+                            <span class="w-3 h-3 bg-blue-400 rounded-full shadow-sm"></span> Mempelai Pria
+                        </h3>
+                        <div class="space-y-4">
+                            <input type="text" id="in_pria_full" class="w-full p-4 bg-white border border-stone-200 rounded-2xl" placeholder="Nama Lengkap Pria">
+                            <textarea id="in_pria_desc" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-sm" placeholder="Putra ke-sekian dari Bp. X & Ibu Y"></textarea>
+                            <input type="text" id="in_pria_ig" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-xs" placeholder="Link Instagram (@username)">
+                        </div>
+                    </div>
+                    <div class="p-8 bg-rose-50/30 rounded-[40px] border border-rose-100/50">
+                        <h3 class="font-bold text-rose-900 mb-6 flex items-center gap-3">
+                            <span class="w-3 h-3 bg-rose-400 rounded-full shadow-sm"></span> Mempelai Wanita
+                        </h3>
+                        <div class="space-y-4">
+                            <input type="text" id="in_wanita_full" class="w-full p-4 bg-white border border-stone-200 rounded-2xl" placeholder="Nama Lengkap Wanita">
+                            <textarea id="in_wanita_desc" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-sm" placeholder="Putri ke-sekian dari Bp. A & Ibu B"></textarea>
+                            <input type="text" id="in_wanita_ig" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-xs" placeholder="Link Instagram (@username)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: DETAIL ACARA -->
+                <div id="tab-acara" class="tab-pane hidden space-y-10">
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold text-stone-800">Akad Nikah / Pemberkatan</h3>
+                        <input type="text" id="in_ev1_time" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Contoh: Senin, 25 Mei 2026 | 08.00 WIB">
+                        <textarea id="in_ev1_loc" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-sm" placeholder="Alamat Lengkap & Nama Gedung"></textarea>
+                        <input type="text" id="in_ev1_maps" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps (PENTING!)">
+                    </div>
+                    <div class="pt-10 border-t border-stone-100 space-y-6">
+                        <h3 class="text-xl font-bold text-stone-800">Resepsi Pernikahan</h3>
+                        <input type="text" id="in_ev2_time" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Contoh: Senin, 25 Mei 2026 | 12.30 WIB">
+                        <textarea id="in_ev2_loc" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-sm" placeholder="Alamat Lengkap & Nama Gedung"></textarea>
+                        <input type="text" id="in_ev2_maps" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps (PENTING!)">
+                    </div>
+                </div>
+
+                <!-- TAB: GALERI -->
+                <div id="tab-galeri" class="tab-pane hidden space-y-8">
+                    <p class="text-sm text-stone-500 bg-stone-50 p-4 rounded-xl border border-stone-100">Fitur Galeri sedang dalam pengembangan untuk mendukung multiple upload. Silakan simpan foto background utama terlebih dahulu.</p>
+                </div>
+
+                <!-- TAB: MUSIK & FITUR -->
+                <div id="tab-musik" class="tab-pane hidden space-y-8">
+                    <div>
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Background Musik (Link MP3)</label>
+                        <input type="text" id="in_music" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="https://domain.com/lagu-nikah.mp3">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Hashtag Acara</label>
+                        <input type="text" id="in_hashtag" oninput="updatePreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="#SatuBINTANGuntukANISA">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-stone-700 mb-2">Tanggal Target (Countdown)</label>
+                        <input type="datetime-local" id="in_date" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl">
+                    </div>
+                </div>
             </div>
         </main>
 
         <!-- LIVE PREVIEW AREA -->
-        <aside class="flex-1 bg-slate-100 flex items-center justify-center p-8 border-l">
-            <div class="preview-frame relative">
-                <!-- SIMULATED MOBILE VIEW -->
-                <div id="pv_bg" class="w-full h-full bg-stone-100 bg-cover bg-center transition-all duration-700 relative">
-                    <div class="absolute inset-0 bg-black/30"></div>
-                    <div id="preview-container" class="relative z-10 w-full h-full p-8 text-center flex flex-col items-center justify-center text-white">
-                        <div id="pv_theme" class="text-[10px] text-rose-300 font-bold mb-4 tracking-widest uppercase">Rose Gold Theme</div>
-                        <h1 id="pv_title" class="text-3xl font-serif mb-4 drop-shadow-lg">The Wedding of</h1>
-                        <div class="flex items-center gap-4 mb-8">
-                            <span id="pv_pria" class="text-4xl font-bold drop-shadow-md">Gildan</span>
-                            <span class="text-rose-300 font-serif italic text-2xl">&</span>
-                            <span id="pv_wanita" class="text-4xl font-bold drop-shadow-md">Mita</span>
+        <aside class="flex-1 bg-slate-100 flex items-center justify-center p-8 border-l overflow-hidden">
+            <div class="preview-frame relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)]">
+                <div id="pv_bg" class="w-full h-full bg-stone-200 bg-cover bg-center transition-all duration-700 relative">
+                    <div class="absolute inset-0 bg-black/40"></div>
+                    <div class="relative z-10 w-full h-full p-8 text-center flex flex-col items-center justify-center text-white">
+                        <p id="pv_hashtag" class="text-[9px] text-rose-300 font-bold mb-8 tracking-[0.5em] uppercase">#SatuBINTANGuntukANISA</p>
+                        <h2 id="pv_header" class="text-xs tracking-[0.4em] uppercase font-bold mb-4 text-white/70">The Wedding of</h2>
+                        <div class="flex flex-col items-center gap-2 mb-8">
+                            <span id="pv_pria" class="text-5xl font-serif italic drop-shadow-lg">Bintang</span>
+                            <span class="text-rose-300 font-serif italic text-3xl">&</span>
+                            <span id="pv_wanita" class="text-5xl font-serif italic drop-shadow-lg">Anisa</span>
                         </div>
-                        <p class="text-white/80 text-sm italic drop-shadow-sm">Save the Date - 25.12.2026</p>
-                        <div class="mt-12 w-24 h-1 bg-rose-300/50 mx-auto rounded-full"></div>
+                        <p class="text-rose-300 text-[10px] tracking-[0.3em] font-bold uppercase drop-shadow-sm">Save the Date</p>
                     </div>
                 </div>
-                
-                <!-- OVERLAY INDICATOR -->
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-3 py-1 rounded-full font-bold">LIVE PREVIEW</div>
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-4 py-1.5 rounded-full font-bold tracking-widest backdrop-blur">LIVE PREVIEW</div>
             </div>
         </aside>
     </div>
 
     <script>
-        // KONFIGURASI CLOUDINARY & SUPABASE
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvygmpmir/image/upload";
         const CLOUDINARY_PRESET = "sapatamu_preset";
-        
         const SUPABASE_URL = "https://cikptujrdfvxyfihwamh.supabase.co";
         const SUPABASE_KEY = "sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B";
         const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentBgImage = "";
+        let clientId = "";
 
-        // Helper untuk ambil cookie
+        // AUTH CHECK
         function getCookie(name) {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
@@ -162,119 +209,156 @@
             return data ? JSON.parse(data) : null;
         }
 
-        // FUNGSI UPLOAD KE CLOUDINARY
+        // TAB SWITCHING
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('tab-active'));
+            el.classList.add('tab-active');
+
+            const titles = { 'informasi': 'Informasi Dasar', 'mempelai': 'Data Mempelai', 'acara': 'Detail Acara', 'galeri': 'Galeri Foto', 'musik': 'Musik & Fitur' };
+            document.getElementById('section-title').innerText = titles[tabId];
+        }
+
+        // IMAGE UPLOAD
         async function handleUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            const statusText = document.getElementById('upload-status');
-            statusText.innerText = "⌛ Mengunggah...";
-            statusText.classList.remove('hidden');
+            const label = document.getElementById('upload-label');
+            label.innerText = "⏳ Mengunggah...";
 
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', CLOUDINARY_PRESET);
 
             try {
-                const response = await fetch(CLOUDINARY_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-                
+                const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+                const data = await res.json();
                 if (data.secure_url) {
                     currentBgImage = data.secure_url;
                     document.getElementById('pv_bg').style.backgroundImage = `url('${currentBgImage}')`;
-                    statusText.innerText = "✅ Berhasil Diunggah!";
-                    statusText.classList.remove('text-red-500');
-                    statusText.classList.add('text-green-500');
+                    label.innerText = "✅ Berhasil Diunggah!";
+                    label.classList.add('text-green-500');
                 }
             } catch (err) {
-                console.error("Upload gagal:", err);
-                statusText.innerText = "❌ Gagal mengunggah.";
-                statusText.classList.remove('text-green-500');
-                statusText.classList.add('text-red-500');
+                label.innerText = "❌ Gagal mengunggah";
             }
         }
 
-        // FUNGSI REAL-TIME PREVIEW
+        // PREVIEW SYNC
         function updatePreview() {
-            const title = document.getElementById('in_title').value || "The Wedding of";
-            const pria = document.getElementById('in_pria').value || "Gildan";
-            const wanita = document.getElementById('in_wanita').value || "Mita";
-
-            document.getElementById('pv_title').innerText = title;
-            document.getElementById('pv_pria').innerText = pria;
-            document.getElementById('pv_wanita').innerText = wanita;
+            document.getElementById('pv_header').innerText = document.getElementById('in_title').value || "The Wedding of";
+            document.getElementById('pv_pria').innerText = document.getElementById('in_pria_short').value || "Bintang";
+            document.getElementById('pv_wanita').innerText = document.getElementById('in_wanita_short').value || "Anisa";
+            document.getElementById('pv_hashtag').innerText = document.getElementById('in_hashtag').value || "#BintangAnisa";
         }
 
-        // FUNGSI SIMPAN KE SUPABASE
-        async function saveToSupabase(event) {
-            const data = getSessionData();
-            if (!data) return alert("Sesi habis, silakan login ulang.");
-            const clientId = data.username;
-
-            const configData = {
-                title: document.getElementById('in_title').value,
-                pria: document.getElementById('in_pria').value,
-                wanita: document.getElementById('in_wanita').value,
-                music: document.getElementById('in_music').value,
-                bg_image: currentBgImage
-            };
-
-            const btn = event.target;
-            const originalText = btn.innerText;
-            btn.innerText = "💾 Menyimpan...";
+        // SUPABASE OPS
+        async function saveChanges() {
+            const btn = document.getElementById('save-btn');
+            btn.innerHTML = '⏳ Menyimpan...';
             btn.disabled = true;
+
+            const config = {
+                title: document.getElementById('in_title').value,
+                pria_short: document.getElementById('in_pria_short').value,
+                wanita_short: document.getElementById('in_wanita_short').value,
+                bg_image: currentBgImage,
+                hashtag: document.getElementById('in_hashtag').value,
+                music_url: document.getElementById('in_music').value,
+                event_date: document.getElementById('in_date').value,
+                groom: {
+                    full_name: document.getElementById('in_pria_full').value,
+                    desc: document.getElementById('in_pria_desc').value,
+                    ig: document.getElementById('in_pria_ig').value
+                },
+                bride: {
+                    full_name: document.getElementById('in_wanita_full').value,
+                    desc: document.getElementById('in_wanita_desc').value,
+                    ig: document.getElementById('in_wanita_ig').value
+                },
+                ev1: {
+                    time: document.getElementById('in_ev1_time').value,
+                    loc: document.getElementById('in_ev1_loc').value,
+                    maps: document.getElementById('in_ev1_maps').value
+                },
+                ev2: {
+                    time: document.getElementById('in_ev2_time').value,
+                    loc: document.getElementById('in_ev2_loc').value,
+                    maps: document.getElementById('in_ev2_maps').value
+                }
+            };
 
             try {
                 const { error } = await _supabase
                     .from('invitations')
-                    .update({ config: configData })
+                    .update({ theme_config: config })
                     .eq('client_id', clientId);
 
                 if (error) throw error;
-                alert("Konfigurasi Berhasil Disimpan! 🎉");
+                alert("Berhasil disimpan! 🎉");
             } catch (err) {
-                alert("Gagal menyimpan: " + err.message);
+                alert("Gagal: " + err.message);
             } finally {
-                btn.innerText = originalText;
+                btn.innerHTML = 'Simpan Perubahan';
                 btn.disabled = false;
             }
         }
 
-        // LOAD DATA AWAL JIKA ADA
-        async function loadInitialData() {
-            // Ambil Theme dari URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const themeId = urlParams.get('theme') || 'rose-gold';
-            document.getElementById('theme-name').innerText = themeId.toUpperCase();
+        async function init() {
+            const session = getSessionData();
+            if (!session) return window.location.href = 'login.html';
+            clientId = session.username;
 
-            const data = getSessionData();
-            if (!data) return;
-            const clientId = data.username;
+            try {
+                const { data, error } = await _supabase
+                    .from('invitations')
+                    .select('theme_config')
+                    .eq('client_id', clientId)
+                    .single();
 
-            const { data: invData, error } = await _supabase
-                .from('invitations')
-                .select('config')
-                .eq('client_id', clientId)
-                .single();
+                if (data && data.theme_config) {
+                    const c = data.theme_config;
+                    document.getElementById('in_title').value = c.title || "";
+                    document.getElementById('in_pria_short').value = c.pria_short || "";
+                    document.getElementById('in_wanita_short').value = c.wanita_short || "";
+                    document.getElementById('in_hashtag').value = c.hashtag || "";
+                    document.getElementById('in_music').value = c.music_url || "";
+                    document.getElementById('in_date').value = c.event_date || "";
+                    
+                    if (c.groom) {
+                        document.getElementById('in_pria_full').value = c.groom.full_name || "";
+                        document.getElementById('in_pria_desc').value = c.groom.desc || "";
+                        document.getElementById('in_pria_ig').value = c.groom.ig || "";
+                    }
+                    if (c.bride) {
+                        document.getElementById('in_wanita_full').value = c.bride.full_name || "";
+                        document.getElementById('in_wanita_desc').value = c.bride.desc || "";
+                        document.getElementById('in_wanita_ig').value = c.bride.ig || "";
+                    }
+                    if (c.ev1) {
+                        document.getElementById('in_ev1_time').value = c.ev1.time || "";
+                        document.getElementById('in_ev1_loc').value = c.ev1.loc || "";
+                        document.getElementById('in_ev1_maps').value = c.ev1.maps || "";
+                    }
+                    if (c.ev2) {
+                        document.getElementById('in_ev2_time').value = c.ev2.time || "";
+                        document.getElementById('in_ev2_loc').value = c.ev2.loc || "";
+                        document.getElementById('in_ev2_maps').value = c.ev2.maps || "";
+                    }
 
-            if (invData && invData.config) {
-                document.getElementById('in_title').value = invData.config.title || "";
-                document.getElementById('in_pria').value = invData.config.pria || "";
-                document.getElementById('in_wanita').value = invData.config.wanita || "";
-                document.getElementById('in_music').value = invData.config.music || "";
-                
-                if (invData.config.bg_image) {
-                    currentBgImage = invData.config.bg_image;
-                    document.getElementById('pv_bg').style.backgroundImage = `url('${currentBgImage}')`;
+                    if (c.bg_image) {
+                        currentBgImage = c.bg_image;
+                        document.getElementById('pv_bg').style.backgroundImage = `url('${currentBgImage}')`;
+                    }
+                    updatePreview();
                 }
-                updatePreview();
-            }
+            } catch (err) { console.warn("Load error:", err); }
         }
 
-        document.addEventListener('DOMContentLoaded', loadInitialData);
+        init();
     </script>
 </body>
 </html>
