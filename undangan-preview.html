@@ -142,12 +142,8 @@
         <!-- DIGITAL GIFT -->
         <section id="gift-section" class="py-24 px-8 text-center bg-neutral-50/50">
             <h3 class="text-2xl font-serif italic mb-12">Digital Gift</h3>
-            <div class="reveal max-w-sm mx-auto gift-card shadow-xl">
-                <img id="bank-logo" src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" class="h-6 mx-auto mb-6 grayscale opacity-70">
-                <p id="bank-name" class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK BCA</p>
-                <h4 id="bank-rekening" class="text-2xl font-serif mb-1 tracking-wider">0000 0000 00</h4>
-                <p id="bank-owner" class="text-[11px] uppercase tracking-widest opacity-60 mb-8">A/N Nama Pemilik</p>
-                <button onclick="copyAccount()" class="text-[9px] font-bold tracking-widest bg-neutral-900 text-white px-8 py-3 rounded-full uppercase">Salin Rekening</button>
+            <div id="gift-list" class="space-y-6">
+                <!-- Daftar Rekening akan di-inject di sini -->
             </div>
         </section>
 
@@ -183,17 +179,29 @@
             return parts.length >= 4 ? parts[0] : new URLSearchParams(window.location.search).get('clientId');
         }
 
+        const BANK_LOGOS = {
+            'bca': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg',
+            'mandiri': 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg',
+            'bni': 'https://upload.wikimedia.org/wikipedia/commons/0/05/Logo_BNI_46.svg',
+            'bri': 'https://upload.wikimedia.org/wikipedia/commons/2/2e/BRI_Logo.svg',
+            'dana': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_DANA.svg',
+            'ovo': 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg',
+            'gopay': 'https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg',
+            'shopeepay': 'https://upload.wikimedia.org/wikipedia/commons/a/af/ShopeePay_logo.svg',
+            'qris': 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg'
+        };
+
         async function init() {
             const clientId = getClientId();
-            if (!clientId) return alert("Client ID tidak ditemukan");
+            if (!clientId) {
+                document.getElementById('loader').classList.add('hidden');
+                return;
+            }
 
-            // Ambil Nama Tamu dari URL
             const urlParams = new URLSearchParams(window.location.search);
             const guestName = urlParams.get('to') || "Tamu Undangan";
             document.getElementById('guest-name').innerText = guestName;
             document.getElementById('qr-guest').innerText = guestName;
-            
-            // Generate QR Code otomatis
             document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(clientId + ' | ' + guestName)}`;
 
             try {
@@ -206,14 +214,13 @@
                 if (data && data.theme_config) {
                     const c = data.theme_config;
                     
-                    document.getElementById('cv_names').innerText = `${c.pria_short} & ${c.wanita_short}`;
-                    document.getElementById('hero_names').innerText = `${c.pria_short} & ${c.wanita_short}`;
+                    document.getElementById('cv_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
+                    document.getElementById('hero_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
                     document.getElementById('cv_bg').src = c.bg_image || "";
                     document.getElementById('hero_bg').src = c.bg_image || "";
                     document.getElementById('hero_hashtag').innerText = c.hashtag || "";
                     document.getElementById('hero_date').innerText = c.event_date ? new Date(c.event_date).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : "";
                     
-                    // Render Gallery
                     if (c.gallery && c.gallery.length > 0) {
                         const grid = document.getElementById('gallery-grid');
                         grid.innerHTML = "";
@@ -225,47 +232,59 @@
                         });
                     }
 
-                    // Render Banking
-                    if (c.banking) {
-                        document.getElementById('bank-name').innerText = `BANK ${c.banking.name.toUpperCase()}`;
-                        document.getElementById('bank-rekening').innerText = c.banking.rekening;
-                        document.getElementById('bank-owner').innerText = `A/N ${c.banking.owner}`;
+                    // Render Banking (Multiple)
+                    const giftContainer = document.getElementById('gift-list');
+                    if (c.banking && c.banking.length > 0) {
+                        giftContainer.innerHTML = "";
+                        c.banking.forEach(acc => {
+                            const logo = BANK_LOGOS[acc.type.toLowerCase()] || "";
+                            const div = document.createElement('div');
+                            div.className = "reveal max-w-sm mx-auto gift-card shadow-xl mb-6";
+                            div.innerHTML = `
+                                ${logo ? `<img src="${logo}" class="h-6 mx-auto mb-6 grayscale opacity-70">` : ""}
+                                <p class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK ${acc.type.toUpperCase()}</p>
+                                <h4 class="text-2xl font-serif mb-1 tracking-wider">${acc.rekening}</h4>
+                                <p class="text-[11px] uppercase tracking-widest opacity-60 mb-8">A/N ${acc.owner}</p>
+                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-neutral-900 text-white px-8 py-3 rounded-full uppercase">Salin Rekening</button>
+                            `;
+                            giftContainer.appendChild(div);
+                        });
                     } else {
                         document.getElementById('gift-section').classList.add('hidden');
                     }
 
                     if (c.groom) {
-                        document.getElementById('groom_name').innerText = c.groom.full_name;
-                        document.getElementById('groom_desc').innerText = c.groom.desc;
+                        document.getElementById('groom_name').innerText = c.groom.full_name || "Mempelai Pria";
+                        document.getElementById('groom_desc').innerText = c.groom.desc || "";
                         document.getElementById('groom_ig').href = c.groom.ig ? `https://instagram.com/${c.groom.ig.replace('@','')}` : "#";
                     }
                     if (c.bride) {
-                        document.getElementById('bride_name').innerText = c.bride.full_name;
-                        document.getElementById('bride_desc').innerText = c.bride.desc;
+                        document.getElementById('bride_name').innerText = c.bride.full_name || "Mempelai Wanita";
+                        document.getElementById('bride_desc').innerText = c.bride.desc || "";
                         document.getElementById('bride_ig').href = c.bride.ig ? `https://instagram.com/${c.bride.ig.replace('@','')}` : "#";
                     }
                     if (c.ev1) {
-                        document.getElementById('ev1_time').innerText = c.ev1.time;
-                        document.getElementById('ev1_loc').innerText = c.ev1.loc;
-                        document.getElementById('ev1_maps').href = c.ev1.maps;
+                        document.getElementById('ev1_time').innerText = c.ev1.time || "-";
+                        document.getElementById('ev1_loc').innerText = c.ev1.loc || "-";
+                        document.getElementById('ev1_maps').href = c.ev1.maps || "#";
                     }
                     if (c.ev2) {
-                        document.getElementById('ev2_time').innerText = c.ev2.time;
-                        document.getElementById('ev2_loc').innerText = c.ev2.loc;
-                        document.getElementById('ev2_maps').href = c.ev2.maps;
+                        document.getElementById('ev2_time').innerText = c.ev2.time || "-";
+                        document.getElementById('ev2_loc').innerText = c.ev2.loc || "-";
+                        document.getElementById('ev2_maps').href = c.ev2.maps || "#";
                     }
 
                     if (c.music_url) audio.src = c.music_url;
                     eventDate = c.event_date ? new Date(c.event_date).getTime() : null;
-
-                    document.getElementById('loader').classList.add('hidden');
                 }
             } catch (err) { console.error("Init error:", err); }
+            finally {
+                document.getElementById('loader').classList.add('hidden');
+            }
         }
 
-        function copyAccount() {
-            const rek = document.getElementById('bank-rekening').innerText;
-            navigator.clipboard.writeText(rek);
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
             alert("Nomor rekening berhasil disalin!");
         }
 
