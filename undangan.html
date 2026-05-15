@@ -153,7 +153,13 @@
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // INISIALISASI SUPABASE
+        const SUPABASE_URL = "https://cikptujrzdfvyfihwamh.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         // CEK SESI USER
         function checkSession() {
             const session = localStorage.getItem('sapatamu_db');
@@ -163,7 +169,7 @@
             }
         }
 
-        window.selectTheme = function(themeId) {
+        window.selectTheme = async function(themeId) {
             const session = localStorage.getItem('sapatamu_db');
             if (!session) {
                 alert("Silakan login terlebih dahulu untuk memilih tema.");
@@ -172,8 +178,28 @@
             }
             
             const data = JSON.parse(session);
-            // Redireksi ke Editor dengan menyertakan tema pilihan
-            window.location.href = `undangan-edit.html?theme=${themeId}&clientId=${data.username}`;
+            const clientId = data.username;
+
+            console.log("Menyimpan pilihan tema ke Supabase...");
+
+            try {
+                // Gunakan upsert: Jika sudah ada update, jika belum ada buat baru
+                const { error } = await _supabase
+                    .from('invitations')
+                    .upsert({ 
+                        client_id: clientId, 
+                        theme_id: themeId,
+                        updated_at: new Date()
+                    }, { onConflict: 'client_id' });
+
+                if (error) throw error;
+
+                // Redireksi ke Editor
+                window.location.href = `undangan-edit.html?theme=${themeId}`;
+            } catch (err) {
+                console.error("Gagal menyimpan ke Supabase:", err);
+                alert("Terjadi kesalahan saat menyiapkan editor. Silakan coba lagi.");
+            }
         }
 
         document.addEventListener('DOMContentLoaded', checkSession);
