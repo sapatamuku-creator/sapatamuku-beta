@@ -1,0 +1,52 @@
+/* THEME: ELEGANT ROSE GOLD */
+:root {
+    --primary: #b76e79;
+    --bg: #fff5f6;
+    --card-bg: #ffffff;
+    --text-main: #4a4a4a;
+    --text-dim: #8e8e8e;
+    --gold: #e29b9b;
+}
+
+body {
+    background-color: var(--bg) !important;
+    background-image: url('https://www.transparenttextures.com/patterns/pinstriped-suit.png') !important;
+    color: var(--text-main) !important;
+}
+
+#cover h1 {
+    color: var(--primary) !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+}
+
+.font-serif {
+    color: var(--primary) !important;
+}
+
+.gift-card, .wish-card, .bg-white {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--gold) !important;
+    box-shadow: 0 10px 20px rgba(183, 110, 121, 0.05) !important;
+    border-radius: 30px !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #b76e79, #e29b9b) !important;
+    border: none !important;
+    box-shadow: 0 5px 15px rgba(183, 110, 121, 0.3) !important;
+}
+
+.countdown-val {
+    color: var(--primary) !important;
+}
+
+/* Floral Decor placeholders */
+section::before {
+    content: "✿";
+    display: block;
+    text-align: center;
+    color: var(--gold);
+    font-size: 24px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}

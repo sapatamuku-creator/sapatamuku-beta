@@ -35,6 +35,26 @@
         @keyframes pulse { from { height: 20%; } to { height: 100%; } }
         .paused .bar { animation-play-state: paused; height: 2px; }
     </style>
+    <!-- THEME ASSETS PLACEHOLDER -->
+    <link id="theme-css" rel="stylesheet" href="">
+    <script id="theme-js" defer src=""></script>
+
+    <script>
+        // DYNAMIC THEME LOADER
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const theme = urlParams.get('theme') || 'classic-minimalist';
+            
+            // Set CSS & JS Path
+            const cssPath = `assets/themes/${theme}/style.css`;
+            const jsPath = `assets/themes/${theme}/script.js`;
+            
+            document.getElementById('theme-css').href = cssPath;
+            document.getElementById('theme-js').src = jsPath;
+            
+            console.log("Loading Theme Assets:", theme);
+        })();
+    </script>
 </head>
 <body class="bg-pattern">
 

@@ -1,0 +1,50 @@
+/* THEME: JAVANESE HERITAGE */
+:root {
+    --primary: #5d4037;
+    --bg: #fdf5e6;
+    --card-bg: #fffaf0;
+    --text-main: #3e2723;
+    --text-dim: #795548;
+    --gold: #b8860b;
+}
+
+body {
+    background-color: var(--bg) !important;
+    background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png') !important;
+    color: var(--text-main) !important;
+}
+
+#cover {
+    background: var(--bg) !important;
+    background-image: url('https://i.ibb.co/LzhYFm7/batik-pattern.png') !important;
+    background-size: 200px;
+}
+
+.font-serif {
+    color: var(--primary) !important;
+    font-style: italic;
+}
+
+/* Batik Accents */
+h2::after {
+    content: " ꦤꦩ ";
+    display: block;
+    font-size: 14px;
+    opacity: 0.3;
+    margin-top: 5px;
+}
+
+.gift-card, .wish-card, .bg-white {
+    background: var(--card-bg) !important;
+    border: 2px solid #d7ccc8 !important;
+    border-radius: 8px !important; /* Kotak lebih tradisional */
+}
+
+.btn-primary {
+    background: var(--primary) !important;
+    border: 2px solid var(--gold) !important;
+}
+
+.countdown-val {
+    color: var(--primary) !important;
+}

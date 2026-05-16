@@ -1,0 +1,20 @@
+/* THEME: CLASSIC MINIMALIST */
+:root {
+    --primary: #1a1a1a;
+    --bg: #ffffff;
+    --gold: #D4AF37;
+}
+
+body {
+    background-color: var(--bg) !important;
+    color: var(--primary) !important;
+}
+
+.font-serif {
+    font-family: 'Alice', serif;
+}
+
+.btn-primary {
+    background: #1a1a1a;
+    color: white;
+}
