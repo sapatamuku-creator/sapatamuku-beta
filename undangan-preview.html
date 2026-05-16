@@ -7,23 +7,42 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Alice&family=Montserrat:wght@200;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alice&family=Montserrat:wght@200;400;600;700&family=Plus+Jakarta+Sans:wght@200;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { --primary: #1a1a1a; --bg: #ffffff; --gold: #D4AF37; }
-        body { font-family: 'Montserrat', sans-serif; background: #ffffff; color: #1a1a1a; overflow-x: hidden; scroll-behavior: smooth; }
+        :root { 
+            --primary: #1a1a1a; 
+            --theme-accent: #D4AF37;
+            --theme-bg: #ffffff;
+            --theme-bg-alt: #f8f8f8;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+        }
+        body { font-family: var(--font-main); background: var(--theme-bg); color: var(--primary); overflow-x: hidden; scroll-behavior: smooth; }
         .font-serif { font-family: 'Alice', serif; }
+        .font-script { font-family: 'Alice', serif; } /* Placeholder for script font */
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.2, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translate(0); }
         
-        /* Animasi Cover */
-        #cover { transition: transform 1s ease-in-out; }
-        
-        .btn-primary {
-            background: #1a1a1a; color: white; border-radius: 9999px;
+        /* Theme Utilities */
+        .theme-text-main { color: var(--primary); }
+        .theme-text-accent { color: var(--theme-accent); }
+        .theme-text-muted { color: var(--primary); opacity: 0.6; }
+        .theme-text-dark { color: #1a1a1a; }
+        .theme-bg { background-color: var(--theme-bg); }
+        .theme-bg-alt { background-color: var(--theme-bg-alt); }
+        .theme-bg-dark { background-color: #0f172a; }
+        .theme-border { border-color: var(--primary); opacity: 0.1; }
+        .theme-border-accent { border-color: var(--theme-accent); }
+        .theme-card { background-color: var(--theme-bg); }
+
+        .btn-theme-primary {
+            background-color: var(--theme-accent); color: white;
+            padding: 14px 40px; border-radius: 999px;
             font-size: 10px; font-weight: bold; text-transform: uppercase;
-            letter-spacing: 0.25em; padding: 18px 50px; transition: all 0.3s ease;
+            letter-spacing: 0.2em; transition: all 0.3s ease;
         }
+        .btn-theme-primary:hover { opacity: 0.9; transform: translateY(-2px); }
 
         .countdown-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
         .countdown-val { font-size: 2.2rem; font-family: 'Alice', serif; color: var(--gold); font-weight: bold; }
@@ -512,11 +531,22 @@
 
         setInterval(updateCountdown, 1000);
         
+        function applyStyles(s) {
+            if (!s) return;
+            const root = document.documentElement;
+            if (s.main) root.style.setProperty('--primary', s.main);
+            if (s.accent) root.style.setProperty('--theme-accent', s.accent);
+            if (s.bg1) root.style.setProperty('--theme-bg', s.bg1);
+            if (s.bg2) root.style.setProperty('--theme-bg-alt', s.bg2);
+            if (s.font) root.style.setProperty('--font-main', s.font);
+        }
+
         // REAL-TIME SYNC FROM EDITOR
         window.addEventListener('message', (event) => {
-            if (event.data.action === 'UPDATE_PREVIEW') {
+            if (event.data.type === 'sync') {
                 const c = event.data.config;
                 if (!c) return;
+                applyStyles(c.styles);
                 renderModularPage(c);
             }
         });

@@ -114,12 +114,67 @@
                 <button onclick="showTab('galeri')" class="tab-btn"><i class="fas fa-images w-5"></i> Galeri Foto</button>
                 <button onclick="showTab('music')" class="tab-btn"><i class="fas fa-music w-5"></i> Musik & Fitur</button>
                 <button onclick="showTab('layout')" class="tab-btn"><i class="fas fa-layer-group w-5"></i> Tata Letak</button>
+                <button onclick="showTab('style')" class="tab-btn"><i class="fas fa-palette w-5"></i> Gaya & Warna</button>
             </nav>
         </aside>
 
         <main class="flex-1 overflow-y-auto p-10 bg-slate-50 custom-scroll">
             <div class="max-w-2xl mx-auto pb-20">
                 
+                <!-- TAB: STYLE -->
+                <div id="tab-style" class="tab-content hidden">
+                    <div class="config-card">
+                        <h3 class="font-bold text-lg mb-2">Gaya & Warna</h3>
+                        <p class="text-[10px] text-slate-400 mb-8 uppercase tracking-widest">Kustomisasi kontras dan identitas visual</p>
+                        
+                        <div class="space-y-8">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="input-group">
+                                    <label>Warna Utama (Teks)</label>
+                                    <div class="flex gap-2">
+                                        <input type="color" id="in_color_main" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="text" id="in_color_main_text" oninput="updateColorFromText(this, 'in_color_main')" class="input-field flex-1" placeholder="#000000">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Warna Aksen (Hiasan)</label>
+                                    <div class="flex gap-2">
+                                        <input type="color" id="in_color_accent" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="text" id="in_color_accent_text" oninput="updateColorFromText(this, 'in_color_accent')" class="input-field flex-1" placeholder="#D4AF37">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="input-group">
+                                    <label>Latar Belakang 1</label>
+                                    <div class="flex gap-2">
+                                        <input type="color" id="in_color_bg1" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="text" id="in_color_bg1_text" oninput="updateColorFromText(this, 'in_color_bg1')" class="input-field flex-1" placeholder="#FFFFFF">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Latar Belakang 2</label>
+                                    <div class="flex gap-2">
+                                        <input type="color" id="in_color_bg2" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="text" id="in_color_bg2_text" oninput="updateColorFromText(this, 'in_color_bg2')" class="input-field flex-1" placeholder="#F8F8F8">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Pilihan Font Utama</label>
+                                <select id="in_font_main" onchange="syncPreview()" class="input-field">
+                                    <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans (Modern)</option>
+                                    <option value="'Playfair Display', serif">Playfair (Elegant Serif)</option>
+                                    <option value="'Cormorant Garamond', serif">Cormorant (High-End Serif)</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat (Clean)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TAB: INFO -->
                 <div id="tab-info" class="tab-content">
                     <div class="config-card">
@@ -361,6 +416,14 @@
         }
 
         function toggleSection(id) { activeSections = activeSections.includes(id) ? activeSections.filter(s => s !== id) : [...activeSections, id]; syncPreview(); }
+        function updateColorFromText(input, colorId) {
+            const color = input.value;
+            if (/^#[0-9A-F]{6}$/i.test(color)) {
+                document.getElementById(colorId).value = color;
+                syncPreview();
+            }
+        }
+
         function moveSection(index, dir) { const next = index + dir; if (next < 0 || next >= sectionsOrder.length) return; [sectionsOrder[index], sectionsOrder[next]] = [sectionsOrder[next], sectionsOrder[index]]; renderLayoutControls(); syncPreview(); }
 
         function syncPreview() {
@@ -376,6 +439,13 @@
                 music_url: document.getElementById('in_music')?.value || "",
                 quote_text: document.getElementById('in_quote_text')?.value || "",
                 quote_ref: document.getElementById('in_quote_ref')?.value || "",
+                styles: {
+                    main: document.getElementById('in_color_main')?.value || "",
+                    accent: document.getElementById('in_color_accent')?.value || "",
+                    bg1: document.getElementById('in_color_bg1')?.value || "",
+                    bg2: document.getElementById('in_color_bg2')?.value || "",
+                    font: document.getElementById('in_font_main')?.value || ""
+                },
                 groom: { 
                     full_name: document.getElementById('in_pria_full')?.value || "", 
                     sibling: document.getElementById('in_pria_sibling')?.value || "",
