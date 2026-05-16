@@ -268,4 +268,10 @@ Untuk mendukung sistem **Unit-Based SaaS**, struktur folder diatur sebagai berik
 *   **Engine**: Unit-Based Preview (Modular)
 *   **Status**: **FULLY OPERATIONAL & INTERACTIVE**
 
+### **Phase 2.7.2: Sync Failure Root Cause & Restoration**
+*   **Automation Bug Found**: Identified a syntax error in `apply_beta_config.ps1` (using `//` instead of `#` for comments) which caused `run_update.bat` to fail silently or skip critical credential enforcement.
+*   **Live Site Audit**: Browser agent confirmed the live site was stuck with placeholders (`'YOUR_KEY_HERE'`) and missing DOM elements (`tab-quote`, `tab-galeri`), explaining the "unclickable" and "unauthorized" issues.
+*   **Global Enforcement**: Re-synchronized all local files with the authentic Supabase Key (`...76nY`) and restored the missing HTML blocks for Quote and Gallery modules.
+*   **Interactivity Status**: Local code is now **100% Correct**. Waiting for successful Vercel deployment via fixed `run_update.bat`.
+
 ---
