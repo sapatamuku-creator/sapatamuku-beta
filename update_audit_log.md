@@ -31,12 +31,28 @@ Perombakan total antarmuka editor klien (`undangan-edit.html`).
 - Penambahan field **"Putra/Putri Ke-"** untuk silsilah keluarga.
 - Tombol **Google Maps Helper** untuk mempermudah pengambilan koordinat lokasi acara.
 
+### 5. Theme Structural Variants (iPhone Model Analogy)
+Sistem tidak lagi hanya sekadar mengganti warna (CSS), melainkan sudah mendukung perbedaan struktur HTML antar tema:
+- **Emerald Forest**: Menggunakan bingkai foto **"Arch Frame"**, ornamen floral (leaf icons), dan tata letak kartu yang lebih lebar.
+- **Midnight Sapphire**: Menggunakan gaya minimalis modern dengan kontras tinggi.
+- **Classic Minimalist**: Mempertahankan gaya lingkaran tradisional yang bersih.
+
 ---
 
 ## 🚀 DAFTAR PATCH SCRIPT (16 Mei - Final)
-*Berikut adalah blok kode inti yang wajib disinkronkan ke direktori rilis.*
+*Wajib diterapkan untuk mendukung sistem modular builder v1.3.5.*
 
-### **A. Core Rendering Engine (`undangan-preview.html`)**
+**A. Core Rendering Engine (`undangan-preview.html`):**
+```javascript
+const SectionLibrary = {
+    'mempelai': (c, theme) => {
+        const isForest = theme === 'forest';
+        // Logic render struktur berbeda berdasarkan ID tema
+        return `...`;
+    }
+}
+```
+
 Fungsi `renderModularPage` sekarang mendeteksi parameter `?u=` dan menggunakan variabel CSS untuk *theming*.
 ```javascript
 function getClientId() {

@@ -122,109 +122,148 @@
             'qris': 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg'
         };
 
-        // --- SECTION LIBRARY (MODULAR BLOCKS) ---
+        // --- SECTION LIBRARY (MODULAR BLOCKS WITH THEME VARIANTS) ---
         const SectionLibrary = {
-            'cover': (c) => `
-                <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg">
-                    <div class="absolute inset-0"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-30"></div>
-                    <div class="relative z-10 px-8">
-                        <p class="text-[9px] tracking-[0.5em] uppercase mb-6 theme-text-muted font-bold">${c.title || 'The Wedding Celebration'}</p>
-                        <h1 class="text-5xl font-serif theme-text-main mb-12">${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}</h1>
-                        <div class="mb-12">
-                            <p class="text-[9px] tracking-[0.2em] theme-text-muted uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
-                            <h2 class="text-2xl font-serif italic theme-text-main guest-name-placeholder">Tamu Undangan</h2>
+            'cover': (c, theme) => {
+                if (theme === 'forest') {
+                    return `
+                        <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg">
+                            <div class="absolute inset-0 scale-110"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-40 grayscale-[20%]"></div>
+                            <div class="relative z-10 px-8 py-20 border-4 border-double border-white/20 m-6 h-[calc(100%-3rem)] flex flex-col justify-center">
+                                <p class="text-[10px] tracking-[0.6em] uppercase mb-8 theme-text-muted font-bold">${c.title || 'The Wedding of'}</p>
+                                <h1 class="text-6xl font-serif theme-text-main mb-4">${c.pria_short || 'Pria'}</h1>
+                                <span class="text-4xl font-script theme-text-accent mb-4">&</span>
+                                <h1 class="text-6xl font-serif theme-text-main mb-12">${c.wanita_short || 'Wanita'}</h1>
+                                <div class="mb-12">
+                                    <p class="text-[9px] tracking-[0.2em] theme-text-muted uppercase mb-4 italic">Kepada Yth.</p>
+                                    <h2 class="text-3xl font-serif theme-text-main guest-name-placeholder mb-2">Tamu Undangan</h2>
+                                    <div class="w-20 h-[1px] bg-theme-accent mx-auto"></div>
+                                </div>
+                                <button onclick="startInvitation()" class="btn-theme-primary px-12">Buka Undangan</button>
+                            </div>
                         </div>
-                        <button onclick="startInvitation()" class="btn-theme-primary">Buka Undangan</button>
+                    `;
+                }
+                // Default Cover
+                return `
+                    <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg">
+                        <div class="absolute inset-0"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-30"></div>
+                        <div class="relative z-10 px-8">
+                            <p class="text-[9px] tracking-[0.5em] uppercase mb-6 theme-text-muted font-bold">${c.title || 'The Wedding Celebration'}</p>
+                            <h1 class="text-5xl font-serif theme-text-main mb-12">${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}</h1>
+                            <div class="mb-12">
+                                <p class="text-[9px] tracking-[0.2em] theme-text-muted uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
+                                <h2 class="text-2xl font-serif italic theme-text-main guest-name-placeholder">Tamu Undangan</h2>
+                            </div>
+                            <button onclick="startInvitation()" class="btn-theme-primary">Buka Undangan</button>
+                        </div>
                     </div>
-                </div>
-            `,
+                `;
+            },
             'quote': (c) => `
                 <section class="py-24 px-8 text-center theme-bg-alt">
                     <div class="reveal max-w-2xl mx-auto italic theme-text-dark font-serif opacity-80 leading-relaxed">
-                        <p class="text-3xl mb-6 font-script">"${c.quote_text || 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri...'}"</p>
+                        <p class="text-2xl mb-6 font-script">"${c.quote_text || 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri...'}"</p>
                         <p class="text-xs tracking-widest font-bold opacity-60 uppercase">${c.quote_ref || 'QS. Ar-Rum: 21'}</p>
                     </div>
                 </section>
             `,
-            'mempelai': (c) => `
-                <section class="px-8 py-32 space-y-24 text-center theme-bg">
-                    <div class="reveal">
-                        <h4 class="font-serif italic text-3xl mb-6 theme-text-accent">the Groom</h4>
-                        <div class="w-48 h-48 mx-auto mb-8 rounded-full border-4 border-theme-accent p-2">
-                             <img src="${c.groom?.photo || ''}" class="w-full h-full object-cover rounded-full">
+            'mempelai': (c, theme) => {
+                const isForest = theme === 'forest';
+                const frameClass = isForest ? "rounded-t-full rounded-b-lg border-2 border-theme-accent p-1 aspect-[4/5] h-64" : "rounded-full border-4 border-theme-accent p-2 w-48 h-48";
+                const imgClass = isForest ? "rounded-t-full rounded-b-md" : "rounded-full";
+                
+                return `
+                    <section class="px-8 py-32 space-y-32 text-center theme-bg overflow-hidden">
+                        <div class="reveal">
+                            <h4 class="font-serif italic text-3xl mb-12 theme-text-accent">the Groom</h4>
+                            <div class="${frameClass} mx-auto mb-8 shadow-2xl relative">
+                                <img src="${c.groom?.photo || ''}" class="w-full h-full object-cover ${imgClass}">
+                                ${isForest ? '<div class="absolute -bottom-4 -right-4 w-12 h-12 theme-text-accent opacity-20"><i class="fas fa-leaf text-4xl rotate-45"></i></div>' : ''}
+                            </div>
+                            <h4 class="font-serif italic text-4xl mb-2 theme-text-main">${c.groom?.full_name || 'Nama Pria'}</h4>
+                            <p class="text-[10px] font-bold uppercase tracking-[0.2em] theme-text-accent mb-4">Putra ${c.groom?.sibling || 'Pertama'}</p>
+                            <p class="text-[11px] theme-text-muted leading-relaxed mb-6 italic">Bp. ${c.groom?.father || 'X'} & Ibu ${c.groom?.mother || 'Y'}</p>
+                            <a href="${c.groom?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-6 py-2 rounded-full hover:bg-theme-accent hover:text-white transition">INSTAGRAM</a>
                         </div>
-                        <h4 class="font-serif italic text-3xl mb-1 theme-text-main">${c.groom?.full_name || 'Nama Pria'}</h4>
-                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] theme-text-muted leading-loose mb-4">Putra dari Bp. ${c.groom?.father || 'X'} & Ibu ${c.groom?.mother || 'Y'}</p>
-                        <a href="${c.groom?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-4 py-2 rounded-full">INSTAGRAM</a>
-                    </div>
-                    <div class="reveal">
-                        <h4 class="font-serif italic text-3xl mb-6 theme-text-accent">the Bride</h4>
-                        <div class="w-48 h-48 mx-auto mb-8 rounded-full border-4 border-theme-accent p-2">
-                             <img src="${c.bride?.photo || ''}" class="w-full h-full object-cover rounded-full">
+                        <div class="reveal">
+                            <h4 class="font-serif italic text-3xl mb-12 theme-text-accent">the Bride</h4>
+                            <div class="${frameClass} mx-auto mb-8 shadow-2xl relative">
+                                <img src="${c.bride?.photo || ''}" class="w-full h-full object-cover ${imgClass}">
+                                ${isForest ? '<div class="absolute -top-4 -left-4 w-12 h-12 theme-text-accent opacity-20"><i class="fas fa-leaf text-4xl -rotate-12"></i></div>' : ''}
+                            </div>
+                            <h4 class="font-serif italic text-4xl mb-2 theme-text-main">${c.bride?.full_name || 'Nama Wanita'}</h4>
+                            <p class="text-[10px] font-bold uppercase tracking-[0.2em] theme-text-accent mb-4">Putri ${c.bride?.sibling || 'Pertama'}</p>
+                            <p class="text-[11px] theme-text-muted leading-relaxed mb-6 italic">Bp. ${c.bride?.father || 'A'} & Ibu ${c.bride?.mother || 'B'}</p>
+                            <a href="${c.bride?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-6 py-2 rounded-full hover:bg-theme-accent hover:text-white transition">INSTAGRAM</a>
                         </div>
-                        <h4 class="font-serif italic text-3xl mb-1 theme-text-main">${c.bride?.full_name || 'Nama Wanita'}</h4>
-                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] theme-text-muted leading-loose mb-4">Putri dari Bp. ${c.bride?.father || 'A'} & Ibu ${c.bride?.mother || 'B'}</p>
-                        <a href="${c.bride?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-4 py-2 rounded-full">INSTAGRAM</a>
-                    </div>
-                </section>
-            `,
+                    </section>
+                `;
+            },
             'story': (c) => `
                 <section class="py-24 px-8 theme-bg-alt">
                     <h3 class="text-3xl font-serif italic text-center mb-16 theme-text-dark">Our Love Story</h3>
-                    <div class="max-w-md mx-auto">
+                    <div class="max-w-md mx-auto space-y-8">
                         ${(c.story || [
                             { date: 'First Meet', desc: 'Pertama kali kami bertemu...' },
                             { date: 'Relationship', desc: 'Memutuskan untuk memulai perjalanan bersama...' },
                             { date: 'Engagement', desc: 'Mengikat janji suci di depan keluarga...' }
                         ]).map(s => `
-                            <div class="timeline-item reveal">
-                                <div class="timeline-dot"></div>
-                                <h4 class="font-bold text-sm uppercase tracking-widest theme-text-accent mb-2">${s.date}</h4>
-                                <p class="text-xs leading-relaxed theme-text-dark opacity-70">${s.desc}</p>
+                            <div class="reveal theme-card p-6 rounded-2xl shadow-sm border theme-border relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-1 h-full bg-theme-accent"></div>
+                                <h4 class="font-bold text-xs uppercase tracking-widest theme-text-accent mb-2">${s.date}</h4>
+                                <p class="text-xs leading-relaxed theme-text-dark opacity-80">${s.desc}</p>
                             </div>
                         `).join('')}
                     </div>
                 </section>
             `,
-            'acara': (c) => `
-                <section class="py-24 px-8 theme-bg-alt text-center">
-                    <div class="max-w-xl mx-auto space-y-16">
-                        <h3 class="text-2xl font-serif italic mb-4 theme-text-main">Wedding Events</h3>
-                        ${c.ev1 ? `
-                        <div class="reveal theme-card p-8 rounded-3xl shadow-sm border theme-border">
-                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase theme-text-accent">Akad Nikah</p>
-                            <p class="text-lg font-serif mb-4 theme-text-main">${c.ev1.time || ''}</p>
-                            <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">${c.ev1.loc || ''}</p>
-                            <a href="${c.ev1.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border theme-border-accent rounded-full text-[9px] uppercase tracking-widest font-bold theme-text-accent">Petunjuk Lokasi</a>
-                        </div>` : ''}
-                        ${c.ev2 ? `
-                        <div class="reveal theme-card p-8 rounded-3xl shadow-sm border theme-border">
-                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase theme-text-accent">Resepsi</p>
-                            <p class="text-lg font-serif mb-4 theme-text-main">${c.ev2.time || ''}</p>
-                            <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">${c.ev2.loc || ''}</p>
-                            <a href="${c.ev2.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border theme-border-accent rounded-full text-[9px] uppercase tracking-widest font-bold theme-text-accent">Petunjuk Lokasi</a>
-                        </div>` : ''}
-                    </div>
-                </section>
-            `,
+            'acara': (c, theme) => {
+                const isForest = theme === 'forest';
+                return `
+                    <section class="py-24 px-8 theme-bg-alt text-center">
+                        <div class="max-w-xl mx-auto space-y-16">
+                            <h3 class="text-3xl font-serif italic mb-4 theme-text-main">Wedding Events</h3>
+                            ${c.ev1 ? `
+                            <div class="reveal theme-card p-10 rounded-[40px] shadow-sm border theme-border relative overflow-hidden">
+                                ${isForest ? '<div class="absolute top-4 right-4 text-theme-accent opacity-10"><i class="fas fa-ring text-6xl"></i></div>' : ''}
+                                <p class="text-[11px] font-bold tracking-[0.4em] mb-4 uppercase theme-text-accent italic">Akad Nikah</p>
+                                <div class="w-12 h-[2px] bg-theme-accent mx-auto mb-6"></div>
+                                <p class="text-xl font-serif mb-2 theme-text-main">${c.ev1.time || ''}</p>
+                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8 leading-loose">${c.ev1.loc || ''}</p>
+                                <a href="${c.ev1.maps || '#'}" target="_blank" class="inline-block px-12 py-4 bg-theme-accent text-white rounded-full text-[9px] uppercase tracking-widest font-bold shadow-lg shadow-theme-accent/20">Petunjuk Lokasi</a>
+                            </div>` : ''}
+                            ${c.ev2 ? `
+                            <div class="reveal theme-card p-10 rounded-[40px] shadow-sm border theme-border relative overflow-hidden">
+                                ${isForest ? '<div class="absolute top-4 right-4 text-theme-accent opacity-10"><i class="fas fa-glass-cheers text-6xl"></i></div>' : ''}
+                                <p class="text-[11px] font-bold tracking-[0.4em] mb-4 uppercase theme-text-accent italic">Resepsi</p>
+                                <div class="w-12 h-[2px] bg-theme-accent mx-auto mb-6"></div>
+                                <p class="text-xl font-serif mb-2 theme-text-main">${c.ev2.time || ''}</p>
+                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8 leading-loose">${c.ev2.loc || ''}</p>
+                                <a href="${c.ev2.maps || '#'}" target="_blank" class="inline-block px-12 py-4 bg-theme-accent text-white rounded-full text-[9px] uppercase tracking-widest font-bold shadow-lg shadow-theme-accent/20">Petunjuk Lokasi</a>
+                            </div>` : ''}
+                        </div>
+                    </section>
+                `;
+            },
             'galeri': (c) => `
                 <section class="py-24 px-4 text-center theme-bg">
-                    <h3 class="text-2xl font-serif italic mb-12 theme-text-main">Our Moments</h3>
-                    <div class="grid grid-cols-2 gap-2 max-w-lg mx-auto">
-                        ${(c.gallery || []).map(src => `<img src="${src}" class="w-full aspect-square object-cover rounded-xl reveal theme-border">`).join('')}
+                    <h3 class="text-3xl font-serif italic mb-12 theme-text-main">Our Moments</h3>
+                    <div class="grid grid-cols-2 gap-3 max-w-lg mx-auto p-2">
+                        ${(c.gallery || []).map(src => `<div class="reveal overflow-hidden rounded-2xl shadow-md"><img src="${src}" class="w-full aspect-square object-cover hover:scale-110 transition-transform duration-700"></div>`).join('')}
                     </div>
                 </section>
             `,
             'kado': (c) => `
                 <section class="py-24 px-8 text-center theme-bg-alt">
-                    <h3 class="text-2xl font-serif italic mb-12 theme-text-main">Digital Gift</h3>
-                    <div class="space-y-6">
+                    <h3 class="text-3xl font-serif italic mb-12 theme-text-main">Digital Gift</h3>
+                    <div class="space-y-8">
                         ${(c.banking || []).map(acc => `
-                            <div class="reveal max-w-sm mx-auto theme-card shadow-sm p-8 rounded-3xl border theme-border">
-                                <p class="text-[10px] font-bold tracking-widest uppercase mb-2 theme-text-accent">BANK ${acc.type.toUpperCase()}</p>
-                                <h4 class="text-2xl font-serif mb-1 theme-text-main">${acc.rekening}</h4>
-                                <p class="text-[11px] uppercase theme-text-muted mb-6">A/N ${acc.owner}</p>
-                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest theme-btn-dark px-8 py-3 rounded-full uppercase">Salin Rekening</button>
+                            <div class="reveal max-w-sm mx-auto theme-card shadow-sm p-10 rounded-[40px] border theme-border relative">
+                                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-theme-accent text-white text-[8px] font-bold px-4 py-1 rounded-full uppercase tracking-widest">Bank ${acc.type.toUpperCase()}</div>
+                                <h4 class="text-3xl font-serif mb-2 theme-text-main tracking-wider">${acc.rekening}</h4>
+                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">a.n ${acc.owner}</p>
+                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-slate-900 text-white px-10 py-4 rounded-full uppercase hover:bg-slate-800 transition">Salin Rekening</button>
                             </div>
                         `).join('')}
                     </div>
@@ -232,13 +271,14 @@
             `,
             'access_card': (c) => `
                 <section class="py-24 px-8 theme-bg-dark text-center">
-                    <div class="reveal max-w-sm mx-auto theme-card text-neutral-900 p-8 rounded-[40px]">
-                        <p class="text-[10px] font-bold tracking-[0.3em] uppercase mb-8 opacity-40">Digital Access Card</p>
-                        <div class="w-48 h-48 bg-stone-100 mx-auto mb-8 rounded-3xl flex items-center justify-center border-4 border-stone-50">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SapaTamu" class="w-40 h-40 qrcode-img">
+                    <div class="reveal max-w-sm mx-auto theme-card text-neutral-900 p-10 rounded-[50px] shadow-2xl">
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase mb-12 opacity-40 italic">Digital Access Card</p>
+                        <div class="w-56 h-56 bg-stone-50 mx-auto mb-10 rounded-3xl flex items-center justify-center border border-dashed border-stone-300 p-4">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SapaTamu" class="w-full h-full qrcode-img">
                         </div>
-                        <h4 class="text-xl font-serif italic mb-2 guest-name-placeholder">Tamu Undangan</h4>
-                        <p class="text-[9px] uppercase tracking-widest opacity-50">Tunjukkan QR Code ini kepada petugas penerima tamu</p>
+                        <h4 class="text-2xl font-serif italic mb-2 guest-name-placeholder">Tamu Undangan</h4>
+                        <div class="w-12 h-[1px] bg-slate-200 mx-auto mb-4"></div>
+                        <p class="text-[10px] uppercase tracking-[0.2em] opacity-50 px-8 leading-relaxed">Harap tunjukkan kode QR ini kepada petugas untuk proses check-in</p>
                     </div>
                 </section>
             `
@@ -246,7 +286,7 @@
 
         function renderModularPage(config) {
             const canvas = document.getElementById('main-canvas');
-            // Jika user tidak menentukan urutan, gunakan urutan default
+            const theme = currentThemeId; // Dapatkan tema aktif
             const sectionsOrder = config.sections_order || ['cover', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
             
             let html = "";
