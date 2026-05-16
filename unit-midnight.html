@@ -27,7 +27,7 @@
     <div id="main-content"></div>
 
     <script>
-        const _supabase = supabase.createClient('https://cikptujrzdfvyfihwamh.supabase.co', 'sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B');
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY');
         
         async function loadUnit() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -41,6 +41,14 @@
             }
             document.getElementById('loader').classList.add('hidden');
         }
+
+        // --- SALAMAN INSTAN (REAL-TIME SYNC) ---
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'sync') {
+                console.log("Syncing Real-time...", event.data.config);
+                renderMidnight(event.data.config);
+            }
+        });
 
         function renderMidnight(c) {
             const container = document.getElementById('main-content');

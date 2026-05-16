@@ -256,9 +256,14 @@ Untuk mendukung sistem **Unit-Based SaaS**, struktur folder diatur sebagai berik
 
 ---
 
-### **Phase 2.3: Critical Infrastructure Stabilization**
-*   **Supabase URL Correction**: Fixed a fatal typo in the Supabase project URL across all core files (Corrected from `rdfvxy` to `rzdfvy`). This resolves the "Invalid API key" error.
-*   **Database Schema Standardization**: Unified the configuration column name to `config` across the Editor and all Theme Units, aligning with the primary SQL schema.
-*   **Unit Data Extraction Overhaul**: Updated `unit-forest.html`, `unit-midnight.html`, and `unit-classic.html` to properly parse the JSON `config` column, ensuring all client-specific data (Story, Banking, etc.) renders perfectly.
-*   **Failsafe Editor Loading**: Added robust JSON parsing and error handling in the editor initialization to prevent UI freezes when loading legacy or malformed configuration data.
-*   **Beta Navigation Integrity**: Finalized the "Lihat Live" routing to ensure testing remains contained within the `beta.sapatamu.id` environment without leaking to production domains.
+### **Phase 2.4: Real-Time Handshake & Credential Recovery**
+*   **Supabase Correction (CRITICAL)**: Reverted project ID to **`rdfvxy`** (Verified by User link). The previous switch to `rzdfvy` was erroneous.
+*   **API Key Recovery**: Successfully integrated the authentic Supabase JWT `anon` key (`eyJhbG...`), replacing the accidental Clerk key.
+*   **Handshake Protocol (Salaman Total)**: 
+    *   Implemented `postMessage` listener in all theme units for instant UI updates.
+    *   Unified database schema: Editor now saves to both `config` and `theme_id` columns.
+*   **Visual Excellence**: Fixed `object-fit: cover` in `unit-classic.html` for professional photo rendering.
+
+#### **Official Project Credentials**
+*   **URL**: `https://cikptujrdfvxyfihwamh.supabase.co`
+*   **Key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY`

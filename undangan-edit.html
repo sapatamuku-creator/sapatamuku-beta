@@ -405,7 +405,7 @@
         const CLOUDINARY_MUSIC_URL = 'https://api.cloudinary.com/v1_1/cikptujrdfvxyfihwamh/video/upload'; // Use video type for music
         const CLOUDINARY_PRESET = 'sapatamu_preset';
 
-        const _supabase = supabase.createClient('https://cikptujrzdfvyfihwamh.supabase.co', 'sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B');
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY');
         
         let clientId = "";
         let sectionsOrder = ['cover', 'quote', 'mempelai', 'story', 'acara', 'galeri', 'access_card', 'kado'];
@@ -651,7 +651,13 @@
                 sections_order: sectionsOrder.filter(s => activeSections.includes(s))
             };
             try {
-                const { error } = await _supabase.from('invitations').upsert({ client_id: clientId, config: config, updated_at: new Date() }, { onConflict: 'client_id' });
+                const themeId = new URLSearchParams(window.location.search).get('theme') || 'classic-minimalist';
+                const { error } = await _supabase.from('invitations').upsert({ 
+                    client_id: clientId, 
+                    config: config, 
+                    theme_id: themeId, 
+                    updated_at: new Date() 
+                }, { onConflict: 'client_id' });
                 if (error) throw error;
                 alert("Tersimpan! 🎉");
             } catch (err) { alert("Gagal Simpan: " + err.message); } finally { btn.innerHTML = 'Simpan Perubahan'; btn.disabled = false; }
@@ -661,7 +667,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             clientId = urlParams.get('clientId') || "claraclairyn";
             document.getElementById('client-id-display').innerText = clientId;
-            const { data } = await _supabase.from('invitations').select('config').eq('client_id', clientId).maybeSingle();
+            const { data } = await _supabase.from('invitations').select('config, theme_id').eq('client_id', clientId).maybeSingle();
             if(data) {
                 const c = typeof data.config === 'string' ? JSON.parse(data.config) : data.config;
                 if(c) {
@@ -715,7 +721,8 @@
                     if(c.sections_order) { sectionsOrder = c.sections_order; activeSections = [...c.sections_order]; }
                 }
             }
-            document.getElementById('preview-iframe').src = `undangan-preview.html?clientId=${clientId}&t=${Date.now()}`;
+            const savedThemeId = data?.theme_id || urlParams.get('theme') || 'classic-minimalist';
+            document.getElementById('preview-iframe').src = `unit-${savedThemeId.split('-')[0]}.html?clientId=${clientId}&t=${Date.now()}`;
             renderLayoutControls();
         }
         init();
