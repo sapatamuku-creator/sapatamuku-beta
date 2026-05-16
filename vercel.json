@@ -1,13 +1,13 @@
 {
-  "outputDirectory": ".",
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/u/:id/:u",
-      "destination": "/api/undangan?id=:id&u=:u"
+      "source": "/:clientId",
+      "destination": "/dispatch.html?clientId=:clientId"
     },
     {
-      "source": "/u/:id",
-      "destination": "/api/undangan?id=:id"
+      "source": "/:clientId.html",
+      "destination": "/dispatch.html?clientId=:clientId"
     }
   ]
 }

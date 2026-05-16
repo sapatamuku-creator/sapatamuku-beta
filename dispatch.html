@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>SapaTamu.Ku - Dispatching Unit...</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; color: #fff; font-family: sans-serif; margin: 0; }
+        .loader { width: 40px; height: 40px; border: 3px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    
+    <script>
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'YOUR_KEY_HERE');
+        
+        async function dispatch() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clientId = urlParams.get('clientId');
+            
+            if (!clientId) {
+                document.body.innerHTML = "Unit ID tidak ditemukan.";
+                return;
+            }
+
+            try {
+                const { data: clientData } = await _supabase
+                    .from('invitations')
+                    .select('theme_id')
+                    .ilike('client_id', clientId)
+                    .maybeSingle();
+
+                if (!clientData) {
+                    document.body.innerHTML = "Unit belum terdaftar di gudang kami.";
+                    return;
+                }
+
+                // Tentukan Model Unit berdasarkan Theme ID
+                let unitFile = "unit-classic.html"; // Default
+                if (clientData.theme_id === 'forest') unitFile = "unit-forest.html";
+                if (clientData.theme_id === 'midnight') unitFile = "unit-midnight.html";
+
+                // Kirim Unit ke Klien (Rewrite internal via fetch)
+                const response = await fetch(`${unitFile}?clientId=${clientId}`);
+                const html = await response.text();
+                
+                document.open();
+                document.write(html);
+                document.close();
+
+            } catch (err) {
+                console.error(err);
+                document.body.innerHTML = "Gagal mengambil unit.";
+            }
+        }
+
+        dispatch();
+    </script>
+</body>
+</html>

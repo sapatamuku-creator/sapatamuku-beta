@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SapaTamu.Ku - Modern Unit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #0f172a; 
+            --theme-accent: #38bdf8;
+            --theme-bg: #020617;
+            --theme-bg-alt: #0f172a;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+        }
+        body { font-family: var(--font-main); background: var(--theme-bg); color: white; margin:0; padding:0; overflow-x: hidden; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translate(0); }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body>
+    <div id="loader" class="fixed inset-0 bg-slate-950 z-[999] flex items-center justify-center text-white">Loading Unit...</div>
+    <div id="main-content"></div>
+
+    <script>
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'YOUR_KEY_HERE');
+        
+        async function loadUnit() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clientId = urlParams.get('clientId');
+            if(!clientId) return;
+
+            const { data: c } = await _supabase.from('invitations').select('*').ilike('client_id', clientId).maybeSingle();
+            if(c) renderMidnight(c);
+            document.getElementById('loader').classList.add('hidden');
+        }
+
+        function renderMidnight(c) {
+            const container = document.getElementById('main-content');
+            
+            let storyHtml = "";
+            if(Array.isArray(c.story)) {
+                c.story.forEach(s => {
+                    storyHtml += `
+                        <div class="glass p-8 rounded-3xl mb-6 reveal">
+                            <p class="text-sky-400 text-xs font-bold mb-2">${s.date}</p>
+                            <h3 class="text-xl font-bold mb-4">${s.title}</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">${s.desc}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            let bankHtml = "";
+            if(Array.isArray(c.banking)) {
+                c.banking.forEach(b => {
+                    bankHtml += `
+                        <div class="glass p-6 rounded-2xl text-center reveal">
+                            <p class="text-xs text-slate-500 mb-1 uppercase tracking-widest">${b.bank}</p>
+                            <p class="text-lg font-bold mb-2">${b.no}</p>
+                            <p class="text-xs text-slate-400">a/n ${b.name}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = `
+                <section class="h-screen flex flex-col items-center justify-center text-center p-10 bg-slate-950 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#38bdf8 0.5px, transparent 0.5px); background-size: 20px 20px;"></div>
+                    <p class="text-xs tracking-[0.5em] mb-6 reveal">THE WEDDING OF</p>
+                    <h1 class="text-6xl font-bold mb-8 reveal">${c.pria_short} & ${c.wanita_short}</h1>
+                    <div class="w-20 h-[1px] bg-sky-400 mb-8 reveal"></div>
+                    <p class="text-sm tracking-widest reveal">${c.event_date || ''}</p>
+                </section>
+
+                <section class="p-10 md:p-20 bg-slate-950">
+                    <div class="max-w-2xl mx-auto">
+                        <h2 class="text-3xl font-bold mb-10 text-center reveal">Cerita Kita</h2>
+                        ${storyHtml}
+                    </div>
+                </section>
+
+                <section class="p-10 md:p-20 bg-slate-900">
+                    <div class="max-w-4xl mx-auto glass p-10 rounded-[40px] text-center">
+                        <h2 class="text-3xl font-bold mb-10 reveal">Kado Digital</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${bankHtml}
+                        </div>
+                    </div>
+                </section>
+            `;
+            initObserver();
+        }
+
+        function initObserver() {
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+        }
+
+        loadUnit();
+    </script>
+</body>
+</html>

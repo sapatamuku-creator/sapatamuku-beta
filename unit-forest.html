@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SapaTamu.Ku - Forest Unit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Alice&family=Plus+Jakarta+Sans:wght@200;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #064e3b; 
+            --theme-accent: #d4af37;
+            --theme-bg: #fdfcf6;
+            --theme-bg-alt: #f1f5f9;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+        }
+        body { font-family: var(--font-main); background: var(--theme-bg); color: var(--primary); margin:0; padding:0; overflow-x: hidden; }
+        .font-serif { font-family: 'Alice', serif; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translate(0); }
+        .ornament-border { border: 2px solid var(--theme-accent); padding: 10px; position: relative; }
+        .ornament-border::before { content: '🌿'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--theme-bg); padding: 0 10px; }
+    </style>
+</head>
+<body>
+    <div id="loader" class="fixed inset-0 bg-stone-100 z-[999] flex items-center justify-center text-emerald-900">Preparing Forest Unit...</div>
+    <div id="main-content"></div>
+
+    <script>
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'YOUR_KEY_HERE');
+        
+        async function loadUnit() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clientId = urlParams.get('clientId');
+            if(!clientId) return;
+
+            const { data: c } = await _supabase.from('invitations').select('*').ilike('client_id', clientId).maybeSingle();
+            if(c) renderForest(c);
+            document.getElementById('loader').classList.add('hidden');
+        }
+
+        function renderForest(c) {
+            const container = document.getElementById('main-content');
+            container.innerHTML = `
+                <section class="h-screen flex flex-col items-center justify-center text-center p-10 bg-emerald-950 text-white relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1920" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                    <div class="relative ornament-border">
+                        <p class="text-xs tracking-[0.5em] mb-6 reveal">WALIMATUL 'URSY</p>
+                        <h1 class="text-6xl font-serif mb-8 reveal">${c.pria_short} & ${c.wanita_short}</h1>
+                        <p class="text-sm tracking-widest reveal">${c.event_date || ''}</p>
+                    </div>
+                </section>
+                <section class="p-20">
+                    <div class="max-w-4xl mx-auto border-2 border-emerald-900/10 p-10 rounded-[60px] text-center bg-white shadow-2xl">
+                        <h2 class="text-3xl font-serif mb-6 text-emerald-900">Mempelai</h2>
+                        <div class="grid grid-cols-2 gap-10">
+                            <div><p class="font-bold text-emerald-800">${c.groom?.full_name}</p></div>
+                            <div><p class="font-bold text-emerald-800">${c.bride?.full_name}</p></div>
+                        </div>
+                    </div>
+                </section>
+            `;
+            initObserver();
+        }
+
+        function initObserver() {
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+        }
+
+        loadUnit();
+    </script>
+</body>
+</html>

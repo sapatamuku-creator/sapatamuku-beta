@@ -18,9 +18,9 @@
             --theme-bg-alt: #f8f8f8;
             --font-main: 'Plus Jakarta Sans', sans-serif;
         }
-        body { font-family: var(--font-main); background: var(--theme-bg); color: var(--primary); overflow-x: hidden; scroll-behavior: smooth; }
-        .font-serif { font-family: 'Alice', serif; }
-        .font-script { font-family: 'Alice', serif; } /* Placeholder for script font */
+        body, h1, h2, h3, h4, p, span, button { font-family: var(--font-main) !important; background: var(--theme-bg); color: var(--primary); overflow-x: hidden; scroll-behavior: smooth; }
+        .font-serif { font-family: var(--font-main) !important; font-weight: 700; }
+        .font-script { font-family: 'Alice', serif; } /* Keep Alice for script accents if needed, or allow override */
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.2, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translate(0); }
         

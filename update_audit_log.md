@@ -80,6 +80,13 @@ Pastikan folder ini ada di server untuk mendukung tema Forest:
 - `/assets/themes/forest/style.css`
 - `/assets/themes/forest/script.js` (jika ada logic khusus)
 
+### **Phase 2.0: Unit-Based SaaS Ecosystem (The "IPhone" Model)**
+*   **Warehouse & Unit Architecture**: Decoupled all theme logic from a shared engine into standalone product units (`unit-forest.html`, `unit-midnight.html`, `unit-classic.html`).
+*   **Dynamic Dispatcher System**: Implemented `dispatch.html` and `vercel.json` to deliver specific theme units based on client data while maintaining professional "Pretty URLs".
+*   **Two-Way Color Sync**: Fixed UI/UX inconsistencies in the editor with real-time hex and picker synchronization.
+*   **Aggressive Font Injection**: Forced global typography overrides across all theme sections for perfect brand consistency.
+*   **Static-Feel Routing**: Every client now "owns" their specific URL path, mirroring the experience of purchasing a physical device unit.
+
 ---
 > [!IMPORTANT]
 > **Catatan untuk Release Agent:**
