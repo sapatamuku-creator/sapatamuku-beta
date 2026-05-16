@@ -125,29 +125,63 @@
             'qris': 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg'
         };
 
-        // --- SECTION LIBRARY (MODULAR BLOCKS WITH THEME VARIANTS) ---
+        // --- THEME UTILS ---
+        const getThemeLayout = (theme) => {
+            if (theme === 'forest') return 'nature';
+            if (theme === 'midnight') return 'modern';
+            return 'classic';
+        };
+
+        // --- SECTION LIBRARY (TRIPLE VARIANT ARCHITECTURE) ---
         const SectionLibrary = {
             'cover': (c, theme) => {
-                if (theme === 'forest') {
+                const layout = getThemeLayout(theme);
+                if (layout === 'nature') {
                     return `
-                        <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg">
-                            <div class="absolute inset-0 scale-110"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-40 grayscale-[20%]"></div>
-                            <div class="relative z-10 px-8 py-20 border-4 border-double border-white/20 m-6 h-[calc(100%-3rem)] flex flex-col justify-center">
-                                <p class="text-[10px] tracking-[0.6em] uppercase mb-8 theme-text-muted font-bold">${c.title || 'The Wedding of'}</p>
-                                <h1 class="text-6xl font-serif theme-text-main mb-4">${c.pria_short || 'Pria'}</h1>
-                                <span class="text-4xl font-script theme-text-accent mb-4">&</span>
-                                <h1 class="text-6xl font-serif theme-text-main mb-12">${c.wanita_short || 'Wanita'}</h1>
-                                <div class="mb-12">
-                                    <p class="text-[9px] tracking-[0.2em] theme-text-muted uppercase mb-4 italic">Kepada Yth.</p>
-                                    <h2 class="text-3xl font-serif theme-text-main guest-name-placeholder mb-2">Tamu Undangan</h2>
-                                    <div class="w-20 h-[1px] bg-theme-accent mx-auto"></div>
+                        <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg overflow-hidden">
+                            <div class="absolute inset-0 scale-110"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-50 contrast-125"></div>
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40"></div>
+                            <div class="relative z-10 w-[85%] h-[85%] border-[1px] border-white/40 flex flex-col justify-center items-center p-8">
+                                <div class="absolute -top-10 -left-10 w-32 h-32 opacity-20 border-r border-b border-white"></div>
+                                <div class="absolute -bottom-10 -right-10 w-32 h-32 opacity-20 border-l border-t border-white"></div>
+                                <p class="text-[10px] tracking-[0.8em] uppercase mb-10 theme-text-muted font-bold animate-pulse">${c.title || 'The Wedding of'}</p>
+                                <h1 class="text-7xl font-serif theme-text-main mb-2 leading-none">${c.pria_short || 'Pria'}</h1>
+                                <div class="flex items-center gap-4 my-4 w-full justify-center">
+                                    <div class="h-[1px] flex-1 bg-theme-accent opacity-30"></div>
+                                    <span class="text-4xl font-script theme-text-accent">&</span>
+                                    <div class="h-[1px] flex-1 bg-theme-accent opacity-30"></div>
                                 </div>
-                                <button onclick="startInvitation()" class="btn-theme-primary px-12">Buka Undangan</button>
+                                <h1 class="text-7xl font-serif theme-text-main mb-14 leading-none">${c.wanita_short || 'Wanita'}</h1>
+                                <div class="mb-12">
+                                    <p class="text-[9px] tracking-[0.3em] theme-text-muted uppercase mb-4 opacity-70">Special Guest</p>
+                                    <h2 class="text-3xl font-serif theme-text-main guest-name-placeholder italic mb-6">Tamu Undangan</h2>
+                                </div>
+                                <button onclick="startInvitation()" class="btn-theme-primary px-16 py-5 rounded-none tracking-[0.3em] text-[10px] uppercase font-bold border border-white/20">Enter Experience</button>
                             </div>
                         </div>
                     `;
                 }
-                // Default Cover
+                if (layout === 'modern') {
+                    return `
+                        <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg overflow-hidden bg-slate-950">
+                            <div class="absolute inset-0"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-20 scale-125 blur-sm"></div>
+                            <div class="relative z-10 w-full px-12">
+                                <p class="text-[8px] tracking-[1em] uppercase mb-16 theme-text-muted opacity-50">${c.title || 'Official Invitation'}</p>
+                                <div class="relative mb-20">
+                                    <h1 class="text-8xl font-serif theme-text-main leading-tight tracking-tighter mix-blend-difference">${c.pria_short || 'Pria'}</h1>
+                                    <h1 class="text-8xl font-serif theme-text-main leading-tight tracking-tighter opacity-20 -mt-10 ml-10">${c.wanita_short || 'Wanita'}</h1>
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl font-script theme-text-accent rotate-12">&</div>
+                                </div>
+                                <div class="text-left max-w-xs mx-auto mb-16 border-l-2 border-theme-accent pl-6">
+                                    <p class="text-[8px] uppercase tracking-widest theme-text-muted mb-2">Honored Guest</p>
+                                    <h2 class="text-4xl font-serif theme-text-main guest-name-placeholder">Tamu</h2>
+                                </div>
+                                <button onclick="startInvitation()" class="w-full max-w-xs py-6 bg-white text-black text-[10px] font-bold uppercase tracking-[0.5em] hover:bg-theme-accent transition-all duration-500">Open Digital Card</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                // Default Classic
                 return `
                     <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg">
                         <div class="absolute inset-0"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-30"></div>
@@ -158,133 +192,185 @@
                                 <p class="text-[9px] tracking-[0.2em] theme-text-muted uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
                                 <h2 class="text-2xl font-serif italic theme-text-main guest-name-placeholder">Tamu Undangan</h2>
                             </div>
-                            <button onclick="startInvitation()" class="btn-theme-primary">Buka Undangan</button>
+                            <button onclick="startInvitation()" class="btn-theme-primary px-10">Buka Undangan</button>
                         </div>
                     </div>
                 `;
             },
-            'quote': (c) => `
-                <section class="py-24 px-8 text-center theme-bg-alt">
-                    <div class="reveal max-w-2xl mx-auto italic theme-text-dark font-serif opacity-80 leading-relaxed">
-                        <p class="text-2xl mb-6 font-script">"${c.quote_text || 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri...'}"</p>
-                        <p class="text-xs tracking-widest font-bold opacity-60 uppercase">${c.quote_ref || 'QS. Ar-Rum: 21'}</p>
-                    </div>
-                </section>
-            `,
+            'quote': (c, theme) => {
+                const layout = getThemeLayout(theme);
+                const bgStyle = layout === 'nature' ? 'background: url("https://www.transparenttextures.com/patterns/pinstriped-suit.png")' : '';
+                return `
+                    <section class="py-32 px-8 text-center theme-bg-alt relative overflow-hidden" style="${bgStyle}">
+                        ${layout === 'nature' ? '<div class="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-theme-bg to-transparent opacity-50"></div>' : ''}
+                        <div class="reveal max-w-2xl mx-auto">
+                            <div class="w-12 h-12 theme-text-accent mx-auto mb-8 opacity-30"><i class="fas fa-quote-right text-4xl"></i></div>
+                            <p class="${layout === 'modern' ? 'text-xl font-serif leading-relaxed' : 'text-3xl font-script'} mb-8 theme-text-dark opacity-90 italic">"${c.quote_text || 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri...'}"</p>
+                            <div class="flex items-center justify-center gap-4">
+                                <div class="w-8 h-[1px] bg-theme-accent"></div>
+                                <p class="text-[10px] tracking-[0.4em] font-bold theme-text-muted uppercase">${c.quote_ref || 'QS. Ar-Rum: 21'}</p>
+                                <div class="w-8 h-[1px] bg-theme-accent"></div>
+                            </div>
+                        </div>
+                    </section>
+                `;
+            },
             'mempelai': (c, theme) => {
-                const isForest = theme === 'forest';
-                const frameClass = isForest ? "rounded-t-full rounded-b-lg border-2 border-theme-accent p-1 aspect-[4/5] h-64" : "rounded-full border-4 border-theme-accent p-2 w-48 h-48";
-                const imgClass = isForest ? "rounded-t-full rounded-b-md" : "rounded-full";
-                
-                return `
-                    <section class="px-8 py-32 space-y-32 text-center theme-bg overflow-hidden">
-                        <div class="reveal">
-                            <h4 class="font-serif italic text-3xl mb-12 theme-text-accent">the Groom</h4>
-                            <div class="${frameClass} mx-auto mb-8 shadow-2xl relative">
-                                <img src="${c.groom?.photo || ''}" class="w-full h-full object-cover ${imgClass}">
-                                ${isForest ? '<div class="absolute -bottom-4 -right-4 w-12 h-12 theme-text-accent opacity-20"><i class="fas fa-leaf text-4xl rotate-45"></i></div>' : ''}
-                            </div>
-                            <h4 class="font-serif italic text-4xl mb-2 theme-text-main">${c.groom?.full_name || 'Nama Pria'}</h4>
-                            <p class="text-[10px] font-bold uppercase tracking-[0.2em] theme-text-accent mb-4">Putra ${c.groom?.sibling || 'Pertama'}</p>
-                            <p class="text-[11px] theme-text-muted leading-relaxed mb-6 italic">Bp. ${c.groom?.father || 'X'} & Ibu ${c.groom?.mother || 'Y'}</p>
-                            <a href="${c.groom?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-6 py-2 rounded-full hover:bg-theme-accent hover:text-white transition">INSTAGRAM</a>
+                const layout = getThemeLayout(theme);
+                let frameClass = "rounded-full border-4 border-theme-accent p-2 w-48 h-48";
+                let imgClass = "rounded-full";
+                let sectionClass = "px-8 py-32 space-y-32 text-center theme-bg overflow-hidden";
+
+                if (layout === 'nature') {
+                    frameClass = "rounded-t-full rounded-b-lg border-2 border-theme-accent p-1 aspect-[4/5] h-72";
+                    imgClass = "rounded-t-full rounded-b-md";
+                } else if (layout === 'modern') {
+                    frameClass = "rounded-[20px] rotate-3 border-l-8 border-theme-accent p-0 w-56 h-64 grayscale hover:grayscale-0 transition-all duration-700";
+                    imgClass = "rounded-[15px] -rotate-3";
+                    sectionClass = "px-8 py-40 space-y-48 text-left theme-bg-dark";
+                }
+
+                const renderPerson = (person, label) => `
+                    <div class="reveal ${layout === 'modern' ? 'flex flex-col' : ''}">
+                        <h4 class="font-serif italic ${layout === 'modern' ? 'text-6xl -mb-4 opacity-10' : 'text-3xl mb-12'} theme-text-accent">${label}</h4>
+                        <div class="${frameClass} ${layout === 'modern' ? 'mb-12' : 'mx-auto mb-10'} shadow-2xl relative">
+                            <img src="${person?.photo || ''}" class="w-full h-full object-cover ${imgClass} shadow-inner">
+                            ${layout === 'nature' ? '<div class="absolute -bottom-6 -right-6 w-16 h-16 theme-text-accent opacity-20"><i class="fas fa-leaf text-5xl rotate-45"></i></div>' : ''}
                         </div>
-                        <div class="reveal">
-                            <h4 class="font-serif italic text-3xl mb-12 theme-text-accent">the Bride</h4>
-                            <div class="${frameClass} mx-auto mb-8 shadow-2xl relative">
-                                <img src="${c.bride?.photo || ''}" class="w-full h-full object-cover ${imgClass}">
-                                ${isForest ? '<div class="absolute -top-4 -left-4 w-12 h-12 theme-text-accent opacity-20"><i class="fas fa-leaf text-4xl -rotate-12"></i></div>' : ''}
-                            </div>
-                            <h4 class="font-serif italic text-4xl mb-2 theme-text-main">${c.bride?.full_name || 'Nama Wanita'}</h4>
-                            <p class="text-[10px] font-bold uppercase tracking-[0.2em] theme-text-accent mb-4">Putri ${c.bride?.sibling || 'Pertama'}</p>
-                            <p class="text-[11px] theme-text-muted leading-relaxed mb-6 italic">Bp. ${c.bride?.father || 'A'} & Ibu ${c.bride?.mother || 'B'}</p>
-                            <a href="${c.bride?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-6 py-2 rounded-full hover:bg-theme-accent hover:text-white transition">INSTAGRAM</a>
+                        <div class="${layout === 'modern' ? 'pl-2' : ''}">
+                            <h4 class="font-serif italic text-4xl mb-3 theme-text-main">${person?.full_name || 'Nama Lengkap'}</h4>
+                            <p class="text-[11px] font-bold uppercase tracking-[0.3em] theme-text-accent mb-6 italic">${person?.sibling || 'Putra/Putri Pertama'}</p>
+                            <p class="text-xs theme-text-muted leading-loose mb-8 opacity-70">Keluarga Besar Bp. ${person?.father || 'Nama Ayah'} & Ibu ${person?.mother || 'Nama Ibu'}</p>
+                            <a href="${person?.ig || '#'}" target="_blank" class="inline-block px-8 py-3 border theme-border-accent rounded-none text-[9px] font-bold tracking-[0.3em] theme-text-accent hover:bg-theme-accent hover:text-white transition-all">FOLLOW IG</a>
+                        </div>
+                    </div>
+                `;
+
+                return `
+                    <section class="${sectionClass}">
+                        ${renderPerson(c.groom, 'the Groom')}
+                        ${renderPerson(c.bride, 'the Bride')}
+                    </section>
+                `;
+            },
+            'story': (c, theme) => {
+                const layout = getThemeLayout(theme);
+                return `
+                    <section class="py-32 px-8 theme-bg-alt relative">
+                        ${layout === 'nature' ? '<div class="absolute inset-0 opacity-[0.03]" style="background-image: url(\'https://www.transparenttextures.com/patterns/leaves.png\')"></div>' : ''}
+                        <h3 class="text-4xl font-serif italic text-center mb-24 theme-text-dark relative">Journey of Love</h3>
+                        <div class="max-w-md mx-auto space-y-12 relative">
+                            ${(Array.isArray(c.story) ? c.story : [
+                                { date: 'Initial Meeting', desc: 'A beautiful beginning of a long journey...' },
+                                { date: 'Engagement', desc: 'Two hearts decided to stay together forever...' }
+                            ]).map((s, i) => `
+                                <div class="reveal flex ${layout === 'modern' ? 'flex-col border-l-2 border-theme-accent pl-8' : 'flex-col items-center text-center'} group">
+                                    <div class="${layout === 'nature' ? 'w-10 h-10 rounded-full bg-theme-accent/10 flex items-center justify-center mb-6' : 'mb-4'}">
+                                        <i class="fas ${layout === 'nature' ? 'fa-leaf' : 'fa-circle text-[6px]'} theme-text-accent"></i>
+                                    </div>
+                                    <h4 class="font-bold text-[10px] uppercase tracking-[0.4em] theme-text-accent mb-3">${s.date}</h4>
+                                    <p class="text-[12px] leading-relaxed theme-text-dark opacity-70 italic">${s.desc}</p>
+                                    ${i < (c.story?.length || 2) - 1 && layout === 'classic' ? '<div class="w-[1px] h-12 bg-theme-accent/20 my-6"></div>' : ''}
+                                </div>
+                            `).join('')}
                         </div>
                     </section>
                 `;
             },
-            'story': (c) => `
-                <section class="py-24 px-8 theme-bg-alt">
-                    <h3 class="text-3xl font-serif italic text-center mb-16 theme-text-dark">Our Love Story</h3>
-                    <div class="max-w-md mx-auto space-y-8">
-                        ${(Array.isArray(c.story) ? c.story : [
-                            { date: 'First Meet', desc: 'Pertama kali kami bertemu...' },
-                            { date: 'Relationship', desc: 'Memutuskan untuk memulai perjalanan bersama...' },
-                            { date: 'Engagement', desc: 'Mengikat janji suci di depan keluarga...' }
-                        ]).map(s => `
-                            <div class="reveal theme-card p-6 rounded-2xl shadow-sm border theme-border relative overflow-hidden">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-theme-accent"></div>
-                                <h4 class="font-bold text-xs uppercase tracking-widest theme-text-accent mb-2">${s.date}</h4>
-                                <p class="text-xs leading-relaxed theme-text-dark opacity-80">${s.desc}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `,
             'acara': (c, theme) => {
-                const isForest = theme === 'forest';
+                const layout = getThemeLayout(theme);
+                const cardClass = layout === 'modern' ? 'bg-white/5 backdrop-blur-xl border border-white/10 text-left p-12 rounded-none' : 'theme-card p-12 rounded-[50px] shadow-2xl border theme-border';
+                
+                const renderEvent = (ev, label, icon) => ev ? `
+                    <div class="reveal ${cardClass} relative overflow-hidden group">
+                        ${layout === 'nature' ? `<div class="absolute -top-10 -right-10 text-theme-accent opacity-[0.05] group-hover:scale-125 transition-transform duration-1000"><i class="fas ${icon} text-[150px]"></i></div>` : ''}
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold tracking-[0.5em] mb-6 uppercase theme-text-accent italic">${label}</p>
+                            <div class="w-16 h-[2px] bg-theme-accent mb-8"></div>
+                            <div class="space-y-6">
+                                <div class="flex items-center gap-4 ${layout === 'modern' ? '' : 'justify-center'}">
+                                    <i class="far fa-clock theme-text-accent"></i>
+                                    <p class="text-2xl font-serif theme-text-main">${ev.time || 'Waktu Belum Diatur'}</p>
+                                </div>
+                                <div class="flex items-start gap-4 ${layout === 'modern' ? '' : 'justify-center'}">
+                                    <i class="fas fa-map-marker-alt theme-text-accent mt-1"></i>
+                                    <p class="text-xs uppercase tracking-[0.2em] theme-text-muted leading-relaxed">${ev.loc || 'Lokasi Belum Diatur'}</p>
+                                </div>
+                            </div>
+                            <div class="mt-12">
+                                <a href="${ev.maps || '#'}" target="_blank" class="inline-block px-14 py-5 bg-theme-accent text-white rounded-none text-[9px] uppercase tracking-[0.4em] font-bold shadow-xl hover:scale-105 transition-all">View on Maps</a>
+                            </div>
+                        </div>
+                    </div>
+                ` : '';
+
                 return `
-                    <section class="py-24 px-8 theme-bg-alt text-center">
-                        <div class="max-w-xl mx-auto space-y-16">
-                            <h3 class="text-3xl font-serif italic mb-4 theme-text-main">Wedding Events</h3>
-                            ${c.ev1 ? `
-                            <div class="reveal theme-card p-10 rounded-[40px] shadow-sm border theme-border relative overflow-hidden">
-                                ${isForest ? '<div class="absolute top-4 right-4 text-theme-accent opacity-10"><i class="fas fa-ring text-6xl"></i></div>' : ''}
-                                <p class="text-[11px] font-bold tracking-[0.4em] mb-4 uppercase theme-text-accent italic">Akad Nikah</p>
-                                <div class="w-12 h-[2px] bg-theme-accent mx-auto mb-6"></div>
-                                <p class="text-xl font-serif mb-2 theme-text-main">${c.ev1.time || ''}</p>
-                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8 leading-loose">${c.ev1.loc || ''}</p>
-                                <a href="${c.ev1.maps || '#'}" target="_blank" class="inline-block px-12 py-4 bg-theme-accent text-white rounded-full text-[9px] uppercase tracking-widest font-bold shadow-lg shadow-theme-accent/20">Petunjuk Lokasi</a>
-                            </div>` : ''}
-                            ${c.ev2 ? `
-                            <div class="reveal theme-card p-10 rounded-[40px] shadow-sm border theme-border relative overflow-hidden">
-                                ${isForest ? '<div class="absolute top-4 right-4 text-theme-accent opacity-10"><i class="fas fa-glass-cheers text-6xl"></i></div>' : ''}
-                                <p class="text-[11px] font-bold tracking-[0.4em] mb-4 uppercase theme-text-accent italic">Resepsi</p>
-                                <div class="w-12 h-[2px] bg-theme-accent mx-auto mb-6"></div>
-                                <p class="text-xl font-serif mb-2 theme-text-main">${c.ev2.time || ''}</p>
-                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8 leading-loose">${c.ev2.loc || ''}</p>
-                                <a href="${c.ev2.maps || '#'}" target="_blank" class="inline-block px-12 py-4 bg-theme-accent text-white rounded-full text-[9px] uppercase tracking-widest font-bold shadow-lg shadow-theme-accent/20">Petunjuk Lokasi</a>
-                            </div>` : ''}
+                    <section class="py-40 px-8 ${layout === 'modern' ? 'bg-slate-900' : 'theme-bg-alt'} text-center">
+                        <div class="max-w-2xl mx-auto space-y-20">
+                            <div class="mb-24">
+                                <h3 class="text-4xl font-serif italic theme-text-main">The Celebration</h3>
+                                <div class="w-12 h-1 bg-theme-accent mx-auto mt-6"></div>
+                            </div>
+                            ${renderEvent(c.ev1, 'Akad Nikah / Holy Matrimony', 'fa-ring')}
+                            ${renderEvent(c.ev2, 'Wedding Reception', 'fa-glass-cheers')}
                         </div>
                     </section>
                 `;
             },
-            'galeri': (c) => `
-                <section class="py-24 px-4 text-center theme-bg">
-                    <h3 class="text-3xl font-serif italic mb-12 theme-text-main">Our Moments</h3>
-                    <div class="grid grid-cols-2 gap-3 max-w-lg mx-auto p-2">
-                        ${(Array.isArray(c.gallery) ? c.gallery : []).map(src => `<div class="reveal overflow-hidden rounded-2xl shadow-md"><img src="${src}" class="w-full aspect-square object-cover hover:scale-110 transition-transform duration-700"></div>`).join('')}
-                    </div>
-                </section>
-            `,
-            'kado': (c) => `
-                <section class="py-24 px-8 text-center theme-bg-alt">
-                    <h3 class="text-3xl font-serif italic mb-12 theme-text-main">Digital Gift</h3>
-                    <div class="space-y-8">
-                        ${(Array.isArray(c.banking) ? c.banking : []).map(acc => `
-                            <div class="reveal max-w-sm mx-auto theme-card shadow-sm p-10 rounded-[40px] border theme-border relative">
-                                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-theme-accent text-white text-[8px] font-bold px-4 py-1 rounded-full uppercase tracking-widest">Bank ${(acc.type || 'Bank').toUpperCase()}</div>
-                                <h4 class="text-3xl font-serif mb-2 theme-text-main tracking-wider">${acc.rekening || '-'}</h4>
-                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">a.n ${acc.owner || '-'}</p>
-                                <button onclick="copyToClipboard('${acc.rekening || ''}')" class="text-[9px] font-bold tracking-widest bg-slate-900 text-white px-10 py-4 rounded-full uppercase hover:bg-slate-800 transition">Salin Rekening</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `,
-            'access_card': (c) => `
-                <section class="py-24 px-8 theme-bg-dark text-center">
-                    <div class="reveal max-w-sm mx-auto theme-card text-neutral-900 p-10 rounded-[50px] shadow-2xl">
-                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase mb-12 opacity-40 italic">Digital Access Card</p>
-                        <div class="w-56 h-56 bg-stone-50 mx-auto mb-10 rounded-3xl flex items-center justify-center border border-dashed border-stone-300 p-4">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SapaTamu" class="w-full h-full qrcode-img">
+            'galeri': (c, theme) => {
+                const layout = getThemeLayout(theme);
+                return `
+                    <section class="py-32 px-4 theme-bg overflow-hidden">
+                        <h3 class="text-4xl font-serif italic text-center mb-20 theme-text-main">Captured Moments</h3>
+                        <div class="${layout === 'modern' ? 'columns-2 gap-4' : 'grid grid-cols-2 gap-4'} max-w-2xl mx-auto p-4">
+                            ${(Array.isArray(c.gallery) ? c.gallery : []).map(src => `
+                                <div class="reveal mb-4 overflow-hidden shadow-2xl relative group">
+                                    <img src="${src}" class="w-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-theme-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                </div>
+                            `).join('')}
                         </div>
-                        <h4 class="text-2xl font-serif italic mb-2 guest-name-placeholder">Tamu Undangan</h4>
-                        <div class="w-12 h-[1px] bg-slate-200 mx-auto mb-4"></div>
-                        <p class="text-[10px] uppercase tracking-[0.2em] opacity-50 px-8 leading-relaxed">Harap tunjukkan kode QR ini kepada petugas untuk proses check-in</p>
-                    </div>
-                </section>
-            `
+                    </section>
+                `;
+            },
+            'kado': (c, theme) => {
+                const layout = getThemeLayout(theme);
+                return `
+                    <section class="py-32 px-8 text-center theme-bg-alt relative">
+                        <div class="max-w-3xl mx-auto">
+                            <h3 class="text-3xl font-serif italic mb-20 theme-text-main">Wedding Gift</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                ${(Array.isArray(c.banking) ? c.banking : []).map(acc => `
+                                    <div class="reveal theme-card p-12 rounded-none border-l-4 border-theme-accent shadow-xl text-left bg-white">
+                                        <p class="text-[9px] font-bold tracking-[0.5em] uppercase mb-8 theme-text-accent italic">${acc.type || 'Bank Account'}</p>
+                                        <h4 class="text-4xl font-serif mb-4 theme-text-main tracking-widest">${acc.rekening || '0000-0000'}</h4>
+                                        <p class="text-[11px] uppercase tracking-[0.3em] theme-text-muted mb-12">Account Holder: ${acc.owner || '-'}</p>
+                                        <button onclick="copyToClipboard('${acc.rekening || ''}')" class="w-full py-5 bg-slate-900 text-white text-[9px] font-bold uppercase tracking-[0.4em] hover:bg-theme-accent transition-all">Copy Number</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </section>
+                `;
+            },
+            'access_card': (c, theme) => {
+                const layout = getThemeLayout(theme);
+                return `
+                    <section class="py-40 px-8 ${layout === 'modern' ? 'bg-black' : 'theme-bg-dark'} text-center">
+                        <div class="reveal max-w-sm mx-auto bg-white p-12 rounded-none shadow-2xl relative">
+                            <div class="absolute -top-1 -left-1 w-10 h-10 border-t-4 border-l-4 border-theme-accent"></div>
+                            <div class="absolute -bottom-1 -right-1 w-10 h-10 border-b-4 border-r-4 border-theme-accent"></div>
+                            <p class="text-[9px] font-bold tracking-[0.6em] uppercase mb-16 opacity-30 italic">Guest Access Card</p>
+                            <div class="w-full aspect-square bg-stone-50 mb-12 flex items-center justify-center border border-stone-100 p-6">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=SapaTamu" class="w-full qrcode-img grayscale">
+                            </div>
+                            <h4 class="text-3xl font-serif italic mb-4 guest-name-placeholder">Guest Name</h4>
+                            <div class="w-16 h-[2px] bg-slate-200 mx-auto mb-6"></div>
+                            <p class="text-[10px] uppercase tracking-[0.3em] opacity-40 px-4 leading-relaxed">Present this code to the receptionist for check-in</p>
+                        </div>
+                    </section>
+                `;
+            }
         };
 
         function renderModularPage(config) {
