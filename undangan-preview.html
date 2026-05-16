@@ -87,6 +87,9 @@
         const SUPABASE_KEY = "sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B";
         const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentThemeId = urlParams.get('theme') || 'classic-minimalist';
+
         let audio = document.getElementById('main-audio');
         let isPlaying = false;
         let eventDate = null;
@@ -204,7 +207,7 @@
                 <section class="py-24 px-8 theme-bg-alt">
                     <h3 class="text-3xl font-serif italic text-center mb-16 theme-text-dark">Our Love Story</h3>
                     <div class="max-w-md mx-auto space-y-8">
-                        ${(c.story || [
+                        ${(Array.isArray(c.story) ? c.story : [
                             { date: 'First Meet', desc: 'Pertama kali kami bertemu...' },
                             { date: 'Relationship', desc: 'Memutuskan untuk memulai perjalanan bersama...' },
                             { date: 'Engagement', desc: 'Mengikat janji suci di depan keluarga...' }
@@ -250,7 +253,7 @@
                 <section class="py-24 px-4 text-center theme-bg">
                     <h3 class="text-3xl font-serif italic mb-12 theme-text-main">Our Moments</h3>
                     <div class="grid grid-cols-2 gap-3 max-w-lg mx-auto p-2">
-                        ${(c.gallery || []).map(src => `<div class="reveal overflow-hidden rounded-2xl shadow-md"><img src="${src}" class="w-full aspect-square object-cover hover:scale-110 transition-transform duration-700"></div>`).join('')}
+                        ${(Array.isArray(c.gallery) ? c.gallery : []).map(src => `<div class="reveal overflow-hidden rounded-2xl shadow-md"><img src="${src}" class="w-full aspect-square object-cover hover:scale-110 transition-transform duration-700"></div>`).join('')}
                     </div>
                 </section>
             `,
@@ -258,12 +261,12 @@
                 <section class="py-24 px-8 text-center theme-bg-alt">
                     <h3 class="text-3xl font-serif italic mb-12 theme-text-main">Digital Gift</h3>
                     <div class="space-y-8">
-                        ${(c.banking || []).map(acc => `
+                        ${(Array.isArray(c.banking) ? c.banking : []).map(acc => `
                             <div class="reveal max-w-sm mx-auto theme-card shadow-sm p-10 rounded-[40px] border theme-border relative">
-                                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-theme-accent text-white text-[8px] font-bold px-4 py-1 rounded-full uppercase tracking-widest">Bank ${acc.type.toUpperCase()}</div>
-                                <h4 class="text-3xl font-serif mb-2 theme-text-main tracking-wider">${acc.rekening}</h4>
-                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">a.n ${acc.owner}</p>
-                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-slate-900 text-white px-10 py-4 rounded-full uppercase hover:bg-slate-800 transition">Salin Rekening</button>
+                                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-theme-accent text-white text-[8px] font-bold px-4 py-1 rounded-full uppercase tracking-widest">Bank ${(acc.type || 'Bank').toUpperCase()}</div>
+                                <h4 class="text-3xl font-serif mb-2 theme-text-main tracking-wider">${acc.rekening || '-'}</h4>
+                                <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">a.n ${acc.owner || '-'}</p>
+                                <button onclick="copyToClipboard('${acc.rekening || ''}')" class="text-[9px] font-bold tracking-widest bg-slate-900 text-white px-10 py-4 rounded-full uppercase hover:bg-slate-800 transition">Salin Rekening</button>
                             </div>
                         `).join('')}
                     </div>
@@ -286,13 +289,19 @@
 
         function renderModularPage(config) {
             const canvas = document.getElementById('main-canvas');
-            const theme = currentThemeId; // Dapatkan tema aktif
+            const theme = currentThemeId; 
             const sectionsOrder = config.sections_order || ['cover', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
             
             let html = "";
             sectionsOrder.forEach(secKey => {
-                if (SectionLibrary[secKey]) {
-                    html += SectionLibrary[secKey](config);
+                try {
+                    if (SectionLibrary[secKey]) {
+                        // Pastikan config adalah object
+                        const safeConfig = config || {};
+                        html += SectionLibrary[secKey](safeConfig, theme);
+                    }
+                } catch (e) {
+                    console.error(`Gagal merender seksi ${secKey}:`, e);
                 }
             });
             
