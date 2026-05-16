@@ -107,16 +107,16 @@
     <div class="flex flex-1 overflow-hidden">
         <aside class="w-72 bg-white border-r flex flex-col p-6 overflow-y-auto custom-scroll shrink-0">
             <nav class="space-y-1">
-                <button onclick="showTab('info')" class="tab-btn active"><i class="fas fa-info-circle w-5"></i> Tampilan Utama</button>
-                <button onclick="showTab('mempelai')" class="tab-btn"><i class="fas fa-heart w-5"></i> Data Mempelai</button>
-                <button onclick="showTab('story')" class="tab-btn"><i class="fas fa-book-open w-5"></i> Cerita Kita</button>
-                <button onclick="showTab('quote')" class="tab-btn"><i class="fas fa-quote-left w-5"></i> Ayat & Kutipan</button>
-                <button onclick="showTab('acara')" class="tab-btn"><i class="fas fa-calendar-check w-5"></i> Detail Acara</button>
-                <button onclick="showTab('galeri')" class="tab-btn"><i class="fas fa-images w-5"></i> Galeri Foto</button>
-                <button onclick="showTab('kado')" class="tab-btn"><i class="fas fa-wallet w-5"></i> Kado Digital</button>
-                <button onclick="showTab('music')" class="tab-btn"><i class="fas fa-music w-5"></i> Musik & Fitur</button>
-                <button onclick="showTab('layout')" class="tab-btn"><i class="fas fa-layer-group w-5"></i> Tata Letak</button>
-                <button onclick="showTab('style')" class="tab-btn"><i class="fas fa-palette w-5"></i> Gaya & Warna</button>
+                <button onclick="showTab('info', event)" class="tab-btn active"><i class="fas fa-info-circle w-5"></i> Tampilan Utama</button>
+                <button onclick="showTab('mempelai', event)" class="tab-btn"><i class="fas fa-heart w-5"></i> Data Mempelai</button>
+                <button onclick="showTab('story', event)" class="tab-btn"><i class="fas fa-book-open w-5"></i> Cerita Kita</button>
+                <button onclick="showTab('quote', event)" class="tab-btn"><i class="fas fa-quote-left w-5"></i> Ayat & Kutipan</button>
+                <button onclick="showTab('acara', event)" class="tab-btn"><i class="fas fa-calendar-check w-5"></i> Detail Acara</button>
+                <button onclick="showTab('galeri', event)" class="tab-btn"><i class="fas fa-images w-5"></i> Galeri Foto</button>
+                <button onclick="showTab('kado', event)" class="tab-btn"><i class="fas fa-wallet w-5"></i> Kado Digital</button>
+                <button onclick="showTab('music', event)" class="tab-btn"><i class="fas fa-music w-5"></i> Musik & Fitur</button>
+                <button onclick="showTab('layout', event)" class="tab-btn"><i class="fas fa-layer-group w-5"></i> Tata Letak</button>
+                <button onclick="showTab('style', event)" class="tab-btn"><i class="fas fa-palette w-5"></i> Gaya & Warna</button>
             </nav>
         </aside>
 
@@ -405,7 +405,7 @@
         const CLOUDINARY_MUSIC_URL = 'https://api.cloudinary.com/v1_1/cikptujrdfvxyfihwamh/video/upload'; // Use video type for music
         const CLOUDINARY_PRESET = 'sapatamu_preset';
 
-        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'YOUR_KEY_HERE');
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B');
         
         let clientId = "";
         let sectionsOrder = ['cover', 'quote', 'mempelai', 'story', 'acara', 'galeri', 'access_card', 'kado'];
@@ -483,7 +483,7 @@
             });
         }
 
-        function showTab(id) {
+        function showTab(id, e) {
             // Hide all contents
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             // Show selected content
@@ -492,10 +492,12 @@
             
             // Handle active button state
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if(window.event && window.event.currentTarget) {
-                window.event.currentTarget.classList.add('active');
+            
+            const currentBtn = e ? e.currentTarget : null;
+            if(currentBtn) {
+                currentBtn.classList.add('active');
             } else {
-                // Fallback: search by text or icon if event is lost
+                // Fallback
                 const btns = Array.from(document.querySelectorAll('.tab-btn'));
                 const match = btns.find(b => b.getAttribute('onclick')?.includes(`'${id}'`));
                 if(match) match.classList.add('active');
