@@ -99,7 +99,7 @@
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="window.open('/dispatch.html?clientId=' + clientId)" class="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition">Lihat Live</button>
+            <button onclick="window.open('https://' + clientId + '.sapatamu.id')" class="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition">Lihat Live</button>
             <button id="save-btn" onclick="saveChanges()" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition">Simpan Perubahan</button>
         </div>
     </nav>
@@ -107,16 +107,14 @@
     <div class="flex flex-1 overflow-hidden">
         <aside class="w-72 bg-white border-r flex flex-col p-6 overflow-y-auto custom-scroll shrink-0">
             <nav class="space-y-1">
-                <button onclick="showTab('info', event)" class="tab-btn active"><i class="fas fa-info-circle w-5"></i> Tampilan Utama</button>
-                <button onclick="showTab('mempelai', event)" class="tab-btn"><i class="fas fa-heart w-5"></i> Data Mempelai</button>
-                <button onclick="showTab('story', event)" class="tab-btn"><i class="fas fa-book-open w-5"></i> Cerita Kita</button>
-                <button onclick="showTab('quote', event)" class="tab-btn"><i class="fas fa-quote-left w-5"></i> Ayat & Kutipan</button>
-                <button onclick="showTab('acara', event)" class="tab-btn"><i class="fas fa-calendar-check w-5"></i> Detail Acara</button>
-                <button onclick="showTab('galeri', event)" class="tab-btn"><i class="fas fa-images w-5"></i> Galeri Foto</button>
-                <button onclick="showTab('kado', event)" class="tab-btn"><i class="fas fa-wallet w-5"></i> Kado Digital</button>
-                <button onclick="showTab('music', event)" class="tab-btn"><i class="fas fa-music w-5"></i> Musik & Fitur</button>
-                <button onclick="showTab('layout', event)" class="tab-btn"><i class="fas fa-layer-group w-5"></i> Tata Letak</button>
-                <button onclick="showTab('style', event)" class="tab-btn"><i class="fas fa-palette w-5"></i> Gaya & Warna</button>
+                <button onclick="showTab('info')" class="tab-btn active"><i class="fas fa-info-circle w-5"></i> Tampilan Utama</button>
+                <button onclick="showTab('mempelai')" class="tab-btn"><i class="fas fa-heart w-5"></i> Data Mempelai</button>
+                <button onclick="showTab('quote')" class="tab-btn"><i class="fas fa-quote-left w-5"></i> Ayat & Kutipan</button>
+                <button onclick="showTab('acara')" class="tab-btn"><i class="fas fa-calendar-check w-5"></i> Detail Acara</button>
+                <button onclick="showTab('galeri')" class="tab-btn"><i class="fas fa-images w-5"></i> Galeri Foto</button>
+                <button onclick="showTab('music')" class="tab-btn"><i class="fas fa-music w-5"></i> Musik & Fitur</button>
+                <button onclick="showTab('layout')" class="tab-btn"><i class="fas fa-layer-group w-5"></i> Tata Letak</button>
+                <button onclick="showTab('style')" class="tab-btn"><i class="fas fa-palette w-5"></i> Gaya & Warna</button>
             </nav>
         </aside>
 
@@ -134,14 +132,14 @@
                                 <div class="input-group">
                                     <label>Warna Utama (Teks)</label>
                                     <div class="flex gap-2">
-                                        <input type="color" id="in_color_main" oninput="updateColorFromPicker(this, 'in_color_main_text')" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="color" id="in_color_main" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
                                         <input type="text" id="in_color_main_text" oninput="updateColorFromText(this, 'in_color_main')" class="input-field flex-1" placeholder="#000000">
                                     </div>
                                 </div>
                                 <div class="input-group">
                                     <label>Warna Aksen (Hiasan)</label>
                                     <div class="flex gap-2">
-                                        <input type="color" id="in_color_accent" oninput="updateColorFromPicker(this, 'in_color_accent_text')" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="color" id="in_color_accent" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
                                         <input type="text" id="in_color_accent_text" oninput="updateColorFromText(this, 'in_color_accent')" class="input-field flex-1" placeholder="#D4AF37">
                                     </div>
                                 </div>
@@ -151,14 +149,14 @@
                                 <div class="input-group">
                                     <label>Latar Belakang 1</label>
                                     <div class="flex gap-2">
-                                        <input type="color" id="in_color_bg1" oninput="updateColorFromPicker(this, 'in_color_bg1_text')" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="color" id="in_color_bg1" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
                                         <input type="text" id="in_color_bg1_text" oninput="updateColorFromText(this, 'in_color_bg1')" class="input-field flex-1" placeholder="#FFFFFF">
                                     </div>
                                 </div>
                                 <div class="input-group">
                                     <label>Latar Belakang 2</label>
                                     <div class="flex gap-2">
-                                        <input type="color" id="in_color_bg2" oninput="updateColorFromPicker(this, 'in_color_bg2_text')" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
+                                        <input type="color" id="in_color_bg2" onchange="syncPreview()" class="w-12 h-12 rounded-lg border-2 border-slate-100 cursor-pointer">
                                         <input type="text" id="in_color_bg2_text" oninput="updateColorFromText(this, 'in_color_bg2')" class="input-field flex-1" placeholder="#F8F8F8">
                                     </div>
                                 </div>
@@ -173,29 +171,6 @@
                                     <option value="'Montserrat', sans-serif">Montserrat (Clean)</option>
                                 </select>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: QUOTE -->
-                <div id="tab-quote" class="tab-content hidden">
-                    <div class="config-card">
-                        <h3 class="font-bold text-lg mb-6">Ayat & Kutipan</h3>
-                        <div class="space-y-6">
-                            <div class="input-group"><label>Teks Kutipan</label><textarea id="in_quote_text" oninput="syncPreview()" class="input-field h-32" placeholder="Dan di antara tanda-tanda..."></textarea></div>
-                            <div class="input-group"><label>Sumber (Reference)</label><input type="text" id="in_quote_ref" oninput="syncPreview()" class="input-field" placeholder="QS. Ar-Rum: 21"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: GALERI -->
-                <div id="tab-galeri" class="tab-content hidden">
-                    <div class="config-card">
-                        <h3 class="font-bold text-lg mb-2">Galeri Foto</h3>
-                        <p class="text-[10px] text-slate-400 mb-6 uppercase tracking-widest">Gunakan URL foto atau paste dari Cloudinary</p>
-                        <div class="space-y-4">
-                            <textarea id="in_gallery" oninput="syncPreview()" class="input-field h-40" placeholder="Paste URL foto di sini (Pisahkan dengan koma atau baris baru)"></textarea>
-                            <p class="text-[9px] text-slate-400 italic leading-relaxed">Tip: Untuk performa terbaik, gunakan URL foto yang sudah di-hosting di Cloudinary.</p>
                         </div>
                     </div>
                 </div>
@@ -320,36 +295,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: STORY -->
-                <div id="tab-story" class="tab-content hidden">
-                    <div class="config-card">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-bold text-lg">Cerita Kita</h3>
-                            <button onclick="addStoryItem()" class="text-[10px] font-bold text-white bg-indigo-600 px-4 py-2 rounded-xl hover:bg-indigo-700 transition">
-                                <i class="fas fa-plus mr-1"></i> Tambah Cerita
-                            </button>
-                        </div>
-                        <div id="story-container" class="space-y-4">
-                            <!-- Story items will be rendered here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: KADO -->
-                <div id="tab-kado" class="tab-content hidden">
-                    <div class="config-card">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-bold text-lg">Kado Digital</h3>
-                            <button onclick="addBankItem()" class="text-[10px] font-bold text-white bg-indigo-600 px-4 py-2 rounded-xl hover:bg-indigo-700 transition">
-                                <i class="fas fa-plus mr-1"></i> Tambah Rekening
-                            </button>
-                        </div>
-                        <div id="bank-container" class="space-y-4">
-                            <!-- Bank items will be rendered here -->
-                        </div>
-                    </div>
-                </div>
-
                 <!-- TAB: LAYOUT -->
                 <div id="tab-layout" class="tab-content hidden">
                     <div id="layout-container" class="space-y-3"></div>
@@ -398,106 +343,17 @@
         const CLOUDINARY_MUSIC_URL = 'https://api.cloudinary.com/v1_1/cikptujrdfvxyfihwamh/video/upload'; // Use video type for music
         const CLOUDINARY_PRESET = 'sapatamu_preset';
 
-        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa3B0dWpyZGZ2eHlmaWh3YW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NDQzOTcsImV4cCI6MjA5NDQyMDM5N30.2nNLkbI_rhXxWDVVrMsXhMW1_Zg5dj4qZKCoA7hK6nY');
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'YOUR_KEY_HERE');
         
         let clientId = "";
         let sectionsOrder = ['cover', 'quote', 'mempelai', 'story', 'acara', 'galeri', 'access_card', 'kado'];
         let activeSections = ['cover', 'quote', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
-        let storyItems = [];
-        let bankItems = [];
 
-        function addStoryItem() {
-            storyItems.push({ title: "Judul Cerita", date: "Tanggal", desc: "Tuliskan momen indah Anda di sini..." });
-            renderStoryItems();
-            syncPreview();
-        }
-
-        function removeStoryItem(index) {
-            storyItems.splice(index, 1);
-            renderStoryItems();
-            syncPreview();
-        }
-
-        function updateStoryItem(index, field, value) {
-            storyItems[index][field] = value;
-            syncPreview();
-        }
-
-        function renderStoryItems() {
-            const container = document.getElementById('story-container');
-            container.innerHTML = "";
-            storyItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = "p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4 relative group";
-                div.innerHTML = `
-                    <button onclick="removeStoryItem(${index})" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white text-rose-500 shadow-sm opacity-0 group-hover:opacity-100 transition"><i class="fas fa-trash-alt text-xs"></i></button>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" value="${item.date}" oninput="updateStoryItem(${index}, 'date', this.value)" class="input-field" placeholder="Tanggal">
-                        <input type="text" value="${item.title}" oninput="updateStoryItem(${index}, 'title', this.value)" class="input-field" placeholder="Judul">
-                    </div>
-                    <textarea oninput="updateStoryItem(${index}, 'desc', this.value)" class="input-field h-24" placeholder="Ceritakan momen ini...">${item.desc}</textarea>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function addBankItem() {
-            bankItems.push({ bank: "Nama Bank", name: "Nama Pemilik", no: "00000000" });
-            renderBankItems();
-            syncPreview();
-        }
-
-        function removeBankItem(index) {
-            bankItems.splice(index, 1);
-            renderBankItems();
-            syncPreview();
-        }
-
-        function updateBankItem(index, field, value) {
-            bankItems[index][field] = value;
-            syncPreview();
-        }
-
-        function renderBankItems() {
-            const container = document.getElementById('bank-container');
-            container.innerHTML = "";
-            bankItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = "p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4 relative group";
-                div.innerHTML = `
-                    <button onclick="removeBankItem(${index})" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white text-rose-500 shadow-sm opacity-0 group-hover:opacity-100 transition"><i class="fas fa-trash-alt text-xs"></i></button>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" value="${item.bank}" oninput="updateBankItem(${index}, 'bank', this.value)" class="input-field" placeholder="Nama Bank (e.g. BCA)">
-                        <input type="text" value="${item.name}" oninput="updateBankItem(${index}, 'name', this.value)" class="input-field" placeholder="Nama Pemilik">
-                    </div>
-                    <input type="text" value="${item.no}" oninput="updateBankItem(${index}, 'no', this.value)" class="input-field" placeholder="Nomor Rekening">
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function showTab(id, e) {
-            try {
-                // Hide all contents
-                document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-                // Show selected content
-                const target = document.getElementById('tab-' + id);
-                if(target) {
-                    target.classList.remove('hidden');
-                } else {
-                    console.warn("Tab target not found:", id);
-                }
-                
-                // Handle active button state
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                
-                const currentBtn = e ? e.currentTarget : null;
-                if(currentBtn) {
-                    currentBtn.classList.add('active');
-                }
-            } catch (err) {
-                console.error("showTab error:", err);
-            }
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
 
         function triggerUpload(type) { document.getElementById('upload_' + type).click(); }
@@ -560,15 +416,10 @@
         }
 
         function toggleSection(id) { activeSections = activeSections.includes(id) ? activeSections.filter(s => s !== id) : [...activeSections, id]; syncPreview(); }
-        function updateColorFromPicker(picker, textId) {
-            document.getElementById(textId).value = picker.value.toUpperCase();
-            syncPreview();
-        }
-
-        function updateColorFromText(input, pickerId) {
+        function updateColorFromText(input, colorId) {
             const color = input.value;
             if (/^#[0-9A-F]{6}$/i.test(color)) {
-                document.getElementById(pickerId).value = color;
+                document.getElementById(colorId).value = color;
                 syncPreview();
             }
         }
@@ -576,54 +427,44 @@
         function moveSection(index, dir) { const next = index + dir; if (next < 0 || next >= sectionsOrder.length) return; [sectionsOrder[index], sectionsOrder[next]] = [sectionsOrder[next], sectionsOrder[index]]; renderLayoutControls(); syncPreview(); }
 
         function syncPreview() {
-            try {
-                const iframe = document.getElementById('preview-iframe');
-                if (!iframe || !iframe.contentWindow) return;
-                
-                const getValue = (id) => document.getElementById(id)?.value || "";
-
-                const config = {
-                    title: getValue('in_title'),
-                    pria_short: getValue('in_pria_short'),
-                    wanita_short: getValue('in_wanita_short'),
-                    hashtag: getValue('in_hashtag'),
-                    event_date: getValue('in_date'),
-                    bg_image: getValue('in_bg_image'),
-                    music_url: getValue('in_music'),
-                    quote_text: getValue('in_quote_text'),
-                    quote_ref: getValue('in_quote_ref'),
-                    styles: {
-                        main: getValue('in_color_main_text') || getValue('in_color_main'),
-                        accent: getValue('in_color_accent_text') || getValue('in_color_accent'),
-                        bg1: getValue('in_color_bg1_text') || getValue('in_color_bg1'),
-                        bg2: getValue('in_color_bg2_text') || getValue('in_color_bg2'),
-                        font: getValue('in_font_main')
-                    },
-                    groom: { 
-                        full_name: getValue('in_pria_full'), 
-                        sibling: getValue('in_pria_sibling'),
-                        father: getValue('in_pria_father'), 
-                        mother: getValue('in_pria_mother'),
-                        photo: getValue('in_pria_photo')
-                    },
-                    bride: { 
-                        full_name: getValue('in_wanita_full'), 
-                        sibling: getValue('in_wanita_sibling'),
-                        father: getValue('in_wanita_father'), 
-                        mother: getValue('in_wanita_mother'),
-                        photo: getValue('in_wanita_photo')
-                    },
-                    ev1: { time: getValue('in_ev1_time'), loc: getValue('in_ev1_loc'), maps: getValue('in_ev1_maps') },
-                    ev2: { time: getValue('in_ev2_time'), loc: getValue('in_ev2_loc'), maps: getValue('in_ev2_maps') },
-                    gallery: getValue('in_gallery').split(/[\n,]/).map(s => s.trim()).filter(s => s !== ""),
-                    story: storyItems,
-                    banking: bankItems,
-                    sections_order: sectionsOrder.filter(s => activeSections.includes(s))
-                };
-                iframe.contentWindow.postMessage({ type: 'sync', config }, '*');
-            } catch (err) {
-                console.error("syncPreview error:", err);
-            }
+            const iframe = document.getElementById('preview-iframe');
+            if (!iframe || !iframe.contentWindow) return;
+            const config = {
+                title: document.getElementById('in_title')?.value || "",
+                pria_short: document.getElementById('in_pria_short')?.value || "",
+                wanita_short: document.getElementById('in_wanita_short')?.value || "",
+                hashtag: document.getElementById('in_hashtag')?.value || "",
+                event_date: document.getElementById('in_date')?.value || "",
+                bg_image: document.getElementById('in_bg_image')?.value || "",
+                music_url: document.getElementById('in_music')?.value || "",
+                quote_text: document.getElementById('in_quote_text')?.value || "",
+                quote_ref: document.getElementById('in_quote_ref')?.value || "",
+                styles: {
+                    main: document.getElementById('in_color_main')?.value || "",
+                    accent: document.getElementById('in_color_accent')?.value || "",
+                    bg1: document.getElementById('in_color_bg1')?.value || "",
+                    bg2: document.getElementById('in_color_bg2')?.value || "",
+                    font: document.getElementById('in_font_main')?.value || ""
+                },
+                groom: { 
+                    full_name: document.getElementById('in_pria_full')?.value || "", 
+                    sibling: document.getElementById('in_pria_sibling')?.value || "",
+                    father: document.getElementById('in_pria_father')?.value || "", 
+                    mother: document.getElementById('in_pria_mother')?.value || "",
+                    photo: document.getElementById('in_pria_photo')?.value || ""
+                },
+                bride: { 
+                    full_name: document.getElementById('in_wanita_full')?.value || "", 
+                    sibling: document.getElementById('in_wanita_sibling')?.value || "",
+                    father: document.getElementById('in_wanita_father')?.value || "", 
+                    mother: document.getElementById('in_wanita_mother')?.value || "",
+                    photo: document.getElementById('in_wanita_photo')?.value || ""
+                },
+                ev1: { time: document.getElementById('in_ev1_time')?.value || "", loc: document.getElementById('in_ev1_loc')?.value || "", maps: document.getElementById('in_ev1_maps')?.value || "" },
+                ev2: { time: document.getElementById('in_ev2_time')?.value || "", loc: document.getElementById('in_ev2_loc')?.value || "", maps: document.getElementById('in_ev2_maps')?.value || "" },
+                sections_order: sectionsOrder.filter(s => activeSections.includes(s))
+            };
+            iframe.contentWindow.postMessage({ action: 'UPDATE_PREVIEW', config }, '*');
         }
 
         async function saveChanges() {
@@ -638,124 +479,61 @@
                 music_url: document.getElementById('in_music')?.value || "",
                 quote_text: document.getElementById('in_quote_text')?.value || "",
                 quote_ref: document.getElementById('in_quote_ref')?.value || "",
-                styles: {
-                    main: document.getElementById('in_color_main_text')?.value || "",
-                    accent: document.getElementById('in_color_accent_text')?.value || "",
-                    bg1: document.getElementById('in_color_bg1_text')?.value || "",
-                    bg2: document.getElementById('in_color_bg2_text')?.value || "",
-                    font: document.getElementById('in_font_main')?.value || ""
-                },
                 groom: { full_name: document.getElementById('in_pria_full')?.value || "", sibling: document.getElementById('in_pria_sibling')?.value || "", father: document.getElementById('in_pria_father')?.value || "", mother: document.getElementById('in_pria_mother')?.value || "", photo: document.getElementById('in_pria_photo')?.value || "" },
                 bride: { full_name: document.getElementById('in_wanita_full')?.value || "", sibling: document.getElementById('in_wanita_sibling')?.value || "", father: document.getElementById('in_wanita_father')?.value || "", mother: document.getElementById('in_wanita_mother')?.value || "", photo: document.getElementById('in_wanita_photo')?.value || "" },
                 ev1: { time: document.getElementById('in_ev1_time')?.value || "", loc: document.getElementById('in_ev1_loc')?.value || "", maps: document.getElementById('in_ev1_maps')?.value || "" },
                 ev2: { time: document.getElementById('in_ev2_time')?.value || "", loc: document.getElementById('in_ev2_loc')?.value || "", maps: document.getElementById('in_ev2_maps')?.value || "" },
-                story: storyItems,
-                banking: bankItems,
                 sections_order: sectionsOrder.filter(s => activeSections.includes(s))
             };
             try {
-                const themeId = new URLSearchParams(window.location.search).get('theme') || 'classic-minimalist';
-                const { error } = await _supabase.from('invitations').upsert({ 
-                    client_id: clientId, 
-                    config: config, 
-                    theme_id: themeId, 
-                    updated_at: new Date() 
-                }, { onConflict: 'client_id' });
+                const { error } = await _supabase.from('invitations').upsert({ client_id: clientId, theme_config: config, updated_at: new Date() }, { onConflict: 'client_id' });
                 if (error) throw error;
                 alert("Tersimpan! 🎉");
             } catch (err) { alert("Gagal Simpan: " + err.message); } finally { btn.innerHTML = 'Simpan Perubahan'; btn.disabled = false; }
         }
 
         async function init() {
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                clientId = urlParams.get('clientId') || "claraclairyn";
-                const clientDisplay = document.getElementById('client-id-display');
-                if(clientDisplay) clientDisplay.innerText = clientId;
-                
-                const { data } = await _supabase.from('invitations').select('config, theme_id').eq('client_id', clientId).maybeSingle();
-                
-                if(data) {
-                    const c = typeof data.config === 'string' ? JSON.parse(data.config) : data.config;
-                    if(c) {
-                        const s = c.styles || {};
-                        const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ""; };
-                        
-                        setVal('in_title', c.title);
-                        setVal('in_pria_short', c.pria_short);
-                        setVal('in_wanita_short', c.wanita_short);
-                        setVal('in_hashtag', c.hashtag);
-                        setVal('in_date', c.event_date);
-                        
-                        setVal('in_color_main', s.main || "#1a1a1a");
-                        setVal('in_color_main_text', s.main || "#1a1a1a");
-                        setVal('in_color_accent', s.accent || "#b49164");
-                        setVal('in_color_accent_text', s.accent || "#b49164");
-                        setVal('in_color_bg1', s.bg1 || "#ffffff");
-                        setVal('in_color_bg1_text', s.bg1 || "#ffffff");
-                        setVal('in_color_bg2', s.bg2 || "#fcfaf8");
-                        setVal('in_color_bg2_text', s.bg2 || "#fcfaf8");
-                        setVal('in_font_main', s.font || "'Montserrat', sans-serif");
-                        
-                        const g = c.groom || {};
-                        setVal('in_pria_full', g.full_name);
-                        setVal('in_pria_sibling', g.sibling);
-                        setVal('in_pria_father', g.father);
-                        setVal('in_pria_mother', g.mother);
-                        setVal('in_pria_photo', g.photo);
-                        if(g.photo && document.getElementById('preview_pria')) { 
-                            document.getElementById('preview_pria').src = g.photo; 
-                            document.getElementById('preview_pria').classList.remove('hidden'); 
-                            if(document.getElementById('icon_pria')) document.getElementById('icon_pria').classList.add('hidden'); 
-                        }
-                        
-                        const b = c.bride || {};
-                        setVal('in_wanita_full', b.full_name);
-                        setVal('in_wanita_sibling', b.sibling);
-                        setVal('in_wanita_father', b.father);
-                        setVal('in_wanita_mother', b.mother);
-                        setVal('in_wanita_photo', b.photo);
-                        if(b.photo && document.getElementById('preview_wanita')) { 
-                            document.getElementById('preview_wanita').src = b.photo; 
-                            document.getElementById('preview_wanita').classList.remove('hidden'); 
-                            if(document.getElementById('icon_wanita')) document.getElementById('icon_wanita').classList.add('hidden'); 
-                        }
-                        
-                        const ev1 = c.ev1 || {};
-                        setVal('in_ev1_time', ev1.time);
-                        setVal('in_ev1_loc', ev1.loc);
-                        setVal('in_ev1_maps', ev1.maps);
-                        
-                        const ev2 = c.ev2 || {};
-                        setVal('in_ev2_time', ev2.time);
-                        setVal('in_ev2_loc', ev2.loc);
-                        setVal('in_ev2_maps', ev2.maps);
-                        
-                        setVal('in_quote_text', c.quote_text);
-                        setVal('in_quote_ref', c.quote_ref);
-                        setVal('in_gallery', (c.gallery || []).join('\n'));
-                        setVal('in_bg_image', c.bg_image);
-                        if(c.bg_image && document.getElementById('label_bg')) document.getElementById('label_bg').innerText = "Foto Terpilih";
-                        
-                        setVal('in_music', c.music_url);
-                        if(c.music_url && document.getElementById('label_music')) document.getElementById('label_music').innerText = "Audio Terpasang";
-                        
-                        if(c.story) { storyItems = c.story; renderStoryItems(); }
-                        if(c.banking) { bankItems = c.banking; renderBankItems(); }
-                        if(c.sections_order) { sectionsOrder = c.sections_order; activeSections = [...c.sections_order]; }
+            const urlParams = new URLSearchParams(window.location.search);
+            clientId = urlParams.get('clientId') || "claraclairyn";
+            document.getElementById('client-id-display').innerText = clientId;
+            const { data } = await _supabase.from('invitations').select('*').eq('client_id', clientId).maybeSingle();
+            if(data) {
+                const c = data.theme_config || data.config;
+                if(c) {
+                    document.getElementById('in_title').value = c.title || "";
+                    document.getElementById('in_pria_short').value = c.pria_short || "";
+                    document.getElementById('in_wanita_short').value = c.wanita_short || "";
+                    document.getElementById('in_hashtag').value = c.hashtag || "";
+                    document.getElementById('in_date').value = c.event_date || "";
+                    document.getElementById('in_bg_image').value = c.bg_image || "";
+                    document.getElementById('in_music').value = c.music_url || "";
+                    document.getElementById('in_quote_text').value = c.quote_text || "";
+                    document.getElementById('in_quote_ref').value = c.quote_ref || "";
+                    if(c.groom) { 
+                        document.getElementById('in_pria_full').value = c.groom.full_name || ""; 
+                        document.getElementById('in_pria_sibling').value = c.groom.sibling || ""; 
+                        document.getElementById('in_pria_father').value = c.groom.father || ""; 
+                        document.getElementById('in_pria_mother').value = c.groom.mother || ""; 
+                        document.getElementById('in_pria_photo').value = c.groom.photo || "";
+                        if(c.groom.photo) { document.getElementById('preview_pria').src = c.groom.photo; document.getElementById('preview_pria').classList.remove('hidden'); document.getElementById('icon_pria').classList.add('hidden'); }
                     }
+                    if(c.bride) { 
+                        document.getElementById('in_wanita_full').value = c.bride.full_name || ""; 
+                        document.getElementById('in_wanita_sibling').value = c.bride.sibling || ""; 
+                        document.getElementById('in_wanita_father').value = c.bride.father || ""; 
+                        document.getElementById('in_wanita_mother').value = c.bride.mother || ""; 
+                        document.getElementById('in_wanita_photo').value = c.bride.photo || "";
+                        if(c.bride.photo) { document.getElementById('preview_wanita').src = c.bride.photo; document.getElementById('preview_wanita').classList.remove('hidden'); document.getElementById('icon_wanita').classList.add('hidden'); }
+                    }
+                    if(c.ev1) { document.getElementById('in_ev1_time').value = c.ev1.time || ""; document.getElementById('in_ev1_loc').value = c.ev1.loc || ""; document.getElementById('in_ev1_maps').value = c.ev1.maps || ""; }
+                    if(c.ev2) { document.getElementById('in_ev2_time').value = c.ev2.time || ""; document.getElementById('in_ev2_loc').value = c.ev2.loc || ""; document.getElementById('in_ev2_maps').value = c.ev2.maps || ""; }
+                    if(c.sections_order) { sectionsOrder = c.sections_order; activeSections = [...c.sections_order]; }
                 }
-                const savedThemeId = data?.theme_id || urlParams.get('theme') || 'classic-minimalist';
-                const iframe = document.getElementById('preview-iframe');
-                if(iframe) iframe.src = `unit-${savedThemeId.split('-')[0]}.html?clientId=${clientId}&t=${Date.now()}`;
-                renderLayoutControls();
-            } catch (err) {
-                console.error("Initialization error:", err);
             }
+            document.getElementById('preview-iframe').src = `undangan-preview.html?clientId=${clientId}&t=${Date.now()}`;
+            renderLayoutControls();
         }
         init();
     </script>
 </body>
 </html>
-< ! - -   t r i g g e r   v e r c e l   d e p l o y   % d a t e %   % t i m e %   - - >  
- 
