@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor Undangan Premium - SapaTamu.Ku</title>
+    <title>SapaTamu.Ku - Premium Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6366f1;
             --primary-soft: #eef2ff;
-            --accent: #f43f5e;
             --bg-main: #f8fafc;
             --card-bg: #ffffff;
             --text-main: #1e293b;
@@ -19,345 +19,243 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg-main);
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         /* --- MODERN SWITCH TOGGLE --- */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 22px;
-        }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #e2e8f0;
-            transition: .4s;
-            border-radius: 34px;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #e2e8f0; transition: .4s; border-radius: 34px;
         }
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px; width: 16px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: absolute; content: ""; height: 16px; width: 16px;
+            left: 3px; bottom: 3px; background-color: white; transition: .4s;
+            border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         input:checked + .slider { background-color: #10b981; }
         input:checked + .slider:before { transform: translateX(18px); }
 
         /* --- PREMIUM CARD UI --- */
         .config-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 24px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+            background: var(--card-bg); border-radius: 24px; padding: 24px;
+            border: 1px solid #f1f5f9; box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease; margin-bottom: 24px;
         }
-        .config-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
 
         .tab-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--text-muted);
-            transition: all 0.2s;
+            display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+            border-radius: 14px; font-weight: 600; font-size: 13px;
+            color: var(--text-muted); transition: all 0.2s; width: 100%; text-align: left;
         }
         .tab-btn.active {
-            background: var(--primary);
-            color: white;
+            background: var(--primary); color: white;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
-
-        /* Sidebar Glassmorphism */
-        aside {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-        }
+        .tab-btn:hover:not(.active) { background: #f1f5f9; }
 
         .input-group label {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            display: block;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; display: block;
         }
 
         .input-field {
-            width: 100%;
-            background: #f1f5f9;
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 14px;
-            transition: all 0.2s;
+            width: 100%; background: #f8fafc; border: 2px solid #f1f5f9;
+            border-radius: 12px; padding: 12px 16px; font-size: 14px; transition: all 0.2s;
         }
         .input-field:focus {
-            background: white;
-            border-color: var(--primary);
-            outline: none;
+            background: white; border-color: var(--primary); outline: none;
             box-shadow: 0 0 0 4px var(--primary-soft);
         }
 
-        #preview-container {
-            background: #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+        #preview-section {
+            background: #e2e8f0; border-left: 1px solid #cbd5e1;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .phone-mockup {
-            width: 320px;
-            height: 650px;
-            background: #000;
-            border-radius: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 320px; height: 650px; background: #000; border-radius: 40px;
+            padding: 10px; border: 8px solid #1e293b; box-shadow: 0 50px 100px -20px rgba(0,0,0,0.3);
+            position: relative;
         }
-        .custom-scroll::-webkit-scrollbar { width: 5px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .tab-link { cursor: pointer !important; transition: all 0.3s ease; }
-        .tab-link:hover { background: #F8FAFC; }
-        .tab-active { border-left: 4px solid #E07B7B; background: #FFF1F1; color: #E07B7B !important; }
+        .phone-mockup iframe { width: 100%; height: 100%; border-radius: 24px; background: white; }
     </style>
 </head>
-<body class="overflow-hidden">
+<body class="flex flex-col h-screen">
 
-    <!-- NAVBAR -->
-    <nav class="h-16 bg-white border-b flex items-center justify-between px-6 z-50 relative">
+    <!-- TOP NAVBAR -->
+    <nav class="h-16 bg-white border-b flex items-center justify-between px-6 z-50 shrink-0">
         <div class="flex items-center gap-4">
-            <a href="undangan.html" class="p-2 hover:bg-stone-100 rounded-full transition">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            </a>
-            <h1 class="font-bold text-lg">Editor Undangan: <span id="theme-name" class="text-rose-500">Classic Minimalist</span></h1>
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                <i class="fas fa-feather-alt"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm leading-tight">SapaTamu<span class="text-indigo-600">.Ku</span> Premium Editor</h1>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Tema: <span id="current-theme-display" class="text-indigo-500">...</span></p>
+            </div>
         </div>
         <div class="flex items-center gap-3">
-            <a id="btn-view-live" href="#" target="_blank" class="hidden md:flex items-center gap-2 px-5 py-2.5 bg-white border border-stone-200 text-stone-600 rounded-full text-sm font-bold hover:bg-stone-50 transition shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                Lihat Live
-            </a>
-            <button id="save-btn" onclick="saveChanges()" class="bg-[#E07B7B] text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-rose-100 hover:bg-rose-600 transition flex items-center">
-                Simpan Perubahan
-            </button>
+            <button onclick="window.open('https://' + clientId + '.sapatamu.id')" class="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition">Lihat Live</button>
+            <button id="save-btn" onclick="saveChanges()" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition">Simpan Perubahan</button>
         </div>
     </nav>
 
-                    <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Judul Undangan (Header)</label>
-                        <input type="text" id="in_title" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none transition" placeholder="The Wedding of...">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Nama Panggilan (Pria & Wanita)</label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" id="in_pria_short" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Bintang">
-                            <input type="text" id="in_wanita_short" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Anisa">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Foto Background Utama</label>
-                        <input type="file" id="in_file" onchange="handleUpload(event)" class="hidden" accept="image/*">
-                        <label for="in_file" class="cursor-pointer w-full p-10 border-2 border-dashed border-stone-200 rounded-[40px] flex flex-col items-center justify-center hover:border-rose-300 hover:bg-rose-50 transition group">
-                            <div id="upload-icon" class="mb-3 text-stone-300 group-hover:text-rose-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+    <!-- MAIN WORKSPACE -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- SIDEBAR (Left) -->
+        <aside class="w-72 bg-white border-r flex flex-col p-6 overflow-y-auto custom-scroll shrink-0">
+            <nav class="space-y-1">
+                <button onclick="showTab('info')" class="tab-btn active"><i class="fas fa-info-circle w-5"></i> Tampilan Utama</button>
+                <button onclick="showTab('mempelai')" class="tab-btn"><i class="fas fa-heart w-5"></i> Data Mempelai</button>
+                <button onclick="showTab('quote')" class="tab-btn"><i class="fas fa-quote-left w-5"></i> Ayat & Kutipan</button>
+                <button onclick="showTab('acara')" class="tab-btn"><i class="fas fa-calendar-check w-5"></i> Detail Acara</button>
+                <button onclick="showTab('galeri')" class="tab-btn"><i class="fas fa-images w-5"></i> Galeri Foto</button>
+                <button onclick="showTab('music')" class="tab-btn"><i class="fas fa-music w-5"></i> Musik & Fitur</button>
+                <button onclick="showTab('layout')" class="tab-btn"><i class="fas fa-layer-group w-5"></i> Tata Letak</button>
+            </nav>
+            <div class="mt-auto pt-10">
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Panduan Cepat</p>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">Geser urutan di tab Tata Letak untuk mengubah struktur undangan.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- EDITOR FORM (Middle) -->
+        <main class="flex-1 overflow-y-auto p-10 bg-slate-50 custom-scroll">
+            <div class="max-w-2xl mx-auto pb-20">
+                
+                <!-- TAB: INFO -->
+                <div id="tab-info" class="tab-content">
+                    <div class="config-card">
+                        <h3 class="font-bold text-lg mb-6">Informasi Dasar</h3>
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <label>Judul Undangan (Header)</label>
+                                <input type="text" id="in_title" oninput="syncPreview()" class="input-field" placeholder="The Wedding of...">
                             </div>
-                            <span id="upload-label" class="text-sm font-bold text-stone-500 group-hover:text-rose-600">Klik untuk Ganti Foto</span>
-                            <span class="text-[10px] text-stone-400 mt-1 uppercase tracking-widest">Portrait (9:16) Recommended</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- TAB: DATA MEMPELAI -->
-                <div id="tab-mempelai" class="tab-pane hidden space-y-10">
-                    <div class="p-8 bg-blue-50/30 rounded-[40px] border border-blue-100/50">
-                        <h3 class="font-bold text-blue-900 mb-6 flex items-center gap-3">
-                            <span class="w-3 h-3 bg-blue-400 rounded-full shadow-sm"></span> Mempelai Pria
-                        </h3>
-                        <div class="space-y-4">
-                            <input type="text" id="in_pria_full" oninput="syncPreview()" class="w-full p-4 bg-white border border-stone-200 rounded-2xl" placeholder="Nama Lengkap Pria">
-                            <textarea id="in_pria_desc" oninput="syncPreview()" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-sm" placeholder="Putra ke-sekian dari Bp. X & Ibu Y"></textarea>
-                            <input type="text" id="in_pria_ig" oninput="syncPreview()" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-xs" placeholder="Link Instagram (@username)">
-                        </div>
-                    </div>
-                    <div class="p-8 bg-rose-50/30 rounded-[40px] border border-rose-100/50">
-                        <h3 class="font-bold text-rose-900 mb-6 flex items-center gap-3">
-                            <span class="w-3 h-3 bg-rose-400 rounded-full shadow-sm"></span> Mempelai Wanita
-                        </h3>
-                        <div class="space-y-4">
-                            <input type="text" id="in_wanita_full" oninput="syncPreview()" class="w-full p-4 bg-white border border-stone-200 rounded-2xl" placeholder="Nama Lengkap Wanita">
-                            <textarea id="in_wanita_desc" oninput="syncPreview()" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-sm" placeholder="Putri ke-sekian dari Bp. A & Ibu B"></textarea>
-                            <input type="text" id="in_wanita_ig" oninput="syncPreview()" class="w-full p-4 bg-white border border-stone-200 rounded-2xl text-xs" placeholder="Link Instagram (@username)">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label>Nama Panggilan Pria</label>
+                                    <input type="text" id="in_pria_short" oninput="syncPreview()" class="input-field" placeholder="Pria">
+                                </div>
+                                <div class="input-group">
+                                    <label>Nama Panggilan Wanita</label>
+                                    <input type="text" id="in_wanita_short" oninput="syncPreview()" class="input-field" placeholder="Wanita">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Hashtag & Tanggal Acara</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input type="text" id="in_hashtag" oninput="syncPreview()" class="input-field" placeholder="#Hashtag">
+                                    <input type="date" id="in_date" onchange="syncPreview()" class="input-field">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB: DETAIL ACARA -->
-                <div id="tab-acara" class="tab-pane hidden space-y-10">
-                    <div class="space-y-6">
-                        <h3 class="text-xl font-bold text-stone-800">Akad Nikah / Pemberkatan</h3>
-                        <input type="text" id="in_ev1_time" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Contoh: Senin, 25 Mei 2026 | 08.00 WIB">
-                        <textarea id="in_ev1_loc" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-sm" placeholder="Alamat Lengkap & Nama Gedung"></textarea>
-                        <input type="text" id="in_ev1_maps" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps">
-                    </div>
-                    <div class="pt-10 border-t border-stone-100 space-y-6">
-                        <h3 class="text-xl font-bold text-stone-800">Resepsi Pernikahan</h3>
-                        <input type="text" id="in_ev2_time" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="Contoh: Senin, 25 Mei 2026 | 12.30 WIB">
-                        <textarea id="in_ev2_loc" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-sm" placeholder="Alamat Lengkap & Nama Gedung"></textarea>
-                        <input type="text" id="in_ev2_maps" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs" placeholder="Link Google Maps">
-                    </div>
-                    <div class="pt-10 border-t border-stone-100 space-y-6">
-                        <h3 class="text-xl font-bold text-stone-800">Hadiah Digital (Banking)</h3>
-                        <div id="bank-form" class="p-6 bg-stone-50 rounded-3xl border border-stone-200 space-y-4">
-                            <select id="in_bank_type" class="w-full p-4 bg-white border border-stone-200 rounded-2xl outline-none">
-                                <option value="BCA">BANK BCA</option>
-                                <option value="Mandiri">BANK MANDIRI</option>
-                                <option value="BNI">BANK BNI</option>
-                                <option value="BRI">BANK BRI</option>
-                                <option value="Dana">E-Wallet DANA</option>
-                                <option value="OVO">E-Wallet OVO</option>
-                                <option value="Gopay">E-Wallet GOPAY</option>
-                                <option value="ShopeePay">E-Wallet SHOPEEPAY</option>
-                                <option value="QRIS">QRIS (Pencairan Otomatis)</option>
-                            </select>
-                            <input type="text" id="in_bank_rekening" class="w-full p-4 bg-white border border-stone-200 rounded-2xl" placeholder="Nomor Rekening / HP">
-                            <input type="text" id="in_bank_owner" class="w-full p-4 bg-white border border-stone-200 rounded-2xl" placeholder="Atas Nama (Pemilik)">
-                            <button onclick="addBank()" class="w-full py-4 bg-stone-800 text-white rounded-2xl font-bold text-sm hover:bg-black transition">+ Tambah Rekening Kado</button>
-                        </div>
-                        <div id="bank-list" class="space-y-3 mt-4">
-                            <!-- Daftar Rekening yang ditambahkan akan muncul di sini -->
+                <!-- TAB: MEMPELAI -->
+                <div id="tab-mempelai" class="tab-content hidden">
+                    <div class="config-card">
+                        <h3 class="font-bold text-lg mb-6">Detail Mempelai</h3>
+                        <div class="space-y-10">
+                            <div class="space-y-4">
+                                <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Pihak Pria</p>
+                                <input type="text" id="in_pria_full" oninput="syncPreview()" class="input-field" placeholder="Nama Lengkap Pria">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input type="text" id="in_pria_father" oninput="syncPreview()" class="input-field" placeholder="Nama Ayah">
+                                    <input type="text" id="in_pria_mother" oninput="syncPreview()" class="input-field" placeholder="Nama Ibu">
+                                </div>
+                            </div>
+                            <div class="space-y-4 border-t pt-10">
+                                <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Pihak Wanita</p>
+                                <input type="text" id="in_wanita_full" oninput="syncPreview()" class="input-field" placeholder="Nama Lengkap Wanita">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input type="text" id="in_wanita_father" oninput="syncPreview()" class="input-field" placeholder="Nama Ayah">
+                                    <input type="text" id="in_wanita_mother" oninput="syncPreview()" class="input-field" placeholder="Nama Ibu">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- TAB: QUOTE -->
-                <div id="tab-quote" class="tab-pane hidden space-y-6">
-                    <h2 class="text-xl font-serif mb-6">Ayat & Kutipan</h2>
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase mb-2">Isi Kutipan/Ayat</label>
-                            <textarea id="in_quote_text" rows="4" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="Masukkan ayat atau kutipan bijak..."></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase mb-2">Sumber/Referensi</label>
-                            <input type="text" id="in_quote_ref" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: QS. Ar-Rum: 21">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: GALERI -->
-                <div id="tab-galeri" class="tab-pane hidden space-y-8">
-                    <h3 class="text-xl font-bold text-stone-800">Galeri Foto (Max 6 Foto)</h3>
-                    <div class="grid grid-cols-3 gap-4" id="gallery-container">
-                        <!-- Preview Gallery akan muncul di sini -->
-                    </div>
-                    <input type="file" id="in_gallery" onchange="handleGalleryUpload(event)" class="hidden" multiple accept="image/*">
-                    <label for="in_gallery" class="cursor-pointer w-full p-10 border-2 border-dashed border-stone-200 rounded-[40px] flex flex-col items-center justify-center hover:border-rose-300 hover:bg-rose-50 transition group">
-                        <span class="text-sm font-bold text-stone-500">Klik untuk Tambah Foto Galeri</span>
-                    </label>
-                </div>
-
-                <!-- TAB: MUSIK & FITUR -->
-                <div id="tab-musik" class="tab-pane hidden space-y-8">
-                    <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Background Musik (Upload MP3)</label>
-                        <input type="file" id="in_music_file" onchange="handleMusicUpload(event)" class="hidden" accept="audio/mp3">
-                        <label for="in_music_file" class="cursor-pointer w-full p-8 border-2 border-dashed border-stone-200 rounded-[30px] flex flex-col items-center justify-center hover:border-blue-300 hover:bg-blue-50 transition group">
-                            <div class="mb-2 text-stone-300 group-hover:text-blue-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <div id="tab-quote" class="tab-content hidden">
+                    <div class="config-card">
+                        <h3 class="font-bold text-lg mb-6">Ayat & Kutipan</h3>
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <label>Isi Kutipan</label>
+                                <textarea id="in_quote_text" oninput="syncPreview()" rows="4" class="input-field" placeholder="Masukkan ayat atau kata bijak..."></textarea>
                             </div>
-                            <span id="music-label" class="text-sm font-bold text-stone-500 group-hover:text-blue-600">Klik untuk Unggah Musik (.mp3)</span>
-                        </label>
-                        <input type="hidden" id="in_music">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Hashtag Acara</label>
-                        <input type="text" id="in_hashtag" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl" placeholder="#HashtagAcara">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-stone-700 mb-2">Tanggal Countdown</label>
-                        <input type="datetime-local" id="in_date" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl">
-                    </div>
-                </div>
-
-                <!-- TAB: TATA LETAK (LAYOUT) -->
-                <div id="tab-layout" class="tab-pane hidden space-y-8">
-                    <div class="bg-blue-50 p-8 rounded-[40px] border border-blue-100">
-                        <div class="flex items-start gap-4">
-                            <div class="bg-blue-500 text-white p-3 rounded-2xl shadow-lg shadow-blue-100">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-blue-900 mb-1">Gudang Elemen & Tata Letak</h4>
-                                <p class="text-[11px] text-blue-600 leading-relaxed">Geser urutan seksi untuk mengubah alur undangan Anda. Aktifkan/matikan fitur sesuai kebutuhan.</p>
+                            <div class="input-group">
+                                <label>Referensi</label>
+                                <input type="text" id="in_quote_ref" oninput="syncPreview()" class="input-field" placeholder="Contoh: QS. Ar-Rum: 21">
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div id="section-list-container" class="space-y-3">
-                        <!-- List Seksi akan di-generate oleh JS -->
+                <!-- TAB: LAYOUT -->
+                <div id="tab-layout" class="tab-content hidden">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold">Atur Tata Letak</h2>
+                        <p class="text-sm text-slate-500">Aktifkan dan urutkan seksi undangan Anda.</p>
                     </div>
-                    
-                    <div class="mt-12 p-10 border-2 border-dashed border-stone-100 rounded-[40px] text-center">
-                        <div class="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-4 text-stone-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                        </div>
-                        <p class="text-stone-400 text-[11px] font-bold uppercase tracking-widest mb-2">Segera Hadir</p>
-                        <p class="text-stone-300 text-xs">Blok Teks Custom, Video Slideshow, & Livestreaming</p>
+                    <div id="layout-container" class="space-y-3">
+                        <!-- Rendered dynamically -->
                     </div>
                 </div>
+
+                <!-- Placeholder tabs for logic consistency -->
+                <div id="tab-acara" class="tab-content hidden"> <div class="config-card"><h3 class="font-bold text-lg mb-4">Detail Acara</h3><div class="space-y-4"> <input type="text" id="in_ev1_time" oninput="syncPreview()" class="input-field" placeholder="Waktu Akad"> <input type="text" id="in_ev1_loc" oninput="syncPreview()" class="input-field" placeholder="Lokasi Akad"> <input type="text" id="in_ev1_maps" oninput="syncPreview()" class="input-field" placeholder="Link Google Maps Akad"> <div class="border-t pt-4 mt-4"></div> <input type="text" id="in_ev2_time" oninput="syncPreview()" class="input-field" placeholder="Waktu Resepsi"> <input type="text" id="in_ev2_loc" oninput="syncPreview()" class="input-field" placeholder="Lokasi Resepsi"> <input type="text" id="in_ev2_maps" oninput="syncPreview()" class="input-field" placeholder="Link Google Maps Resepsi"> </div></div> </div>
+                <div id="tab-galeri" class="tab-content hidden"> <div class="config-card"><h3 class="font-bold text-lg mb-4">Galeri Foto</h3><p class="text-sm text-slate-400">Gunakan tombol upload untuk menambah foto.</p></div> </div>
+                <div id="tab-music" class="tab-content hidden"> <div class="config-card"><h3 class="font-bold text-lg mb-4">Musik & Fitur</h3> <input type="text" id="in_music" oninput="syncPreview()" class="input-field" placeholder="URL MP3 (Cloudinary)"> </div> </div>
+
             </div>
         </main>
 
-        <!-- LIVE PREVIEW AREA -->
-        <aside class="flex-1 bg-slate-100 flex items-center justify-center p-8 border-l overflow-hidden">
-            <div class="preview-frame relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)]">
-                <!-- IFRAME NYATA -->
-                <iframe id="preview-iframe" src="about:blank" class="w-full h-full border-none"></iframe>
-                
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-4 py-1.5 rounded-full font-bold tracking-widest backdrop-blur pointer-events-none">LIVE PREVIEW</div>
+        <!-- PREVIEW (Right) -->
+        <section id="preview-section" class="w-[450px] shrink-0">
+            <div class="phone-mockup">
+                <iframe id="preview-iframe" src="about:blank"></iframe>
             </div>
-        </aside>
+        </section>
+
     </div>
 
     <script>
-        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvygmpmir/image/upload";
-        const CLOUDINARY_PRESET = "sapatamu_preset";
-        const SUPABASE_URL = "https://cikptujrdfvxyfihwamh.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B";
-        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJDudzlgXTS9_zPM0QJw5D7My40pOZ-ATWxGlpay7gtosgGMyBGxyEkAck1JE30q6_6w/exec";
-
-        let currentBgImage = "";
+        // SUPABASE CONFIG
+        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'YOUR_KEY_HERE');
+        
         let clientId = "";
         let clientSsId = "";
         let galleryImages = [];
         let bankAccounts = [];
+        let sectionsOrder = ['cover', 'quote', 'mempelai', 'story', 'acara', 'galeri', 'access_card', 'kado'];
+        let activeSections = ['cover', 'quote', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
 
-        // TAB NAVIGATION
+        // UI LOGIC
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.getElementById('tab-' + id).classList.remove('hidden');
-            
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
 
-        // --- SECTION MANAGEMENT LOGIC ---
         const SECTION_NAMES = {
             'cover': 'Cover Depan',
             'quote': 'Ayat & Kutipan',
@@ -369,30 +267,24 @@
             'kado': 'Kado Digital'
         };
 
-        let sectionsOrder = ['cover', 'quote', 'mempelai', 'story', 'acara', 'galeri', 'access_card', 'kado'];
-        let activeSections = ['cover', 'quote', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
-
         function renderLayoutControls(savedOrder) {
             if (savedOrder) sectionsOrder = savedOrder;
             const container = document.getElementById('layout-container');
+            if(!container) return;
             container.innerHTML = "";
-
             sectionsOrder.forEach((id, index) => {
-                const name = SECTION_NAMES[id] || id;
                 const isActive = activeSections.includes(id);
                 const div = document.createElement('div');
-                div.className = "config-card flex items-center justify-between";
+                div.className = "config-card flex items-center justify-between py-4 px-6 mb-0";
                 div.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 cursor-move">
-                            <i class="fas fa-grip-vertical"></i>
-                        </div>
-                        <span class="font-bold text-sm">${name}</span>
+                        <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-300 text-xs cursor-move"><i class="fas fa-grip-vertical"></i></div>
+                        <span class="font-bold text-sm text-slate-700">${SECTION_NAMES[id] || id}</span>
                     </div>
                     <div class="flex items-center gap-6">
-                        <div class="flex items-center gap-2">
-                            <button onclick="moveSection(${index}, -1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-xs text-slate-400"><i class="fas fa-chevron-up"></i></button>
-                            <button onclick="moveSection(${index}, 1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-xs text-slate-400"><i class="fas fa-chevron-down"></i></button>
+                        <div class="flex items-center gap-1">
+                            <button onclick="moveSection(${index}, -1)" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 text-[10px]"><i class="fas fa-chevron-up"></i></button>
+                            <button onclick="moveSection(${index}, 1)" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 text-[10px]"><i class="fas fa-chevron-down"></i></button>
                         </div>
                         <label class="switch">
                             <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleSection('${id}')">
@@ -405,226 +297,58 @@
         }
 
         function toggleSection(id) {
-            if (activeSections.includes(id)) {
-                activeSections = activeSections.filter(s => s !== id);
-            } else {
-                activeSections.push(id);
-            }
+            activeSections = activeSections.includes(id) ? activeSections.filter(s => s !== id) : [...activeSections, id];
             syncPreview();
         }
 
         function moveSection(index, dir) {
-            const newPos = index + dir;
-            if (newPos < 0 || newPos >= sectionsOrder.length) return;
-            const temp = sectionsOrder[index];
-            sectionsOrder[index] = sectionsOrder[newPos];
-            sectionsOrder[newPos] = temp;
-            renderSectionControls();
+            const next = index + dir;
+            if (next < 0 || next >= sectionsOrder.length) return;
+            [sectionsOrder[index], sectionsOrder[next]] = [sectionsOrder[next], sectionsOrder[index]];
+            renderLayoutControls();
             syncPreview();
         }
 
-        function toggleSection(key) {
-            if (activeSections.includes(key)) {
-                activeSections = activeSections.filter(s => s !== key);
-            } else {
-                activeSections.push(key);
-            }
-            renderSectionControls();
-            syncPreview();
-        }
-
-        // AUTH CHECK
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
-
-        function getSessionData() {
-            let data = localStorage.getItem('sapatamu_db');
-            if (!data) {
-                const cookieData = getCookie('sapatamu_session');
-                if (cookieData) data = decodeURIComponent(cookieData);
-            }
-            return data ? JSON.parse(data) : null;
-        }
-
-        // TAB SWITCHING
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('tab-active'));
-            el.classList.add('tab-active');
-            const titles = { 
-                'informasi': 'Informasi Dasar', 
-                'mempelai': 'Data Mempelai', 
-                'acara': 'Detail Acara', 
-                'galeri': 'Galeri Foto', 
-                'musik': 'Musik & Fitur',
-                'layout': 'Tata Letak (Layout)' 
-            };
-            document.getElementById('section-title').innerText = titles[tabId];
-            if (tabId === 'layout') renderSectionControls();
-        }
-
-        // IMAGE UPLOADS
-        async function handleUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const label = document.getElementById('upload-label');
-            label.innerText = "⏳ Mengunggah...";
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_PRESET);
-            try {
-                const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
-                const data = await res.json();
-                if (data.secure_url) {
-                    currentBgImage = data.secure_url;
-                    label.innerText = "✅ Berhasil Diunggah!";
-                    label.classList.add('text-green-500');
-                    syncPreview();
-                }
-            } catch (err) { label.innerText = "❌ Gagal mengunggah"; }
-        }
-
-        async function handleMusicUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const label = document.getElementById('music-label');
-            label.innerText = "⏳ Mengunggah Musik...";
-            
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_PRESET);
-            formData.append('resource_type', 'video'); // Cloudinary treats audio as video resource type
-
-            try {
-                const res = await fetch(CLOUDINARY_URL.replace('/image/', '/video/'), { method: 'POST', body: formData });
-                const data = await res.json();
-                if (data.secure_url) {
-                    document.getElementById('in_music').value = data.secure_url;
-                    label.innerText = "✅ Musik Berhasil Diunggah!";
-                    label.classList.add('text-blue-500');
-                    syncPreview();
-                }
-            } catch (err) { 
-                label.innerText = "❌ Gagal mengunggah musik";
-                console.error(err);
-            }
-        }
-
-        async function handleGalleryUpload(event) {
-            const files = event.target.files;
-            for (let file of files) {
-                if (galleryImages.length >= 6) break;
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', CLOUDINARY_PRESET);
-                try {
-                    const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
-                    const data = await res.json();
-                    if (data.secure_url) { galleryImages.push(data.secure_url); renderGallery(); }
-                } catch (err) { console.error("Gallery failed", err); }
-            }
-        }
-
-        function renderGallery() {
-            const container = document.getElementById('gallery-container');
-            container.innerHTML = "";
-            galleryImages.forEach((src, index) => {
-                const div = document.createElement('div');
-                div.className = "relative aspect-square rounded-xl overflow-hidden border border-stone-100 group";
-                div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button onclick="removeGallery(${index})" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
-                container.appendChild(div);
-            });
-        }
-        function removeGallery(index) { galleryImages.splice(index, 1); renderGallery(); }
-
-        // BANKING LOGIC
-        function addBank() {
-            const type = document.getElementById('in_bank_type').value;
-            const rek = document.getElementById('in_bank_rekening').value;
-            const owner = document.getElementById('in_bank_owner').value;
-            if (!rek || !owner) return alert("Harap isi nomor rekening dan atas nama!");
-            bankAccounts.push({ type, rekening: rek, owner });
-            document.getElementById('in_bank_rekening').value = "";
-            document.getElementById('in_bank_owner').value = "";
-            renderBanks();
-            syncPreview();
-        }
-
-        function renderBanks() {
-            const container = document.getElementById('bank-list');
-            container.innerHTML = "";
-            bankAccounts.forEach((acc, index) => {
-                const div = document.createElement('div');
-                div.className = "flex items-center justify-between p-4 bg-white border border-stone-100 rounded-2xl shadow-sm";
-                div.innerHTML = `
-                    <div class="flex flex-col text-left">
-                        <span class="text-[9px] font-bold text-rose-400 uppercase tracking-widest">${acc.type}</span>
-                        <span class="font-bold text-stone-800 text-sm">${acc.rekening}</span>
-                        <span class="text-[10px] text-stone-500 uppercase">A/N ${acc.owner}</span>
-                    </div>
-                    <button onclick="removeBank(${index})" class="text-stone-300 hover:text-red-500 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                    </button>
-                `;
-                container.appendChild(div);
-            });
-        }
-        function removeBank(index) { bankAccounts.splice(index, 1); renderBanks(); syncPreview(); }
-
-        // SYNC & SAVE
         function syncPreview() {
             const iframe = document.getElementById('preview-iframe');
             if (!iframe || !iframe.contentWindow) return;
-
             const config = {
-                title: document.getElementById('in_title').value,
-                pria_short: document.getElementById('in_pria_short').value,
-                wanita_short: document.getElementById('in_wanita_short').value,
-                bg_image: currentBgImage,
-                hashtag: document.getElementById('in_hashtag').value,
-                music_url: document.getElementById('in_music').value,
-                event_date: document.getElementById('in_date').value,
-                gallery: galleryImages,
-                banking: bankAccounts,
-                sections_order: sectionsOrder.filter(s => activeSections.includes(s)),
-                quote_text: document.getElementById('in_quote_text')?.value,
-                quote_ref: document.getElementById('in_quote_ref')?.value,
-                groom: {
-                    full_name: document.getElementById('in_pria_full').value,
-                    desc: document.getElementById('in_pria_desc').value,
-                    father: document.getElementById('in_pria_father')?.value,
-                    mother: document.getElementById('in_pria_mother')?.value,
-                    ig: document.getElementById('in_pria_ig')?.value
+                title: document.getElementById('in_title')?.value || "",
+                pria_short: document.getElementById('in_pria_short')?.value || "",
+                wanita_short: document.getElementById('in_wanita_short')?.value || "",
+                hashtag: document.getElementById('in_hashtag')?.value || "",
+                event_date: document.getElementById('in_date')?.value || "",
+                music_url: document.getElementById('in_music')?.value || "",
+                quote_text: document.getElementById('in_quote_text')?.value || "",
+                quote_ref: document.getElementById('in_quote_ref')?.value || "",
+                groom: { 
+                    full_name: document.getElementById('in_pria_full')?.value || "", 
+                    father: document.getElementById('in_pria_father')?.value || "", 
+                    mother: document.getElementById('in_pria_mother')?.value || "" 
                 },
-                bride: {
-                    full_name: document.getElementById('in_wanita_full').value,
-                    desc: document.getElementById('in_wanita_desc').value,
-                    father: document.getElementById('in_wanita_father')?.value,
-                    mother: document.getElementById('in_wanita_mother')?.value,
-                    ig: document.getElementById('in_wanita_ig')?.value
+                bride: { 
+                    full_name: document.getElementById('in_wanita_full')?.value || "", 
+                    father: document.getElementById('in_wanita_father')?.value || "", 
+                    mother: document.getElementById('in_wanita_mother')?.value || "" 
                 },
-                ev1: {
-                    time: document.getElementById('in_ev1_time').value,
-                    loc: document.getElementById('in_ev1_loc').value,
-                    maps: document.getElementById('in_ev1_maps').value
+                ev1: { 
+                    time: document.getElementById('in_ev1_time')?.value || "", 
+                    loc: document.getElementById('in_ev1_loc')?.value || "",
+                    maps: document.getElementById('in_ev1_maps')?.value || ""
                 },
-                ev2: {
-                    time: document.getElementById('in_ev2_time').value,
-                    loc: document.getElementById('in_ev2_loc').value,
-                    maps: document.getElementById('in_ev2_maps').value
-                }
+                ev2: { 
+                    time: document.getElementById('in_ev2_time')?.value || "", 
+                    loc: document.getElementById('in_ev2_loc')?.value || "",
+                    maps: document.getElementById('in_ev2_maps')?.value || ""
+                },
+                sections_order: sectionsOrder.filter(s => activeSections.includes(s))
             };
-
             iframe.contentWindow.postMessage({ action: 'UPDATE_PREVIEW', config }, '*');
         }
 
         function refreshPreview() {
             const iframe = document.getElementById('preview-iframe');
-            if (iframe) iframe.src = `undangan-preview.html?clientId=${clientId}&t=${new Date().getTime()}`;
+            if(iframe) iframe.src = `undangan-preview.html?clientId=${clientId}&t=${Date.now()}`;
         }
 
         async function saveChanges() {
@@ -633,39 +357,30 @@
             btn.disabled = true;
 
             const config = {
-                title: document.getElementById('in_title').value,
-                pria_short: document.getElementById('in_pria_short').value,
-                wanita_short: document.getElementById('in_wanita_short').value,
-                bg_image: currentBgImage,
-                hashtag: document.getElementById('in_hashtag').value,
-                music_url: document.getElementById('in_music').value,
-                event_date: document.getElementById('in_date').value,
-                gallery: galleryImages,
-                banking: bankAccounts,
-                sections_order: sectionsOrder.filter(s => activeSections.includes(s)),
-                quote_text: document.getElementById('in_quote_text')?.value,
-                quote_ref: document.getElementById('in_quote_ref')?.value,
+                title: document.getElementById('in_title')?.value || "",
+                pria_short: document.getElementById('in_pria_short')?.value || "",
+                wanita_short: document.getElementById('in_wanita_short')?.value || "",
+                hashtag: document.getElementById('in_hashtag')?.value || "",
+                event_date: document.getElementById('in_date')?.value || "",
+                music_url: document.getElementById('in_music')?.value || "",
+                quote_text: document.getElementById('in_quote_text')?.value || "",
+                quote_ref: document.getElementById('in_quote_ref')?.value || "",
                 groom: { 
-                    full_name: document.getElementById('in_pria_full').value, 
-                    desc: document.getElementById('in_pria_desc').value, 
-                    father: document.getElementById('in_pria_father')?.value,
-                    mother: document.getElementById('in_pria_mother')?.value,
-                    ig: document.getElementById('in_pria_ig').value 
+                    full_name: document.getElementById('in_pria_full')?.value || "", 
+                    father: document.getElementById('in_pria_father')?.value || "", 
+                    mother: document.getElementById('in_pria_mother')?.value || "" 
                 },
                 bride: { 
-                    full_name: document.getElementById('in_wanita_full').value, 
-                    desc: document.getElementById('in_wanita_desc').value, 
-                    father: document.getElementById('in_wanita_father')?.value,
-                    mother: document.getElementById('in_wanita_mother')?.value,
-                    ig: document.getElementById('in_wanita_ig').value 
+                    full_name: document.getElementById('in_wanita_full')?.value || "", 
+                    father: document.getElementById('in_wanita_father')?.value || "", 
+                    mother: document.getElementById('in_wanita_mother')?.value || "" 
                 },
-                ev1: { time: document.getElementById('in_ev1_time').value, loc: document.getElementById('in_ev1_loc').value, maps: document.getElementById('in_ev1_maps').value },
-                ev2: { time: document.getElementById('in_ev2_time').value, loc: document.getElementById('in_ev2_loc').value, maps: document.getElementById('in_ev2_maps').value }
+                ev1: { time: document.getElementById('in_ev1_time')?.value || "", loc: document.getElementById('in_ev1_loc')?.value || "", maps: document.getElementById('in_ev1_maps')?.value || "" },
+                ev2: { time: document.getElementById('in_ev2_time')?.value || "", loc: document.getElementById('in_ev2_loc')?.value || "", maps: document.getElementById('in_ev2_maps')?.value || "" },
+                sections_order: sectionsOrder.filter(s => activeSections.includes(s))
             };
 
             try {
-                // 1. Simpan ke Supabase (Utama untuk Preview)
-                console.log("Simpan ke Supabase untuk:", clientId);
                 const urlParams = new URLSearchParams(window.location.search);
                 const themeId = urlParams.get('theme') || 'classic-minimalist';
 
@@ -673,135 +388,71 @@
                     client_id: clientId, 
                     theme_id: themeId,
                     theme_config: config,
-                    config: config, // Simpan di kedua kolom untuk keamanan transisi
+                    config: config,
                     updated_at: new Date()
                 }, { onConflict: 'client_id' });
-                if (error) throw error;
-
-                // 2. Simpan ke Google Sheets (Untuk Welcome Sign & Backup)
-                console.log("Sinkron ke Google Sheets. ssId:", clientSsId);
                 
-                if (!clientSsId) {
-                    console.warn("ssId tidak ditemukan di session, sinkron ke Sheet dibatalkan.");
-                } else {
-                    fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors', // Tetap no-cors untuk menghindari preflight OPTIONS yang sering gagal di GAS
-                        headers: { 'Content-Type': 'text/plain' }, // Gunakan text/plain agar GAS mudah membacanya
-                        body: JSON.stringify({
-                            action: 'saveInvitation',
-                            clientId: clientId,
-                            ssId: clientSsId,
-                            config: config
-                        })
-                    });
-                }
-
-                refreshPreview();
-                alert("Berhasil disimpan ke Supabase & Google Sheets! 🎉");
+                if (error) throw error;
+                alert("Berhasil disimpan! 🎉");
             } catch (err) { 
-                console.error("Save error:", err);
                 alert("Gagal Simpan: " + err.message); 
+            } finally { 
+                btn.innerHTML = 'Simpan Perubahan'; 
+                btn.disabled = false; 
+                refreshPreview();
             }
-            finally { btn.innerHTML = 'Simpan Perubahan'; btn.disabled = false; }
         }
 
         async function init() {
-            const session = getSessionData();
-            console.log("Session Data Found:", session);
+            const urlParams = new URLSearchParams(window.location.search);
+            clientId = urlParams.get('clientId') || "claraclairyn";
+            document.getElementById('current-theme-display').innerText = urlParams.get('theme') || 'Classic Minimalist';
             
-            if (!session) return window.location.href = 'login.html';
-            
-            clientId = session.username;
-            clientSsId = session.ssId || session.fileId; // Kadang tersimpan sebagai fileId di sistem Anda
-            
-            // Set Link Live
-            const liveBtn = document.getElementById('btn-view-live');
-            if (liveBtn) {
-                const host = window.location.hostname;
-                if (host.includes('beta.sapatamu.id')) {
-                    // Jika di beta, arahkan ke subdomain beta
-                    liveBtn.href = `https://${clientId}.beta.sapatamu.id`;
-                } else {
-                    // Jika di production
-                    liveBtn.href = `https://${clientId}.sapatamu.id`;
-                }
-                liveBtn.classList.remove('hidden');
-            }
-            
-            console.log("Current Client:", clientId, "Target ssId:", clientSsId);
-            
-            refreshPreview();
-
-            try {
-                // Tambahkan select('*') untuk melihat semua kolom jika theme_config bermasalah
-                const { data, error } = await _supabase
-                    .from('invitations')
-                    .select('theme_config')
-                    .eq('client_id', clientId)
-                    .single();
-                
-                if (error) {
-                    console.warn("Data belum ada atau kolom salah:", error.message);
-                    return;
-                }
-
-                if (data) {
-                    // Cek di kedua kolom (theme_config atau config)
-                    const c = data.theme_config || data.config;
-                    
-                    if (c) {
-                        document.getElementById('in_title').value = c.title || "";
-                        document.getElementById('in_pria_short').value = c.pria_short || "";
-                        document.getElementById('in_wanita_short').value = c.wanita_short || "";
-                        document.getElementById('in_hashtag').value = c.hashtag || "";
-                        document.getElementById('in_music').value = c.music_url || "";
-                        document.getElementById('in_date').value = c.event_date || "";
-                        if (c.gallery) { galleryImages = c.gallery; renderGallery(); }
-                        if (c.banking) { bankAccounts = c.banking; renderBanks(); }
-                        if (c.groom) { 
-                            document.getElementById('in_pria_full').value = c.groom.full_name || ""; 
-                            document.getElementById('in_pria_desc').value = c.groom.desc || ""; 
-                            document.getElementById('in_pria_father').value = c.groom.father || ""; 
-                            document.getElementById('in_pria_mother').value = c.groom.mother || ""; 
-                            document.getElementById('in_pria_ig').value = c.groom.ig || ""; 
-                        }
-                        if (c.bride) { 
-                            document.getElementById('in_wanita_full').value = c.bride.full_name || ""; 
-                            document.getElementById('in_wanita_desc').value = c.bride.desc || ""; 
-                            document.getElementById('in_wanita_father').value = c.bride.father || ""; 
-                            document.getElementById('in_wanita_mother').value = c.bride.mother || ""; 
-                            document.getElementById('in_wanita_ig').value = c.bride.ig || ""; 
-                        }
-                        if (c.quote_text) document.getElementById('in_quote_text').value = c.quote_text;
-                        if (c.quote_ref) document.getElementById('in_quote_ref').value = c.quote_ref;
-                        if (c.ev1) { 
-                            document.getElementById('in_ev1_time').value = c.ev1.time || ""; 
-                            document.getElementById('in_ev1_loc').value = c.ev1.loc || ""; 
-                            document.getElementById('in_ev1_maps').value = c.ev1.maps || ""; 
-                        }
-                        if (c.ev2) { 
-                            document.getElementById('in_ev2_time').value = c.ev2.time || ""; 
-                            document.getElementById('in_ev2_loc').value = c.ev2.loc || ""; 
-                            document.getElementById('in_ev2_maps').value = c.ev2.maps || ""; 
-                        }
-                        if (c.bg_image) currentBgImage = c.bg_image;
-                        if (c.sections_order) {
-                            // Sync state seksi
-                            activeSections = [...c.sections_order];
-                            // Reorder sectionsOrder based on saved state, keeping all possible keys
-                            const allKeys = ['cover', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
-                            sectionsOrder = [...new Set([...c.sections_order, ...allKeys])];
-                        }
-                        syncPreview(); // Pastikan preview terisi setelah load
-                    } else {
-                        console.warn("Kolom theme_config dan config kosong.");
+            // Initial data fetch
+            const { data } = await _supabase.from('invitations').select('*').eq('client_id', clientId).maybeSingle();
+            if(data) {
+                const c = data.theme_config || data.config;
+                if(c) {
+                    if(document.getElementById('in_title')) document.getElementById('in_title').value = c.title || "";
+                    if(document.getElementById('in_pria_short')) document.getElementById('in_pria_short').value = c.pria_short || "";
+                    if(document.getElementById('in_wanita_short')) document.getElementById('in_wanita_short').value = c.wanita_short || "";
+                    if(document.getElementById('in_hashtag')) document.getElementById('in_hashtag').value = c.hashtag || "";
+                    if(document.getElementById('in_date')) document.getElementById('in_date').value = c.event_date || "";
+                    if(document.getElementById('in_music')) document.getElementById('in_music').value = c.music_url || "";
+                    if(document.getElementById('in_quote_text')) document.getElementById('in_quote_text').value = c.quote_text || "";
+                    if(document.getElementById('in_quote_ref')) document.getElementById('in_quote_ref').value = c.quote_ref || "";
+                    if(c.groom) {
+                        if(document.getElementById('in_pria_full')) document.getElementById('in_pria_full').value = c.groom.full_name || "";
+                        if(document.getElementById('in_pria_father')) document.getElementById('in_pria_father').value = c.groom.father || "";
+                        if(document.getElementById('in_pria_mother')) document.getElementById('in_pria_mother').value = c.groom.mother || "";
+                    }
+                    if(c.bride) {
+                        if(document.getElementById('in_wanita_full')) document.getElementById('in_wanita_full').value = c.bride.full_name || "";
+                        if(document.getElementById('in_wanita_father')) document.getElementById('in_wanita_father').value = c.bride.father || "";
+                        if(document.getElementById('in_wanita_mother')) document.getElementById('in_wanita_mother').value = c.bride.mother || "";
+                    }
+                    if(c.ev1) {
+                        if(document.getElementById('in_ev1_time')) document.getElementById('in_ev1_time').value = c.ev1.time || "";
+                        if(document.getElementById('in_ev1_loc')) document.getElementById('in_ev1_loc').value = c.ev1.loc || "";
+                        if(document.getElementById('in_ev1_maps')) document.getElementById('in_ev1_maps').value = c.ev1.maps || "";
+                    }
+                    if(c.ev2) {
+                        if(document.getElementById('in_ev2_time')) document.getElementById('in_ev2_time').value = c.ev2.time || "";
+                        if(document.getElementById('in_ev2_loc')) document.getElementById('in_ev2_loc').value = c.ev2.loc || "";
+                        if(document.getElementById('in_ev2_maps')) document.getElementById('in_ev2_maps').value = c.ev2.maps || "";
+                    }
+                    if(c.sections_order) {
+                        sectionsOrder = c.sections_order;
+                        activeSections = [...c.sections_order]; // All saved are active initially or handle differently
                     }
                 }
-            } catch (err) { console.warn("Load error", err); }
+            }
+
+            refreshPreview();
+            renderLayoutControls();
         }
+
         init();
-        renderSectionControls();
     </script>
 </body>
 </html>
