@@ -484,10 +484,22 @@
         }
 
         function showTab(id) {
+            // Hide all contents
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById('tab-' + id).classList.remove('hidden');
+            // Show selected content
+            const target = document.getElementById('tab-' + id);
+            if(target) target.classList.remove('hidden');
+            
+            // Handle active button state
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if(window.event && window.event.currentTarget) {
+                window.event.currentTarget.classList.add('active');
+            } else {
+                // Fallback: search by text or icon if event is lost
+                const btns = Array.from(document.querySelectorAll('.tab-btn'));
+                const match = btns.find(b => b.getAttribute('onclick')?.includes(`'${id}'`));
+                if(match) match.classList.add('active');
+            }
         }
 
         function triggerUpload(type) { document.getElementById('upload_' + type).click(); }
