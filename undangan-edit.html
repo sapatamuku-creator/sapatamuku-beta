@@ -307,7 +307,7 @@
             if (!input.files || !input.files[0]) return;
             const file = input.files[0];
             const label = document.getElementById('label_' + type);
-            if (label) label.innerText = "⏳ Sedang mengunggah...";
+            if (label) label.innerText = "⏳ Mengompres & Mengunggah...";
 
             const formData = new FormData();
             formData.append('file', file);
@@ -318,12 +318,22 @@
             try {
                 const res = await fetch(uploadUrl, { method: 'POST', body: formData });
                 const data = await res.json();
+                
                 if (data.secure_url) {
-                    document.getElementById('in_' + type + (type === 'bg' ? '_image' : (type === 'music' ? '' : '_photo'))).value = data.secure_url;
-                    if (label) label.innerText = "✅ Berhasil diunggah!";
+                    let finalUrl = data.secure_url;
+                    
+                    // AUTO-COMPRESSION LOGIC (Cloudinary On-the-fly Transformation)
+                    if (type !== 'music') {
+                        // Menyisipkan parameter: f_auto (format otomatis), q_auto (kualitas otomatis), w_1080 (lebar max 1080px)
+                        finalUrl = finalUrl.replace('/upload/', '/upload/f_auto,q_auto,w_1080,c_limit/');
+                    }
+
+                    document.getElementById('in_' + type + (type === 'bg' ? '_image' : (type === 'music' ? '' : '_photo'))).value = finalUrl;
+                    
+                    if (label) label.innerText = "✅ Berhasil diunggah (Optimized)";
                     if (type === 'pria' || type === 'wanita') {
                         const preview = document.getElementById('preview_' + type);
-                        preview.src = data.secure_url;
+                        preview.src = finalUrl;
                         preview.classList.remove('hidden');
                         document.getElementById('icon_' + type).classList.add('hidden');
                     }
