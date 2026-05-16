@@ -95,16 +95,17 @@
             const host = window.location.hostname;
             const urlParams = new URLSearchParams(window.location.search);
             
-            // Priority 1: URL Parameter (for editor preview)
-            if (urlParams.has('clientId')) return urlParams.get('clientId');
+            // Priority 1: Universal Link Parameter (sapatamu.id/undangan.html?u=username)
+            if (urlParams.get('u')) return urlParams.get('u');
+            if (urlParams.get('c')) return urlParams.get('c');
             
-            // Priority 2: Subdomain
+            // Priority 2: Direct ClientId Parameter (for Editor/Dev)
+            if (urlParams.get('clientId')) return urlParams.get('clientId');
+
+            // Priority 3: Subdomain (client.sapatamu.id)
             const parts = host.split('.');
-            if (parts.length >= 3) {
-                // Handle: subdomain.beta.sapatamu.id (4 parts) or subdomain.sapatamu.id (3 parts)
-                if (parts[parts.length-2] === 'sapatamu') {
-                    return parts[0];
-                }
+            if (parts.length > 2 && parts[0] !== 'beta' && parts[0] !== 'www') {
+                return parts[0];
             }
             return null;
         }
@@ -124,80 +125,114 @@
         // --- SECTION LIBRARY (MODULAR BLOCKS) ---
         const SectionLibrary = {
             'cover': (c) => `
-                <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center bg-white">
+                <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center theme-bg">
                     <div class="absolute inset-0"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-30"></div>
                     <div class="relative z-10 px-8">
-                        <p class="text-[9px] tracking-[0.5em] uppercase mb-6 text-neutral-400 font-bold">${c.title || 'The Wedding Celebration'}</p>
-                        <h1 class="text-5xl font-serif text-neutral-900 mb-12">${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}</h1>
+                        <p class="text-[9px] tracking-[0.5em] uppercase mb-6 theme-text-muted font-bold">${c.title || 'The Wedding Celebration'}</p>
+                        <h1 class="text-5xl font-serif theme-text-main mb-12">${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}</h1>
                         <div class="mb-12">
-                            <p class="text-[9px] tracking-[0.2em] text-neutral-400 uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
-                            <h2 class="text-2xl font-serif italic text-neutral-800 guest-name-placeholder">Tamu Undangan</h2>
+                            <p class="text-[9px] tracking-[0.2em] theme-text-muted uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
+                            <h2 class="text-2xl font-serif italic theme-text-main guest-name-placeholder">Tamu Undangan</h2>
                         </div>
-                        <button onclick="startInvitation()" class="btn-primary">Buka Undangan</button>
+                        <button onclick="startInvitation()" class="btn-theme-primary">Buka Undangan</button>
                     </div>
                 </div>
             `,
+            'quote': (c) => `
+                <section class="py-24 px-8 text-center theme-bg-alt">
+                    <div class="reveal max-w-2xl mx-auto italic theme-text-dark font-serif opacity-80 leading-relaxed">
+                        <p class="text-3xl mb-6 font-script">"${c.quote_text || 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri...'}"</p>
+                        <p class="text-xs tracking-widest font-bold opacity-60 uppercase">${c.quote_ref || 'QS. Ar-Rum: 21'}</p>
+                    </div>
+                </section>
+            `,
             'mempelai': (c) => `
-                <section class="px-8 py-32 space-y-24 text-center">
+                <section class="px-8 py-32 space-y-24 text-center theme-bg">
                     <div class="reveal">
-                        <h4 class="font-serif italic text-3xl mb-6">the Groom</h4>
-                        <h4 class="font-serif italic text-3xl mb-1">${c.groom?.full_name || 'Nama Pria'}</h4>
-                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] opacity-60 leading-loose mb-4">${c.groom?.desc || ''}</p>
+                        <h4 class="font-serif italic text-3xl mb-6 theme-text-accent">the Groom</h4>
+                        <div class="w-48 h-48 mx-auto mb-8 rounded-full border-4 border-theme-accent p-2">
+                             <img src="${c.groom?.photo || ''}" class="w-full h-full object-cover rounded-full">
+                        </div>
+                        <h4 class="font-serif italic text-3xl mb-1 theme-text-main">${c.groom?.full_name || 'Nama Pria'}</h4>
+                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] theme-text-muted leading-loose mb-4">Putra dari Bp. ${c.groom?.father || 'X'} & Ibu ${c.groom?.mother || 'Y'}</p>
+                        <a href="${c.groom?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-4 py-2 rounded-full">INSTAGRAM</a>
                     </div>
                     <div class="reveal">
-                        <h4 class="font-serif italic text-3xl mb-6">the Bride</h4>
-                        <h4 class="font-serif italic text-3xl mb-1">${c.bride?.full_name || 'Nama Wanita'}</h4>
-                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] opacity-60 leading-loose mb-4">${c.bride?.desc || ''}</p>
+                        <h4 class="font-serif italic text-3xl mb-6 theme-text-accent">the Bride</h4>
+                        <div class="w-48 h-48 mx-auto mb-8 rounded-full border-4 border-theme-accent p-2">
+                             <img src="${c.bride?.photo || ''}" class="w-full h-full object-cover rounded-full">
+                        </div>
+                        <h4 class="font-serif italic text-3xl mb-1 theme-text-main">${c.bride?.full_name || 'Nama Wanita'}</h4>
+                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] theme-text-muted leading-loose mb-4">Putri dari Bp. ${c.bride?.father || 'A'} & Ibu ${c.bride?.mother || 'B'}</p>
+                        <a href="${c.bride?.ig || '#'}" target="_blank" class="text-[9px] font-bold tracking-widest theme-text-accent border theme-border-accent px-4 py-2 rounded-full">INSTAGRAM</a>
+                    </div>
+                </section>
+            `,
+            'story': (c) => `
+                <section class="py-24 px-8 theme-bg-alt">
+                    <h3 class="text-3xl font-serif italic text-center mb-16 theme-text-dark">Our Love Story</h3>
+                    <div class="max-w-md mx-auto">
+                        ${(c.story || [
+                            { date: 'First Meet', desc: 'Pertama kali kami bertemu...' },
+                            { date: 'Relationship', desc: 'Memutuskan untuk memulai perjalanan bersama...' },
+                            { date: 'Engagement', desc: 'Mengikat janji suci di depan keluarga...' }
+                        ]).map(s => `
+                            <div class="timeline-item reveal">
+                                <div class="timeline-dot"></div>
+                                <h4 class="font-bold text-sm uppercase tracking-widest theme-text-accent mb-2">${s.date}</h4>
+                                <p class="text-xs leading-relaxed theme-text-dark opacity-70">${s.desc}</p>
+                            </div>
+                        `).join('')}
                     </div>
                 </section>
             `,
             'acara': (c) => `
-                <section class="py-24 px-8 bg-neutral-50/50 text-center">
+                <section class="py-24 px-8 theme-bg-alt text-center">
                     <div class="max-w-xl mx-auto space-y-16">
-                        <h3 class="text-2xl font-serif italic mb-4">Wedding Events</h3>
+                        <h3 class="text-2xl font-serif italic mb-4 theme-text-main">Wedding Events</h3>
                         ${c.ev1 ? `
-                        <div class="reveal bg-white p-8 rounded-3xl shadow-sm border">
-                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase text-gold">Akad Nikah</p>
-                            <p class="text-lg font-serif mb-4">${c.ev1.time || ''}</p>
-                            <p class="text-[11px] uppercase tracking-widest text-neutral-500 mb-8">${c.ev1.loc || ''}</p>
-                            <a href="${c.ev1.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border border-gold rounded-full text-[9px] uppercase tracking-widest font-bold text-gold">Petunjuk Lokasi</a>
+                        <div class="reveal theme-card p-8 rounded-3xl shadow-sm border theme-border">
+                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase theme-text-accent">Akad Nikah</p>
+                            <p class="text-lg font-serif mb-4 theme-text-main">${c.ev1.time || ''}</p>
+                            <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">${c.ev1.loc || ''}</p>
+                            <a href="${c.ev1.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border theme-border-accent rounded-full text-[9px] uppercase tracking-widest font-bold theme-text-accent">Petunjuk Lokasi</a>
                         </div>` : ''}
                         ${c.ev2 ? `
-                        <div class="reveal bg-white p-8 rounded-3xl shadow-sm border">
-                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase text-gold">Resepsi</p>
-                            <p class="text-lg font-serif mb-4">${c.ev2.time || ''}</p>
-                            <p class="text-[11px] uppercase tracking-widest text-neutral-500 mb-8">${c.ev2.loc || ''}</p>
-                            <a href="${c.ev2.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border border-gold rounded-full text-[9px] uppercase tracking-widest font-bold text-gold">Petunjuk Lokasi</a>
+                        <div class="reveal theme-card p-8 rounded-3xl shadow-sm border theme-border">
+                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase theme-text-accent">Resepsi</p>
+                            <p class="text-lg font-serif mb-4 theme-text-main">${c.ev2.time || ''}</p>
+                            <p class="text-[11px] uppercase tracking-widest theme-text-muted mb-8">${c.ev2.loc || ''}</p>
+                            <a href="${c.ev2.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border theme-border-accent rounded-full text-[9px] uppercase tracking-widest font-bold theme-text-accent">Petunjuk Lokasi</a>
                         </div>` : ''}
                     </div>
                 </section>
             `,
             'galeri': (c) => `
-                <section class="py-24 px-4 text-center">
-                    <h3 class="text-2xl font-serif italic mb-12">Our Moments</h3>
+                <section class="py-24 px-4 text-center theme-bg">
+                    <h3 class="text-2xl font-serif italic mb-12 theme-text-main">Our Moments</h3>
                     <div class="grid grid-cols-2 gap-2 max-w-lg mx-auto">
-                        ${(c.gallery || []).map(src => `<img src="${src}" class="w-full aspect-square object-cover rounded-xl reveal">`).join('')}
+                        ${(c.gallery || []).map(src => `<img src="${src}" class="w-full aspect-square object-cover rounded-xl reveal theme-border">`).join('')}
                     </div>
                 </section>
             `,
             'kado': (c) => `
-                <section class="py-24 px-8 text-center bg-neutral-50/50">
-                    <h3 class="text-2xl font-serif italic mb-12">Digital Gift</h3>
+                <section class="py-24 px-8 text-center theme-bg-alt">
+                    <h3 class="text-2xl font-serif italic mb-12 theme-text-main">Digital Gift</h3>
                     <div class="space-y-6">
                         ${(c.banking || []).map(acc => `
-                            <div class="reveal max-w-sm mx-auto gift-card shadow-sm bg-white">
-                                <p class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK ${acc.type.toUpperCase()}</p>
-                                <h4 class="text-2xl font-serif mb-1">${acc.rekening}</h4>
-                                <p class="text-[11px] uppercase opacity-60 mb-6">A/N ${acc.owner}</p>
-                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-neutral-900 text-white px-8 py-3 rounded-full uppercase">Salin Rekening</button>
+                            <div class="reveal max-w-sm mx-auto theme-card shadow-sm p-8 rounded-3xl border theme-border">
+                                <p class="text-[10px] font-bold tracking-widest uppercase mb-2 theme-text-accent">BANK ${acc.type.toUpperCase()}</p>
+                                <h4 class="text-2xl font-serif mb-1 theme-text-main">${acc.rekening}</h4>
+                                <p class="text-[11px] uppercase theme-text-muted mb-6">A/N ${acc.owner}</p>
+                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest theme-btn-dark px-8 py-3 rounded-full uppercase">Salin Rekening</button>
                             </div>
                         `).join('')}
                     </div>
                 </section>
             `,
             'access_card': (c) => `
-                <section class="py-24 px-8 bg-neutral-900 text-white text-center">
-                    <div class="reveal max-w-sm mx-auto bg-white text-neutral-900 p-8 rounded-[40px]">
+                <section class="py-24 px-8 theme-bg-dark text-center">
+                    <div class="reveal max-w-sm mx-auto theme-card text-neutral-900 p-8 rounded-[40px]">
                         <p class="text-[10px] font-bold tracking-[0.3em] uppercase mb-8 opacity-40">Digital Access Card</p>
                         <div class="w-48 h-48 bg-stone-100 mx-auto mb-8 rounded-3xl flex items-center justify-center border-4 border-stone-50">
                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SapaTamu" class="w-40 h-40 qrcode-img">

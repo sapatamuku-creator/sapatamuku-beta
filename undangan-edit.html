@@ -8,15 +8,126 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; }
-        .editor-container { height: calc(100vh - 64px); }
-        .preview-frame {
-            width: 375px;
-            height: 667px;
-            border: 12px solid #1e293b;
-            border-radius: 40px;
+        :root {
+            --primary: #6366f1;
+            --primary-soft: #eef2ff;
+            --accent: #f43f5e;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
             overflow: hidden;
+        }
+
+        /* --- MODERN SWITCH TOGGLE --- */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #e2e8f0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        /* --- PREMIUM CARD UI --- */
+        .config-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .config-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Sidebar Glassmorphism */
+        aside {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .input-field:focus {
             background: white;
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px var(--primary-soft);
+        }
+
+        #preview-container {
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .phone-mockup {
+            width: 320px;
+            height: 650px;
+            background: #000;
+            border-radius: 40px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         .custom-scroll::-webkit-scrollbar { width: 5px; }
@@ -47,41 +158,6 @@
         </div>
     </nav>
 
-    <div class="flex editor-container">
-        <!-- SIDEBAR NAV -->
-        <aside class="w-72 bg-white border-r flex flex-col p-4 gap-2 z-40">
-            <button onclick="switchTab('informasi', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 tab-active transition-all">
-                <span class="text-lg">💍</span> Informasi Dasar
-            </button>
-            <button onclick="switchTab('mempelai', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
-                <span class="text-lg">👩‍❤️‍👨</span> Data Mempelai
-            </button>
-            <button onclick="switchTab('acara', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
-                <span class="text-lg">📍</span> Detail Acara
-            </button>
-            <button onclick="switchTab('galeri', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
-                <span class="text-lg">🖼️</span> Galeri Foto
-            </button>
-            <button onclick="switchTab('musik', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
-                <span class="text-lg">🎵</span> Musik & Fitur
-            </button>
-            <button onclick="switchTab('layout', this)" class="tab-link flex items-center gap-3 p-4 rounded-2xl font-bold text-sm text-stone-500 hover:bg-stone-50 transition-all">
-                <span class="text-lg">🏗️</span> Tata Letak (Layout)
-            </button>
-            
-            <div class="mt-auto p-6 bg-rose-50 rounded-3xl border border-rose-100">
-                <h4 class="font-bold text-rose-800 mb-1 text-xs uppercase tracking-wider">Status Preview</h4>
-                <p class="text-rose-600 text-[10px] leading-relaxed">Preview di kanan diperbarui secara otomatis saat Anda mengetik.</p>
-            </div>
-        </aside>
-
-        <!-- FORM EDITOR -->
-        <main class="flex-1 bg-white overflow-y-auto p-12 custom-scroll">
-            <div class="max-w-2xl mx-auto">
-                <h2 id="section-title" class="text-3xl font-extrabold mb-10 text-stone-800">Informasi Dasar</h2>
-                
-                <!-- TAB: INFORMASI DASAR -->
-                <div id="tab-informasi" class="tab-pane space-y-8">
                     <div>
                         <label class="block text-sm font-bold text-stone-700 mb-2">Judul Undangan (Header)</label>
                         <input type="text" id="in_title" oninput="syncPreview()" class="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none transition" placeholder="The Wedding of...">
@@ -164,6 +240,21 @@
                         </div>
                         <div id="bank-list" class="space-y-3 mt-4">
                             <!-- Daftar Rekening yang ditambahkan akan muncul di sini -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: QUOTE -->
+                <div id="tab-quote" class="tab-pane hidden space-y-6">
+                    <h2 class="text-xl font-serif mb-6">Ayat & Kutipan</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase mb-2">Isi Kutipan/Ayat</label>
+                            <textarea id="in_quote_text" rows="4" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="Masukkan ayat atau kutipan bijak..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase mb-2">Sumber/Referensi</label>
+                            <input type="text" id="in_quote_ref" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: QS. Ar-Rum: 21">
                         </div>
                     </div>
                 </div>
@@ -256,47 +347,70 @@
         let clientSsId = "";
         let galleryImages = [];
         let bankAccounts = [];
-        let sectionsOrder = ['cover', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
-        let activeSections = ['cover', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
+
+        // TAB NAVIGATION
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
 
         // --- SECTION MANAGEMENT LOGIC ---
         const SECTION_NAMES = {
             'cover': 'Cover Depan',
+            'quote': 'Ayat & Kutipan',
             'mempelai': 'Data Mempelai',
-            'acara': 'Detail Acara & Peta',
-            'galeri': 'Galeri Foto Moments',
-            'access_card': 'Digital Access (QR)',
-            'kado': 'Kado Digital / Angpao'
+            'story': 'Cerita Kita (Story)',
+            'acara': 'Detail Acara',
+            'galeri': 'Galeri Foto',
+            'access_card': 'Digital Access Card',
+            'kado': 'Kado Digital'
         };
 
-        function renderSectionControls() {
-            const container = document.getElementById('section-list-container');
+        let sectionsOrder = ['cover', 'quote', 'mempelai', 'story', 'acara', 'galeri', 'access_card', 'kado'];
+        let activeSections = ['cover', 'quote', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
+
+        function renderLayoutControls(savedOrder) {
+            if (savedOrder) sectionsOrder = savedOrder;
+            const container = document.getElementById('layout-container');
             container.innerHTML = "";
 
-            sectionsOrder.forEach((key, index) => {
-                const isActive = activeSections.includes(key);
+            sectionsOrder.forEach((id, index) => {
+                const name = SECTION_NAMES[id] || id;
+                const isActive = activeSections.includes(id);
                 const div = document.createElement('div');
-                div.className = `flex items-center justify-between p-4 rounded-2xl border transition-all ${isActive ? 'bg-white border-stone-200 shadow-sm' : 'bg-stone-50 border-stone-100 opacity-60'}`;
-                
+                div.className = "config-card flex items-center justify-between";
                 div.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleSection('${key}')" class="w-5 h-5 rounded-lg border-stone-300 text-rose-500 focus:ring-rose-200">
-                        <div class="flex flex-col text-left">
-                            <span class="text-xs font-bold text-stone-800 uppercase tracking-wider">${SECTION_NAMES[key]}</span>
-                            <span class="text-[9px] text-stone-400 font-medium">Seksi #${index + 1}</span>
+                        <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 cursor-move">
+                            <i class="fas fa-grip-vertical"></i>
                         </div>
+                        <span class="font-bold text-sm">${name}</span>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="moveSection(${index}, -1)" class="p-2 hover:bg-stone-100 rounded-xl text-stone-400 transition" ${index === 0 ? 'disabled' : ''}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>
-                        </button>
-                        <button onclick="moveSection(${index}, 1)" class="p-2 hover:bg-stone-100 rounded-xl text-stone-400 transition" ${index === sectionsOrder.length - 1 ? 'disabled' : ''}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                        </button>
+                    <div class="flex items-center gap-6">
+                        <div class="flex items-center gap-2">
+                            <button onclick="moveSection(${index}, -1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-xs text-slate-400"><i class="fas fa-chevron-up"></i></button>
+                            <button onclick="moveSection(${index}, 1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-xs text-slate-400"><i class="fas fa-chevron-down"></i></button>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleSection('${id}')">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 `;
                 container.appendChild(div);
             });
+        }
+
+        function toggleSection(id) {
+            if (activeSections.includes(id)) {
+                activeSections = activeSections.filter(s => s !== id);
+            } else {
+                activeSections.push(id);
+            }
+            syncPreview();
         }
 
         function moveSection(index, dir) {
@@ -477,13 +591,21 @@
                 gallery: galleryImages,
                 banking: bankAccounts,
                 sections_order: sectionsOrder.filter(s => activeSections.includes(s)),
+                quote_text: document.getElementById('in_quote_text')?.value,
+                quote_ref: document.getElementById('in_quote_ref')?.value,
                 groom: {
                     full_name: document.getElementById('in_pria_full').value,
-                    desc: document.getElementById('in_pria_desc').value
+                    desc: document.getElementById('in_pria_desc').value,
+                    father: document.getElementById('in_pria_father')?.value,
+                    mother: document.getElementById('in_pria_mother')?.value,
+                    ig: document.getElementById('in_pria_ig')?.value
                 },
                 bride: {
                     full_name: document.getElementById('in_wanita_full').value,
-                    desc: document.getElementById('in_wanita_desc').value
+                    desc: document.getElementById('in_wanita_desc').value,
+                    father: document.getElementById('in_wanita_father')?.value,
+                    mother: document.getElementById('in_wanita_mother')?.value,
+                    ig: document.getElementById('in_wanita_ig')?.value
                 },
                 ev1: {
                     time: document.getElementById('in_ev1_time').value,
@@ -521,8 +643,22 @@
                 gallery: galleryImages,
                 banking: bankAccounts,
                 sections_order: sectionsOrder.filter(s => activeSections.includes(s)),
-                groom: { full_name: document.getElementById('in_pria_full').value, desc: document.getElementById('in_pria_desc').value, ig: document.getElementById('in_pria_ig').value },
-                bride: { full_name: document.getElementById('in_wanita_full').value, desc: document.getElementById('in_wanita_desc').value, ig: document.getElementById('in_wanita_ig').value },
+                quote_text: document.getElementById('in_quote_text')?.value,
+                quote_ref: document.getElementById('in_quote_ref')?.value,
+                groom: { 
+                    full_name: document.getElementById('in_pria_full').value, 
+                    desc: document.getElementById('in_pria_desc').value, 
+                    father: document.getElementById('in_pria_father')?.value,
+                    mother: document.getElementById('in_pria_mother')?.value,
+                    ig: document.getElementById('in_pria_ig').value 
+                },
+                bride: { 
+                    full_name: document.getElementById('in_wanita_full').value, 
+                    desc: document.getElementById('in_wanita_desc').value, 
+                    father: document.getElementById('in_wanita_father')?.value,
+                    mother: document.getElementById('in_wanita_mother')?.value,
+                    ig: document.getElementById('in_wanita_ig').value 
+                },
                 ev1: { time: document.getElementById('in_ev1_time').value, loc: document.getElementById('in_ev1_loc').value, maps: document.getElementById('in_ev1_maps').value },
                 ev2: { time: document.getElementById('in_ev2_time').value, loc: document.getElementById('in_ev2_loc').value, maps: document.getElementById('in_ev2_maps').value }
             };
@@ -626,13 +762,19 @@
                         if (c.groom) { 
                             document.getElementById('in_pria_full').value = c.groom.full_name || ""; 
                             document.getElementById('in_pria_desc').value = c.groom.desc || ""; 
+                            document.getElementById('in_pria_father').value = c.groom.father || ""; 
+                            document.getElementById('in_pria_mother').value = c.groom.mother || ""; 
                             document.getElementById('in_pria_ig').value = c.groom.ig || ""; 
                         }
                         if (c.bride) { 
                             document.getElementById('in_wanita_full').value = c.bride.full_name || ""; 
                             document.getElementById('in_wanita_desc').value = c.bride.desc || ""; 
+                            document.getElementById('in_wanita_father').value = c.bride.father || ""; 
+                            document.getElementById('in_wanita_mother').value = c.bride.mother || ""; 
                             document.getElementById('in_wanita_ig').value = c.bride.ig || ""; 
                         }
+                        if (c.quote_text) document.getElementById('in_quote_text').value = c.quote_text;
+                        if (c.quote_ref) document.getElementById('in_quote_ref').value = c.quote_ref;
                         if (c.ev1) { 
                             document.getElementById('in_ev1_time').value = c.ev1.time || ""; 
                             document.getElementById('in_ev1_loc').value = c.ev1.loc || ""; 

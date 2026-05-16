@@ -1,0 +1,97 @@
+/* FOREST PREMIUM THEME - CLONING mitagildan */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&family=Great+Vibes&display=swap');
+
+:root {
+    --theme-bg: #1a2e1a; /* Dark Forest Green */
+    --theme-bg-alt: #f9f4e8; /* Cream/Ivory */
+    --theme-bg-dark: #0d1a0d;
+    --theme-text-main: #ffffff;
+    --theme-text-dark: #2c3e50;
+    --theme-text-muted: #94a3b8;
+    --theme-text-accent: #d4af37; /* Gold */
+    --theme-border: #2a3d2a;
+    --theme-primary: #d4af37;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--theme-bg-alt);
+    color: var(--theme-text-dark);
+}
+
+.font-serif { font-family: 'Playfair Display', serif; }
+.font-script { font-family: 'Great Vibes', cursive; }
+
+/* Custom Backgrounds for Sections */
+.theme-bg { background-color: var(--theme-bg); color: #ffffff; }
+.theme-bg-alt { background-color: var(--theme-bg-alt); color: var(--theme-text-dark); }
+.theme-bg-dark { background-color: var(--theme-bg-dark); color: #ffffff; }
+
+/* Card Styling */
+.theme-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.theme-text-main { color: var(--theme-text-main); }
+.theme-text-dark { color: var(--theme-text-dark); }
+.theme-text-muted { color: var(--theme-text-muted); }
+.theme-text-accent { color: var(--theme-text-accent); }
+
+.theme-border { border-color: var(--theme-border); }
+.theme-border-accent { border-color: var(--theme-text-accent); }
+
+/* Buttons */
+.btn-theme-primary {
+    background: var(--theme-primary);
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 15px 40px;
+    transition: all 0.3s ease;
+    border: 1px solid var(--theme-primary);
+}
+
+.btn-theme-primary:hover {
+    background: transparent;
+    color: var(--theme-primary);
+}
+
+/* Timeline/Story Specific */
+.timeline-item {
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 40px;
+    border-left: 2px solid var(--theme-text-accent);
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -9px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background: var(--theme-text-accent);
+    border-radius: 50%;
+}
+
+/* Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1s cubic-bezier(0.2, 1, 0.3, 1);
+}
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hero Overlay */
+.hero-overlay {
+    background: linear-gradient(to bottom, rgba(26,46,26,0.3), rgba(26,46,26,0.8));
+}

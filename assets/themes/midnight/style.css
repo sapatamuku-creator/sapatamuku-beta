@@ -1,64 +1,44 @@
-/* THEME: MIDNIGHT SAPPHIRE */
+/* MIDNIGHT SAPPHIRE THEME */
 :root {
-    --primary: #D4AF37;
-    --bg: #0f172a;
-    --card-bg: #1e293b;
-    --text-main: #f8fafc;
-    --text-dim: #94a3b8;
-    --gold: #D4AF37;
+    --theme-bg: #0f172a;
+    --theme-bg-alt: #1e293b;
+    --theme-bg-dark: #020617;
+    --theme-text-main: #f8fafc;
+    --theme-text-muted: #94a3b8;
+    --theme-text-accent: #38bdf8;
+    --theme-border: #334155;
+    --theme-primary: #38bdf8;
 }
 
-body {
-    background-color: var(--bg) !important;
-    background-image: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
-    color: var(--text-main) !important;
+.theme-bg { background-color: var(--theme-bg); color: var(--theme-text-main); }
+.theme-bg-alt { background-color: var(--theme-bg-alt); }
+.theme-bg-dark { background-color: var(--theme-bg-dark); }
+.theme-card { background-color: #1e293b; color: white; }
+
+.theme-text-main { color: var(--theme-text-main); }
+.theme-text-muted { color: var(--theme-text-muted); }
+.theme-text-accent { color: var(--theme-text-accent); }
+
+.theme-border { border-color: var(--theme-border); }
+.theme-border-accent { border-color: var(--theme-text-accent); }
+
+.btn-theme-primary {
+    background: var(--theme-primary);
+    color: #0f172a;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    padding: 18px 50px;
+    transition: all 0.3s ease;
 }
 
-#cover {
-    background: var(--bg) !important;
-    color: var(--text-main) !important;
+.theme-btn-dark {
+    background: #0f172a;
+    color: white;
+    border: 1px solid #334155;
 }
 
-.bg-pattern {
-    background-image: none !important;
-}
-
-/* Typography */
-.font-serif {
-    color: var(--gold) !important;
-}
-
-h1, h2, h3, h4 {
-    color: var(--gold) !important;
-}
-
-/* Cards */
-.gift-card, .wish-card, .bg-white {
-    background: var(--card-bg) !important;
-    border: 1px solid rgba(212, 175, 55, 0.2) !important;
-    color: var(--text-main) !important;
-}
-
-.text-neutral-400, .text-neutral-500, .text-neutral-600 {
-    color: var(--text-dim) !important;
-}
-
-.text-neutral-900, .text-neutral-800 {
-    color: var(--text-main) !important;
-}
-
-/* Buttons */
-.btn-primary {
-    background: var(--gold) !important;
-    color: #000 !important;
-}
-
-/* QR Code */
-#qr-code {
-    filter: invert(1) brightness(1.5);
-}
-
-/* Sections */
-section {
-    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-}
+/* Override body for dark mode */
+body { background: #020617; color: white; }
