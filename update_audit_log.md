@@ -253,3 +253,12 @@ Untuk mendukung sistem **Unit-Based SaaS**, struktur folder diatur sebagai berik
 > [!IMPORTANT]
 > **Catatan Keamanan & Integritas:**
 > Seluruh log audit dari tanggal 12 Mei hingga 16 Mei ini bersifat kumulatif dan tidak boleh dihapus. Log ini berfungsi sebagai technical history tunggal untuk memantau evolusi arsitektur SapaTamu.Ku dari sistem monolitik ke sistem Modular Unit-Based SaaS.
+
+---
+
+### **Phase 2.3: Critical Infrastructure Stabilization**
+*   **Supabase URL Correction**: Fixed a fatal typo in the Supabase project URL across all core files (Corrected from `rdfvxy` to `rzdfvy`). This resolves the "Invalid API key" error.
+*   **Database Schema Standardization**: Unified the configuration column name to `config` across the Editor and all Theme Units, aligning with the primary SQL schema.
+*   **Unit Data Extraction Overhaul**: Updated `unit-forest.html`, `unit-midnight.html`, and `unit-classic.html` to properly parse the JSON `config` column, ensuring all client-specific data (Story, Banking, etc.) renders perfectly.
+*   **Failsafe Editor Loading**: Added robust JSON parsing and error handling in the editor initialization to prevent UI freezes when loading legacy or malformed configuration data.
+*   **Beta Navigation Integrity**: Finalized the "Lihat Live" routing to ensure testing remains contained within the `beta.sapatamu.id` environment without leaking to production domains.

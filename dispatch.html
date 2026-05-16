@@ -14,7 +14,8 @@
     <div class="loader"></div>
     
     <script>
-        const _supabase = supabase.createClient('https://cikptujrdfvxyfihwamh.supabase.co', 'sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B');
+        const SUPABASE_URL = "https://cikptujrzdfvyfihwamh.supabase.co";
+        const _supabase = supabase.createClient(SUPABASE_URL, 'sb_publishable_seQaFKa8TwHg7fVTK0GHIg_T0wT93_B');
         
         async function dispatch() {
             const urlParams = new URLSearchParams(window.location.search);
