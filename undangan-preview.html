@@ -220,84 +220,72 @@
                 const { data, error } = await _supabase
                     .from('invitations')
                     .select('*')
-                    .ilike('client_id', clientId) // Gunakan ilike agar case-insensitive
-                    .maybeSingle(); // Gunakan maybeSingle agar tidak error jika kosong
+                    .ilike('client_id', clientId)
+                    .maybeSingle();
 
-                if (error) {
-                    console.error("Supabase Error:", error);
-                }
+                if (error) console.error("Supabase Error:", error);
 
                 if (data) {
-                    // alert("Debug: Data ditemukan untuk " + clientId);
-                    // Ambil data yang tidak kosong
-                    let c = data.theme_config;
-                    if (!c || Object.keys(c).length === 0) c = data.config;
-                    
-                    if (c && Object.keys(c).length > 0) {
-                    
-                    document.getElementById('cv_header').innerText = c.title || "The Wedding Celebration";
-                    document.getElementById('cv_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
-                    document.getElementById('hero_names').innerText = `${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}`;
-                    document.getElementById('cv_bg').src = c.bg_image || "";
-                    document.getElementById('hero_bg').src = c.bg_image || "";
-                    document.getElementById('hero_hashtag').innerText = c.hashtag || "";
-                    document.getElementById('hero_date').innerText = c.event_date ? new Date(c.event_date).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : "";
-                    
-                    if (c.gallery && c.gallery.length > 0) {
-                        const grid = document.getElementById('gallery-grid');
-                        grid.innerHTML = "";
-                        c.gallery.forEach(src => {
-                            const img = document.createElement('img');
-                            img.src = src;
-                            img.className = "w-full aspect-square object-cover rounded-xl reveal";
-                            grid.appendChild(img);
-                        });
-                    }
+                    const savedThemeId = data.theme_id;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const requestedTheme = urlParams.get('theme');
 
-                    // Render Banking (Multiple)
-                    const giftContainer = document.getElementById('gift-list');
-                    if (c.banking && c.banking.length > 0) {
-                        giftContainer.innerHTML = "";
-                        c.banking.forEach(acc => {
-                            const logo = BANK_LOGOS[acc.type.toLowerCase()] || "";
-                            const div = document.createElement('div');
-                            div.className = "reveal max-w-sm mx-auto gift-card shadow-xl mb-6";
-                            div.innerHTML = `
-                                ${logo ? `<img src="${logo}" class="h-6 mx-auto mb-6 grayscale opacity-70">` : ""}
-                                <p class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK ${acc.type.toUpperCase()}</p>
-                                <h4 class="text-2xl font-serif mb-1 tracking-wider">${acc.rekening}</h4>
-                                <p class="text-[11px] uppercase tracking-widest opacity-60 mb-8">A/N ${acc.owner}</p>
-                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-neutral-900 text-white px-8 py-3 rounded-full uppercase">Salin Rekening</button>
-                            `;
-                            giftContainer.appendChild(div);
-                        });
-                    } else {
-                        document.getElementById('gift-section').classList.add('hidden');
-                    }
+                    // HANYA TERAPKAN DATA JIKA TEMA COCOK
+                    // Jika user melihat preview tema lain, biarkan Starter Pack asli yang muncul
+                    if (savedThemeId === requestedTheme || !requestedTheme) {
+                        let c = data.theme_config;
+                        if (!c || Object.keys(c).length === 0) c = data.config;
+                        
+                        if (c && Object.keys(c).length > 0) {
+                            const config = typeof c === 'string' ? JSON.parse(c) : c;
+                            
+                            // Gunakan applyLivePreview jika tersedia (dari script tema)
+                            if (typeof window.applyLivePreview === 'function') {
+                                window.applyLivePreview(config);
+                            } else {
+                                // Manual Rendering Fallback
+                                document.getElementById('cv_header').innerText = config.title || "The Wedding Celebration";
+                                document.getElementById('cv_names').innerText = `${config.pria_short || 'Pria'} & ${config.wanita_short || 'Wanita'}`;
+                                document.getElementById('hero_names').innerText = `${config.pria_short || 'Pria'} & ${config.wanita_short || 'Wanita'}`;
+                                document.getElementById('cv_bg').src = config.bg_image || "";
+                                document.getElementById('hero_bg').src = config.bg_image || "";
+                                document.getElementById('hero_hashtag').innerText = config.hashtag || "";
+                                
+                                if (config.event_date) eventDate = new Date(config.event_date).getTime();
+                                if (config.music_url) audio.src = config.music_url;
 
-                    if (c.groom) {
-                        document.getElementById('groom_name').innerText = c.groom.full_name || "Mempelai Pria";
-                        document.getElementById('groom_desc').innerText = c.groom.desc || "";
-                        document.getElementById('groom_ig').href = c.groom.ig ? `https://instagram.com/${c.groom.ig.replace('@','')}` : "#";
-                    }
-                    if (c.bride) {
-                        document.getElementById('bride_name').innerText = c.bride.full_name || "Mempelai Wanita";
-                        document.getElementById('bride_desc').innerText = c.bride.desc || "";
-                        document.getElementById('bride_ig').href = c.bride.ig ? `https://instagram.com/${c.bride.ig.replace('@','')}` : "#";
-                    }
-                    if (c.ev1) {
-                        document.getElementById('ev1_time').innerText = c.ev1.time || "-";
-                        document.getElementById('ev1_loc').innerText = c.ev1.loc || "-";
-                        document.getElementById('ev1_maps').href = c.ev1.maps || "#";
-                    }
-                    if (c.ev2) {
-                        document.getElementById('ev2_time').innerText = c.ev2.time || "-";
-                        document.getElementById('ev2_loc').innerText = c.ev2.loc || "-";
-                        document.getElementById('ev2_maps').href = c.ev2.maps || "#";
-                    }
+                                // Gallery
+                                const grid = document.getElementById('gallery-grid');
+                                if (grid && config.gallery && config.gallery.length > 0) {
+                                    grid.innerHTML = "";
+                                    config.gallery.forEach(src => {
+                                        const img = document.createElement('img');
+                                        img.src = src;
+                                        img.className = "w-full aspect-square object-cover rounded-xl reveal";
+                                        grid.appendChild(img);
+                                    });
+                                }
 
-                    if (c.music_url) audio.src = c.music_url;
-                    eventDate = c.event_date ? new Date(c.event_date).getTime() : null;
+                                // Banking
+                                const giftContainer = document.getElementById('gift-list');
+                                if (giftContainer && config.banking && config.banking.length > 0) {
+                                    giftContainer.innerHTML = "";
+                                    config.banking.forEach(acc => {
+                                        const logo = BANK_LOGOS[acc.type.toLowerCase()] || "";
+                                        const div = document.createElement('div');
+                                        div.className = "reveal max-w-sm mx-auto gift-card shadow-xl mb-6";
+                                        div.innerHTML = `
+                                            ${logo ? `<img src="${logo}" class="h-6 mx-auto mb-6 grayscale opacity-70">` : ""}
+                                            <p class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK ${acc.type.toUpperCase()}</p>
+                                            <h4 class="text-2xl font-serif mb-1 tracking-wider">${acc.rekening}</h4>
+                                            <p class="text-[11px] uppercase tracking-widest opacity-60 mb-8">A/N ${acc.owner}</p>
+                                            <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-neutral-900 text-white px-8 py-3 rounded-full uppercase">Salin Rekening</button>
+                                        `;
+                                        giftContainer.appendChild(div);
+                                    });
+                                }
+                            }
+                        }
                     }
                 }
             } catch (err) { console.error("Init error:", err); }
