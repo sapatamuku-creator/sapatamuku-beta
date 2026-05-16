@@ -1,9 +1,88 @@
-# 📑 SAPATAMU.KU UPDATE AUDIT LOG (v1.3)
+# 📑 SAPATAMU.KU UPDATE AUDIT LOG (Cumulative Record)
+> [!CAUTION]
+> **PROTOKOL UNTUK AI ASSISTANT:**
+> DILARANG KERAS menghapus, memodifikasi, atau menimpa (overwrite) entri audit dari tanggal-tanggal sebelumnya. File ini bersifat KUMULATIF. Setiap update baru HARUS ditambahkan di bawah entri terakhir atau di seksi tanggal yang baru tanpa menghilangkan data historis yang sudah ada. Pelanggaran terhadap integritas data audit akan merusak jejak sejarah pengembangan (Audit Trail).
+
 **Environment:** `D:\Google Antigrafity\SapaTamu.Ku`
-**Tanggal:** 16 Mei 2026
-**Status:** Beta Testing (Ready for Production Sync)
 
 ---
+
+## 📅 12 MEI 2026
+**Status:** Project Genesis (Pondasi Sistem)
+
+### 1. Infrastruktur Dasar
+Konfigurasi Project Awal dan lingkungan pengembangan.
+- **Setup Koneksi Supabase**: Inisialisasi database untuk penyimpanan undangan modular.
+- **Struktur Folder Standar**: Menetapkan arsitektur direktori untuk aset tema dan backend.
+
+### 2. Digital Guestbook Restoration
+Restorasi modul buku tamu digital dari Legacy V7.6.
+- **Fitur**: Implementasi Glassmorphism Modal untuk formulir entri tamu.
+- **Integrasi**: Koneksi awal dengan Google Apps Script Production URL.
+
+---
+
+## 📅 13 MEI 2026
+**Status:** Alpha Development (Core Features)
+
+### 1. Dynamic Event Config System
+Membangun sistem konfigurasi acara yang fleksibel per klien.
+- **Navigation**: Implementasi Floating Nav Bar untuk kemudahan navigasi antar modul SaaS.
+- **API**: Integrasi awal dengan `ConfigAPI.gs` untuk manajemen data multi-tenant.
+
+### 2. Vercel Deployment Pipeline
+Automasi proses publikasi undangan ke internet.
+- **Otomasi**: Implementasi workflow "Buat Sheet" untuk registrasi klien baru secara otomatis.
+- **Auth**: Konfigurasi autentikasi Google Drive & Sheets API untuk sinkronisasi folder.
+
+---
+
+## 📅 14 MEI 2026
+**Status:** Multi-Tenant Core Deployment
+
+### 1. Subdomain Factory Logic
+Implementasi ekosistem pendaftaran subdomain otomatis untuk klien.
+- **Validasi**: Backend sekarang memvalidasi ketersediaan subdomain secara ketat terhadap Kolom J di Master Sheet.
+- **Naming Convention**: Penamaan subdomain otomatis berbasis input nama klien (Read-Only) untuk konsistensi branding.
+
+### 2. WhatsApp Preview Engine
+Finalisasi modul preview undangan WhatsApp.
+- **Fitur**: Memungkinkan klien melihat tampilan link undangan saat dibagikan di WA (Open Graph / Meta Tags).
+
+---
+
+## 📅 15 MEI 2026
+**Status:** Alpha to Beta Transition
+
+### 1. Real-Time UI Synchronization Engine
+Implementasi arsitektur komunikasi antar-jendela untuk sinkronisasi instan.
+- **Teknologi**: `window.postMessage` API.
+- **Fitur**: Perubahan di editor langsung terpantul di preview tanpa reload.
+```javascript
+// Editor Side (undangan-edit.html)
+iframe.contentWindow.postMessage({ type: 'sync', config }, '*');
+
+// Preview Side (undangan-preview.html)
+window.addEventListener('message', (event) => {
+    if (event.data.type === 'sync') applyStyles(event.data.config);
+});
+```
+
+### 2. Dual-Sync Persistence Layer
+Sistem penyimpanan ganda untuk memastikan redundansi data dan kemudahan operasional backend.
+- **Supabase**: Primary storage untuk rendering undangan cepat.
+- **Google Sheets**: Backend operasional untuk 'Welcome Sign' dan rekapitulasi klien.
+- **Otomasi**: Script 'Buat Sheet' otomatis menduplikasi template `Config_Invitation`.
+
+### 3. Streamlined MP3 Asset Management
+Migrasi dari input URL manual ke sistem upload file langsung.
+- **Integrasi**: Cloudinary Audio API.
+- **UX**: Tombol "Pilih Musik" yang langsung mengunggah file ke cloud dan menyimpan URL-nya.
+
+---
+
+## 📅 16 MEI 2026
+**Status:** Beta Testing (Ready for Production Sync)
 
 ## 📝 DESKRIPSI UPDATE
 Update kali ini berfokus pada **Finalisasi Modular Page Builder** dan **Premium UX Overhaul**. Sistem undangan telah bertransformasi dari sistem template statis menjadi sistem blok dinamis yang memungkinkan fleksibilitas penuh bagi klien.
@@ -11,7 +90,12 @@ Update kali ini berfokus pada **Finalisasi Modular Page Builder** dan **Premium 
 ### 1. Sistem Universal Guest Link (Public Access)
 Kini tamu undangan dapat mengakses undangan tanpa perlu melalui subdomain klien.
 - **Format URL**: `sapatamu.id/undangan.html?u=username`
-- **Tujuan**: Memudahkan akses tamu yang tidak memiliki hak akses SSID subdomain dan berfungsi sebagai preview publik untuk calon klien baru.
+```javascript
+// Logic Penangkapan URL (undangan.html)
+const urlParams = new URLSearchParams(window.location.search);
+const clientId = urlParams.get('u') || urlParams.get('id');
+loadInvitationData(clientId);
+```
 
 ### 2. Tema "Forest" (Cloning mitagildan)
 Implementasi tema baru yang dikloning secara presisi dari referensi premium.
@@ -22,8 +106,16 @@ Implementasi tema baru yang dikloning secara presisi dari referensi premium.
 Perombakan total antarmuka editor klien (`undangan-edit.html`).
 - **3-Column Workspace**: Navigasi Sidebar | Form Editor | Live Preview Mockup.
 - **Switch Toggle**: Mengganti checkbox lama dengan slider ON/OFF yang modern untuk kontrol seksi.
-- **Asset Upload Engine**: Integrasi Cloudinary langsung dari editor untuk:
-    - Background Utama.
+- **Asset Upload Engine**: Integrasi Cloudinary langsung dari editor.
+```javascript
+// Cloudinary Auto-Optimize Logic
+function uploadToCloudinary(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'sapatamu_preset');
+    // Result: returns auto-compressed webp/jpg URL
+}
+```
     - Foto Mempelai (Pria/Wanita).
     - Musik Latar (File MP3).
 
@@ -73,6 +165,23 @@ async function handleFileUpload(input, type) {
 }
 ```
 
+### **C. Two-Way Color Synchronization (UX Polish)**
+Implementasi sinkronisasi 2-arah antara Color Picker dan Input Text Hex untuk presisi visual.
+```javascript
+// updateColorFromPicker & updateColorFromText logic
+function updateColorFromPicker(picker, textId) {
+    document.getElementById(textId).value = picker.value.toUpperCase();
+    syncPreview();
+}
+function updateColorFromText(input, pickerId) {
+    const color = input.value;
+    if (/^#[0-9A-F]{6}$/i.test(color)) {
+        document.getElementById(pickerId).value = color;
+        syncPreview();
+    }
+}
+```
+
 ---
 
 ## 📂 STRUKTUR FOLDER ASET BARU
@@ -81,11 +190,56 @@ Pastikan folder ini ada di server untuk mendukung tema Forest:
 - `/assets/themes/forest/script.js` (jika ada logic khusus)
 
 ### **Phase 2.0: Unit-Based SaaS Ecosystem (The "IPhone" Model)**
-*   **Warehouse & Unit Architecture**: Decoupled all theme logic from a shared engine into standalone product units (`unit-forest.html`, `unit-midnight.html`, `unit-classic.html`).
+*   **Warehouse & Unit Architecture**: Decoupled themes into standalone product units (`unit-forest.html`, `unit-midnight.html`, `unit-classic.html`).
 *   **Dynamic Dispatcher System**: Implemented `dispatch.html` and `vercel.json` to deliver specific theme units based on client data while maintaining professional "Pretty URLs".
+```json
+// vercel.json configuration
+{
+  "rewrites": [{ "source": "/:id", "destination": "/dispatch.html?clientId=:id" }]
+}
+```
+*   **Unit Delivery Logic**: `dispatch.html` dynamically identifies and loads the specific unit code without changing the browser URL.
+```javascript
+// dispatch.html core logic
+const { data } = await supabase.from('invitations').select('theme_id').eq('client_id', id);
+const unitFile = `unit-${data.theme_id}.html`;
+const html = await (await fetch(unitFile)).text();
+document.write(html);
+```
 *   **Two-Way Color Sync**: Fixed UI/UX inconsistencies in the editor with real-time hex and picker synchronization.
 *   **Aggressive Font Injection**: Forced global typography overrides across all theme sections for perfect brand consistency.
 *   **Static-Feel Routing**: Every client now "owns" their specific URL path, mirroring the experience of purchasing a physical device unit.
+
+### **Phase 2.1: The "iOS" OS & Dynamic Content Engine**
+*   **Editor as Operating System**: Upgraded `undangan-edit.html` to a full-featured "OS" capable of managing dynamic lists.
+*   **Dynamic Story Builder**: Clients can now add, remove, and reorder unlimited "Love Story" milestones with real-time preview.
+```javascript
+// Dynamic Story CRUD Logic
+function addStoryItem() {
+    storyItems.push({ title: "New", date: "Date", desc: "..." });
+    renderStoryItems(); syncPreview();
+}
+```
+*   **Smart Banking Manager**: Implementation of a dynamic "Digital Gift" manager where clients can manage multiple bank accounts and digital wallets.
+*   **Unit-Level Looping Engine**: Theme units now render dynamic arrays automatically, ensuring layout consistency.
+```javascript
+// unit-midnight.html rendering engine
+let storyHtml = "";
+c.story.forEach(s => {
+    storyHtml += `<div class="glass"><h3>${s.title}</h3><p>${s.desc}</p></div>`;
+});
+```
+*   **State Persistence**: Integrated two-way Supabase syncing for all dynamic lists, ensuring that "Unit configurations" are saved and restored perfectly like an iCloud backup.
+
+---
+
+## 📂 STRUKTUR FOLDER ASET BARU
+Untuk mendukung sistem **Unit-Based SaaS**, struktur folder diatur sebagai berikut:
+- `/unit-forest.html` - Unit Model Forest
+- `/unit-midnight.html` - Unit Model Midnight
+- `/unit-classic.html` - Unit Model Classic
+- `/dispatch.html` - Pusat Distribusi Unit
+- `/vercel.json` - Konfigurasi Routing Pretty URL
 
 ---
 > [!IMPORTANT]
