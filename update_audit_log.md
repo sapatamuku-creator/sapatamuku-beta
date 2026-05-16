@@ -1,107 +1,70 @@
-# 📋 Audit Log Perbaikan Jalur Sistem SapaTamu.Ku
-
-
-> [!IMPORTANT]
-> **INSTRUKSI PENINJAUAN (WAJIB):** Sebelum menerapkan patch ini ke folder rilis produksi, silakan tinjau dan bandingkan kode dalam log ini dengan file final yang ada di environment **BETA** kita pada direktori: `D:\Google Antigrafity\SapaTamu.Ku`. Log ini adalah representasi dari fitur final yang sudah stabil. Gunakan file pada direktori tersebut sebagai referensi utama untuk memastikan tidak ada kesalahan persepsi saat proses update di website rilis.
-
----
-
-## 📅 Tanggal: 15 Mei 2026 (Core Infrastructure & Subdomain)
-*Berikut adalah detail teknis perubahan kode untuk membuka jalur sinkronisasi antara Editor, Database, dan Live Preview.*
-
-### 1. Perbaikan Konektivitas Supabase (Global)
-**Masalah:** Typo pada URL Ref ID (`rzdfvy` vs `rdfvxy`) menyebabkan error "Failed to fetch" secara sistemik.
-**Perubahan:**
-- Menstandardisasi URL ke: `https://cikptujrdfvxyfihwamh.supabase.co`
-- File terdampak: `undangan.html`, `undangan-edit.html`, `undangan-preview.html`.
-
-### 2. Penyelarasan Skema Kolom (Config)
-**Masalah:** Ketidakkonsistenan antara kolom `config` dan `theme_config` di database.
-**Perubahan:**
-- **Editor:** Sekarang menyimpan data ke kedua kolom (`config` dan `theme_config`) untuk keamanan transisi data.
-- **Preview:** Menambahkan logika fallback. Jika `theme_config` kosong, sistem otomatis mengambil data dari kolom `config`.
-- **Constraint:** Memasukkan `theme_id` dalam proses upsert untuk menghindari error *Not-Null Constraint*.
-
-### 3. Optimasi Subdomain & Case-Insensitivity
-**Masalah:** Subdomain (huruf kecil) tidak cocok dengan Username di database (campuran huruf besar/kecil).
-**Perubahan:**
-- **Frontend:** Menggunakan `.ilike()` pada query Supabase agar pencarian `clientId` tidak sensitif terhadap huruf besar/kecil.
-- **Backend (GAS):** Mengalihkan pencarian data ke **Kolom J** dan menggunakan `.toLowerCase().trim()` pada setiap perbandingan string.
+# 📑 SAPATAMU.KU UPDATE AUDIT LOG (v1.3)
+**Environment:** `D:\Google Antigrafity\SapaTamu.Ku`
+**Tanggal:** 16 Mei 2026
+**Status:** Beta Testing (Ready for Production Sync)
 
 ---
 
-## 🚀 DAFTAR PATCH SCRIPT (15 Mei)
-*Wajib diupdate pada folder rilis agar fitur Subdomain & Preview berjalan lancar.*
+## 📝 DESKRIPSI UPDATE
+Update kali ini berfokus pada **Finalisasi Modular Page Builder** dan **Premium UX Overhaul**. Sistem undangan telah bertransformasi dari sistem template statis menjadi sistem blok dinamis yang memungkinkan fleksibilitas penuh bagi klien.
 
+### 1. Sistem Universal Guest Link (Public Access)
+Kini tamu undangan dapat mengakses undangan tanpa perlu melalui subdomain klien.
+- **Format URL**: `sapatamu.id/undangan.html?u=username`
+- **Tujuan**: Memudahkan akses tamu yang tidak memiliki hak akses SSID subdomain dan berfungsi sebagai preview publik untuk calon klien baru.
+
+### 2. Tema "Forest" (Cloning mitagildan)
+Implementasi tema baru yang dikloning secara presisi dari referensi premium.
+- **Palet Warna**: Dark Forest Green (`#1a2e1a`), Gold (`#d4af37`), Cream (`#f9f4e8`).
+- **Fitur Baru**: Seksi "Our Love Story" (Timeline) dan seksi "Quote/Ayat Suci" yang sepenuhnya modular.
+
+### 3. Premium Editor UI/UX (Katsudoto Style)
+Perombakan total antarmuka editor klien (`undangan-edit.html`).
+- **3-Column Workspace**: Navigasi Sidebar | Form Editor | Live Preview Mockup.
+- **Switch Toggle**: Mengganti checkbox lama dengan slider ON/OFF yang modern untuk kontrol seksi.
+- **Asset Upload Engine**: Integrasi Cloudinary langsung dari editor untuk:
+    - Background Utama.
+    - Foto Mempelai (Pria/Wanita).
+    - Musik Latar (File MP3).
+
+### 4. Kelengkapan Data Mempelai & Acara
+- Penambahan field **"Putra/Putri Ke-"** untuk silsilah keluarga.
+- Tombol **Google Maps Helper** untuk mempermudah pengambilan koordinat lokasi acara.
+
+---
+
+## 🚀 DAFTAR PATCH SCRIPT (16 Mei - Final)
+*Berikut adalah blok kode inti yang wajib disinkronkan ke direktori rilis.*
+
+### **A. Core Rendering Engine (`undangan-preview.html`)**
+Fungsi `renderModularPage` sekarang mendeteksi parameter `?u=` dan menggunakan variabel CSS untuk *theming*.
 ```javascript
-// A. Update backend/CentralBackend.gs (handleSaveInvitation)
-function handleSaveInvitation(data) {
-  try {
-    let ssId = data.ssId;
-    const masterSs = SpreadsheetApp.openById(MASTER_SS_ID);
-    const masterSheet = masterSs.getSheetByName(MASTER_SHEET_NAME);
-    const masterData = masterSheet.getDataRange().getValues();
-    
-    let rowIndex = -1;
-    for (let i = 1; i < masterData.length; i++) {
-      if (masterData[i][9] && masterData[i][9].toString().toLowerCase() === data.clientId.toLowerCase()) {
-        rowIndex = i + 1;
-        break;
-      }
-    }
-    if (rowIndex === -1) return ContentService.createTextOutput("Client Not Found").setMimeType(ContentService.MimeType.TEXT);
-    masterSheet.getRange(rowIndex, 11).setValue(JSON.stringify(data.config)); // Update Kolom K
-    return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
-  } catch (e) {
-    return ContentService.createTextOutput("Error: " + e.toString()).setMimeType(ContentService.MimeType.TEXT);
-  }
+function getClientId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('u') || urlParams.get('c') || window.location.hostname.split('.')[0];
+}
+```
+
+### **B. Asset Management Logic (`undangan-edit.html`)**
+Implementasi `handleFileUpload` untuk Cloudinary.
+```javascript
+async function handleFileUpload(input, type) {
+    const formData = new FormData();
+    formData.append('file', input.files[0]);
+    formData.append('upload_preset', 'sapatamu_preset');
+    const res = await fetch(UPLOAD_URL, { method: 'POST', body: formData });
+    // ... update state & sync preview
 }
 ```
 
 ---
 
-## 📅 Tanggal: 16 Mei 2026 (Modular Builder & Page Engine)
-*Transformasi sistem dari template statis menjadi fleksibilitas modular ala Canva.*
-
-### 1. Transisi ke Modular Page Builder (Section-Based)
-**Masalah:** Struktur HTML statis di `undangan-preview.html` sangat kaku, menyulitkan user untuk menambah, menghapus, atau mengatur ulang urutan seksi undangan.
-**Perubahan:**
-- **Frontend:** Menggunakan `SectionLibrary` di JavaScript untuk merender HTML secara dinamis ke dalam penampung `#main-canvas`.
-- **Logic:** Implementasi array `sections_order` yang memungkinkan urutan seksi disimpan secara unik untuk setiap klien.
-
-### 2. Sistem Dynamic Theme Loader (Theme-Specific Assets)
-**Masalah:** Gaya visual (CSS) antar tema sering bertabrakan karena dimuat secara manual dalam satu file.
-**Perubahan:**
-- Menambahkan **Dynamic Asset Loader** di bagian `<head>` yang mendeteksi parameter `?theme=`.
-- Sistem secara otomatis memanggil file dari path: `/assets/themes/[theme-id]/style.css`.
-
-### 3. Control Panel Tata Letak di Editor
-**Masalah:** User tidak memiliki antarmuka untuk mengatur struktur undangan mereka sendiri.
-**Perubahan:**
-- Menambahkan tab **"Tata Letak (Layout)"** di sidebar editor.
-- Implementasi fitur **Drag & Reorder** menggunakan tombol panah dan **Toggle Visibility** menggunakan checkbox.
+## 📂 STRUKTUR FOLDER ASET BARU
+Pastikan folder ini ada di server untuk mendukung tema Forest:
+- `/assets/themes/forest/style.css`
+- `/assets/themes/forest/script.js` (jika ada logic khusus)
 
 ---
-
-## 🚀 DAFTAR PATCH SCRIPT (16 Mei)
-*Wajib diterapkan untuk mendukung sistem modular builder v1.2.5.*
-
-**A. Struktur Body Baru (`undangan-preview.html`):**
-```html
-<body class="bg-pattern">
-    <div id="main-canvas" class="opacity-0 transition-opacity duration-1000">
-        <!-- Render Otomatis oleh Section Engine -->
-    </div>
-</body>
-```
-
-**B. Persyaratan Struktur Folder Aset:**
-Pastikan direktori berikut tersedia di root server:
-- `/assets/themes/classic-minimalist/`
-- `/assets/themes/midnight/`
-- `/assets/themes/java/`
-- `/assets/themes/rose-gold/`
-
----
-> [!NOTE]
-> Update ini membuat sistem SapaTamu.Ku jauh lebih skalabel. Penambahan desain tema baru di masa depan hanya perlu menambahkan folder aset tanpa mengubah logika kode inti.
+> [!IMPORTANT]
+> **Catatan untuk Release Agent:**
+> Selalu bandingkan file di direktori `D:\Google Antigrafity\SapaTamu.Ku` dengan patch log ini sebelum melakukan push ke server produksi. Pastikan API Key Supabase dan Cloudinary di `undangan-edit.html` sudah sesuai dengan environment production.
