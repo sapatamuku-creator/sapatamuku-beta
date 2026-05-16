@@ -242,6 +242,14 @@ Untuk mendukung sistem **Unit-Based SaaS**, struktur folder diatur sebagai berik
 - `/vercel.json` - Konfigurasi Routing Pretty URL
 
 ---
+
+### **Phase 2.2: Production Hardening & Global Sync**
+*   **API Key Universal Sync**: Removed all `YOUR_KEY_HERE` placeholders across 5+ core files, replacing them with the production Supabase key for real-time database connectivity.
+*   **Failsafe OS Navigation**: Implemented explicit event-passing in the Editor's `showTab` function to eliminate "stuck" UI interactions and ensure cross-browser compatibility.
+*   **CSS Refinement (Unit Classic)**: Corrected invalid `object-cover` property to `object-fit: cover` within standard style blocks to ensure perfect asset rendering.
+*   **Multi-Unit Support**: Successfully applied the "Dynamic Looping Engine" to the **Forest** and **Classic** models, ensuring feature parity across the entire hardware inventory.
+
+---
 > [!IMPORTANT]
-> **Catatan untuk Release Agent:**
-> Selalu bandingkan file di direktori `D:\Google Antigrafity\SapaTamu.Ku` dengan patch log ini sebelum melakukan push ke server produksi. Pastikan API Key Supabase dan Cloudinary di `undangan-edit.html` sudah sesuai dengan environment production.
+> **Catatan Keamanan & Integritas:**
+> Seluruh log audit dari tanggal 12 Mei hingga 16 Mei ini bersifat kumulatif dan tidak boleh dihapus. Log ini berfungsi sebagai technical history tunggal untuk memantau evolusi arsitektur SapaTamu.Ku dari sistem monolitik ke sistem Modular Unit-Based SaaS.
