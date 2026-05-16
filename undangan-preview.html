@@ -66,114 +66,12 @@
         </div>
     </div>
 
-    <!-- COVER SECTION -->
-    <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center bg-white">
-        <div class="absolute inset-0">
-            <img id="cv_bg" src="" class="w-full h-full object-cover opacity-30" alt="Cover BG">
-        </div>
-        <div class="relative z-10 px-8">
-            <p id="cv_header" class="text-[9px] tracking-[0.5em] uppercase mb-6 text-neutral-400 font-bold">The Wedding Celebration</p>
-            <h1 id="cv_names" class="text-5xl font-serif text-neutral-900 mb-12">Loading...</h1>
-            <div class="mb-12">
-                <p class="text-[9px] tracking-[0.2em] text-neutral-400 uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
-                <h2 id="guest-name" class="text-2xl font-serif italic text-neutral-800">Tamu Undangan</h2>
-            </div>
-            <button onclick="startInvitation()" class="btn-primary">Buka Undangan</button>
-        </div>
+    <!-- DYNAMIC SECTION CONTAINER (CANVAS) -->
+    <div id="main-canvas" class="opacity-0 transition-opacity duration-1000">
+        <!-- Sections akan di-render secara modular di sini oleh JavaScript -->
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="content" class="hidden opacity-0 transition-opacity duration-1000">
-        
-        <!-- HERO -->
-        <section class="h-screen relative flex items-center justify-center overflow-hidden">
-            <div class="absolute inset-0">
-                <img id="hero_bg" src="" class="w-full h-full object-cover opacity-70">
-            </div>
-            <div class="relative z-10 text-center px-4">
-                <p id="hero_hashtag" class="text-[10px] tracking-[0.6em] font-serif italic mb-8 text-[#D4AF37]">#Hashtag</p>
-                <h2 id="hero_names" class="text-5xl font-serif italic mb-4 text-[#D4AF37]">Mempelai</h2>
-                <p id="hero_date" class="text-xs tracking-[0.3em] uppercase font-bold mb-8 text-[#D4AF37]">Tanggal Acara</p>
-
-                <div id="countdown" class="flex justify-center gap-4 py-6 px-4 rounded-3xl bg-white/20 backdrop-blur-md border border-white/30">
-                    <div class="countdown-item"><span id="days" class="countdown-val">00</span><span class="text-[9px] uppercase text-[#D4AF37]">Days</span></div>
-                    <div class="countdown-item"><span id="hours" class="countdown-val">00</span><span class="text-[9px] uppercase text-[#D4AF37]">Hours</span></div>
-                    <div class="countdown-item"><span id="mins" class="countdown-val">00</span><span class="text-[9px] uppercase text-[#D4AF37]">Mins</span></div>
-                    <div class="countdown-item"><span id="secs" class="countdown-val">00</span><span class="text-[9px] uppercase text-[#D4AF37]">Secs</span></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- MEMPELAI -->
-        <section class="px-8 py-32 space-y-24 text-center">
-            <div class="reveal">
-                <h4 class="font-serif italic text-3xl mb-6">the Groom</h4>
-                <h4 id="groom_name" class="font-serif italic text-3xl mb-1">Nama Pria</h4>
-                <p id="groom_desc" class="text-[9px] font-medium uppercase tracking-[0.2em] opacity-60 leading-loose mb-4">Deskripsi</p>
-                <a id="groom_ig" href="#" target="_blank" class="text-[9px] font-bold tracking-widest text-neutral-400 border px-4 py-2 rounded-full">INSTAGRAM</a>
-            </div>
-            <div class="reveal">
-                <h4 class="font-serif italic text-3xl mb-6">the Bride</h4>
-                <h4 id="bride_name" class="font-serif italic text-3xl mb-1">Nama Wanita</h4>
-                <p id="bride_desc" class="text-[9px] font-medium uppercase tracking-[0.2em] opacity-60 leading-loose mb-4">Deskripsi</p>
-                <a id="bride_ig" href="#" target="_blank" class="text-[9px] font-bold tracking-widest text-neutral-400 border px-4 py-2 rounded-full">INSTAGRAM</a>
-            </div>
-        </section>
-
-        <!-- EVENTS -->
-        <section class="py-24 px-8 bg-neutral-50/50 text-center">
-            <div class="max-w-xl mx-auto space-y-16">
-                <h3 class="text-2xl font-serif italic mb-4">Wedding Events</h3>
-                <div class="reveal bg-white p-8 rounded-3xl shadow-sm border">
-                    <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase text-[#D4AF37]">Akad Nikah</p>
-                    <p id="ev1_time" class="text-lg font-serif mb-4">Waktu</p>
-                    <p id="ev1_loc" class="text-[11px] uppercase tracking-widest text-neutral-500 mb-8">Lokasi</p>
-                    <a id="ev1_maps" href="#" target="_blank" class="inline-block px-10 py-4 border border-[#D4AF37] rounded-full text-[9px] uppercase tracking-widest font-bold text-[#D4AF37]">Petunjuk Lokasi</a>
-                </div>
-                <div class="reveal bg-white p-8 rounded-3xl shadow-sm border">
-                    <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase text-[#D4AF37]">Resepsi</p>
-                    <p id="ev2_time" class="text-lg font-serif mb-4">Waktu</p>
-                    <p id="ev2_loc" class="text-[11px] uppercase tracking-widest text-neutral-500 mb-8">Lokasi</p>
-                    <a id="ev2_maps" href="#" target="_blank" class="inline-block px-10 py-4 border border-[#D4AF37] rounded-full text-[9px] uppercase tracking-widest font-bold text-[#D4AF37]">Petunjuk Lokasi</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- GALLERY -->
-        <section class="py-24 px-4 text-center">
-            <h3 class="text-2xl font-serif italic mb-12">Our Moments</h3>
-            <div id="gallery-grid" class="grid grid-cols-2 gap-2 max-w-lg mx-auto">
-                <!-- Foto Galeri akan muncul di sini -->
-            </div>
-        </section>
-
-        <!-- QR CARD -->
-        <section class="py-24 px-8 bg-neutral-900 text-white text-center">
-            <div class="reveal max-w-sm mx-auto bg-white text-neutral-900 p-8 rounded-[40px]">
-                <p class="text-[10px] font-bold tracking-[0.3em] uppercase mb-8 opacity-40">Digital Access Card</p>
-                <div class="w-48 h-48 bg-stone-100 mx-auto mb-8 rounded-3xl flex items-center justify-center border-4 border-stone-50">
-                    <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SapaTamu" class="w-40 h-40">
-                </div>
-                <h4 id="qr-guest" class="text-xl font-serif italic mb-2">Tamu Undangan</h4>
-                <p class="text-[9px] uppercase tracking-widest opacity-50">Tunjukkan QR Code ini kepada petugas penerima tamu</p>
-            </div>
-        </section>
-
-        <!-- DIGITAL GIFT -->
-        <section id="gift-section" class="py-24 px-8 text-center bg-neutral-50/50">
-            <h3 class="text-2xl font-serif italic mb-12">Digital Gift</h3>
-            <div id="gift-list" class="space-y-6">
-                <!-- Daftar Rekening akan di-inject di sini -->
-            </div>
-        </section>
-
-        <footer class="py-32 px-8 text-center bg-white">
-            <h3 class="text-3xl font-serif italic mb-6">Thank You</h3>
-            <p class="text-[8px] font-bold uppercase tracking-[0.8em] text-[#D4AF37]">SapaTamu.Ku</p>
-        </footer>
-    </div>
-
-    <!-- MUSIC PLAYER -->
+    <!-- MUSIC PLAYER UI (Global) -->
     <div id="music-btn" class="fixed z-[110] bottom-8 right-8 hidden transition-all duration-500">
         <button onclick="toggleMusic()" class="w-14 h-14 bg-white border shadow-2xl rounded-full flex flex-col items-center justify-center gap-1">
             <div id="visualizer" class="music-bars paused">
@@ -223,18 +121,135 @@
             'qris': 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg'
         };
 
+        // --- SECTION LIBRARY (MODULAR BLOCKS) ---
+        const SectionLibrary = {
+            'cover': (c) => `
+                <div id="cover" class="fixed inset-0 z-[120] flex items-center justify-center text-center bg-white">
+                    <div class="absolute inset-0"><img src="${c.bg_image || ''}" class="w-full h-full object-cover opacity-30"></div>
+                    <div class="relative z-10 px-8">
+                        <p class="text-[9px] tracking-[0.5em] uppercase mb-6 text-neutral-400 font-bold">${c.title || 'The Wedding Celebration'}</p>
+                        <h1 class="text-5xl font-serif text-neutral-900 mb-12">${c.pria_short || 'Pria'} & ${c.wanita_short || 'Wanita'}</h1>
+                        <div class="mb-12">
+                            <p class="text-[9px] tracking-[0.2em] text-neutral-400 uppercase mb-3">Yth. Bapak/Ibu/Saudara/i</p>
+                            <h2 class="text-2xl font-serif italic text-neutral-800 guest-name-placeholder">Tamu Undangan</h2>
+                        </div>
+                        <button onclick="startInvitation()" class="btn-primary">Buka Undangan</button>
+                    </div>
+                </div>
+            `,
+            'mempelai': (c) => `
+                <section class="px-8 py-32 space-y-24 text-center">
+                    <div class="reveal">
+                        <h4 class="font-serif italic text-3xl mb-6">the Groom</h4>
+                        <h4 class="font-serif italic text-3xl mb-1">${c.groom?.full_name || 'Nama Pria'}</h4>
+                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] opacity-60 leading-loose mb-4">${c.groom?.desc || ''}</p>
+                    </div>
+                    <div class="reveal">
+                        <h4 class="font-serif italic text-3xl mb-6">the Bride</h4>
+                        <h4 class="font-serif italic text-3xl mb-1">${c.bride?.full_name || 'Nama Wanita'}</h4>
+                        <p class="text-[9px] font-medium uppercase tracking-[0.2em] opacity-60 leading-loose mb-4">${c.bride?.desc || ''}</p>
+                    </div>
+                </section>
+            `,
+            'acara': (c) => `
+                <section class="py-24 px-8 bg-neutral-50/50 text-center">
+                    <div class="max-w-xl mx-auto space-y-16">
+                        <h3 class="text-2xl font-serif italic mb-4">Wedding Events</h3>
+                        ${c.ev1 ? `
+                        <div class="reveal bg-white p-8 rounded-3xl shadow-sm border">
+                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase text-gold">Akad Nikah</p>
+                            <p class="text-lg font-serif mb-4">${c.ev1.time || ''}</p>
+                            <p class="text-[11px] uppercase tracking-widest text-neutral-500 mb-8">${c.ev1.loc || ''}</p>
+                            <a href="${c.ev1.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border border-gold rounded-full text-[9px] uppercase tracking-widest font-bold text-gold">Petunjuk Lokasi</a>
+                        </div>` : ''}
+                        ${c.ev2 ? `
+                        <div class="reveal bg-white p-8 rounded-3xl shadow-sm border">
+                            <p class="text-[11px] font-bold tracking-[0.3em] mb-3 uppercase text-gold">Resepsi</p>
+                            <p class="text-lg font-serif mb-4">${c.ev2.time || ''}</p>
+                            <p class="text-[11px] uppercase tracking-widest text-neutral-500 mb-8">${c.ev2.loc || ''}</p>
+                            <a href="${c.ev2.maps || '#'}" target="_blank" class="inline-block px-10 py-4 border border-gold rounded-full text-[9px] uppercase tracking-widest font-bold text-gold">Petunjuk Lokasi</a>
+                        </div>` : ''}
+                    </div>
+                </section>
+            `,
+            'galeri': (c) => `
+                <section class="py-24 px-4 text-center">
+                    <h3 class="text-2xl font-serif italic mb-12">Our Moments</h3>
+                    <div class="grid grid-cols-2 gap-2 max-w-lg mx-auto">
+                        ${(c.gallery || []).map(src => `<img src="${src}" class="w-full aspect-square object-cover rounded-xl reveal">`).join('')}
+                    </div>
+                </section>
+            `,
+            'kado': (c) => `
+                <section class="py-24 px-8 text-center bg-neutral-50/50">
+                    <h3 class="text-2xl font-serif italic mb-12">Digital Gift</h3>
+                    <div class="space-y-6">
+                        ${(c.banking || []).map(acc => `
+                            <div class="reveal max-w-sm mx-auto gift-card shadow-sm bg-white">
+                                <p class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK ${acc.type.toUpperCase()}</p>
+                                <h4 class="text-2xl font-serif mb-1">${acc.rekening}</h4>
+                                <p class="text-[11px] uppercase opacity-60 mb-6">A/N ${acc.owner}</p>
+                                <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-neutral-900 text-white px-8 py-3 rounded-full uppercase">Salin Rekening</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `,
+            'access_card': (c) => `
+                <section class="py-24 px-8 bg-neutral-900 text-white text-center">
+                    <div class="reveal max-w-sm mx-auto bg-white text-neutral-900 p-8 rounded-[40px]">
+                        <p class="text-[10px] font-bold tracking-[0.3em] uppercase mb-8 opacity-40">Digital Access Card</p>
+                        <div class="w-48 h-48 bg-stone-100 mx-auto mb-8 rounded-3xl flex items-center justify-center border-4 border-stone-50">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SapaTamu" class="w-40 h-40 qrcode-img">
+                        </div>
+                        <h4 class="text-xl font-serif italic mb-2 guest-name-placeholder">Tamu Undangan</h4>
+                        <p class="text-[9px] uppercase tracking-widest opacity-50">Tunjukkan QR Code ini kepada petugas penerima tamu</p>
+                    </div>
+                </section>
+            `
+        };
+
+        function renderModularPage(config) {
+            const canvas = document.getElementById('main-canvas');
+            // Jika user tidak menentukan urutan, gunakan urutan default
+            const sectionsOrder = config.sections_order || ['cover', 'mempelai', 'acara', 'galeri', 'access_card', 'kado'];
+            
+            let html = "";
+            sectionsOrder.forEach(secKey => {
+                if (SectionLibrary[secKey]) {
+                    html += SectionLibrary[secKey](config);
+                }
+            });
+            
+            // Tambahkan Footer Global
+            html += `<footer class="py-24 text-center bg-white"><p class="text-[8px] font-bold uppercase tracking-[0.8em] text-gold">SapaTamu.Ku</p></footer>`;
+            
+            canvas.innerHTML = html;
+            
+            // Update Guest Name di semua placeholder
+            const urlParams = new URLSearchParams(window.location.search);
+            const guestName = urlParams.get('to') || "Tamu Undangan";
+            document.querySelectorAll('.guest-name-placeholder').forEach(el => el.innerText = guestName);
+            
+            // Update QR Code
+            const clientId = getClientId();
+            document.querySelectorAll('.qrcode-img').forEach(img => {
+                img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(clientId + ' | ' + guestName)}`;
+            });
+
+            if (config.event_date) eventDate = new Date(config.event_date).getTime();
+            if (config.music_url) audio.src = config.music_url;
+
+            canvas.classList.remove('opacity-0');
+            initObserver();
+        }
+
         async function init() {
             const clientId = getClientId();
             if (!clientId) {
                 document.getElementById('loader').classList.add('hidden');
                 return;
             }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const guestName = urlParams.get('to') || "Tamu Undangan";
-            document.getElementById('guest-name').innerText = guestName;
-            document.getElementById('qr-guest').innerText = guestName;
-            document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(clientId + ' | ' + guestName)}`;
 
             try {
                 const { data, error } = await _supabase
@@ -250,68 +265,28 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const requestedTheme = urlParams.get('theme');
 
-                    // HANYA TERAPKAN DATA JIKA TEMA COCOK
-                    // Jika user melihat preview tema lain, biarkan Starter Pack asli yang muncul
                     if (savedThemeId === requestedTheme || !requestedTheme) {
                         let c = data.theme_config;
                         if (!c || Object.keys(c).length === 0) c = data.config;
                         
                         if (c && Object.keys(c).length > 0) {
                             const config = typeof c === 'string' ? JSON.parse(c) : c;
-                            
-                            // Gunakan applyLivePreview jika tersedia (dari script tema)
-                            if (typeof window.applyLivePreview === 'function') {
-                                window.applyLivePreview(config);
-                            } else {
-                                // Manual Rendering Fallback
-                                document.getElementById('cv_header').innerText = config.title || "The Wedding Celebration";
-                                document.getElementById('cv_names').innerText = `${config.pria_short || 'Pria'} & ${config.wanita_short || 'Wanita'}`;
-                                document.getElementById('hero_names').innerText = `${config.pria_short || 'Pria'} & ${config.wanita_short || 'Wanita'}`;
-                                document.getElementById('cv_bg').src = config.bg_image || "";
-                                document.getElementById('hero_bg').src = config.bg_image || "";
-                                document.getElementById('hero_hashtag').innerText = config.hashtag || "";
-                                
-                                if (config.event_date) eventDate = new Date(config.event_date).getTime();
-                                if (config.music_url) audio.src = config.music_url;
-
-                                // Gallery
-                                const grid = document.getElementById('gallery-grid');
-                                if (grid && config.gallery && config.gallery.length > 0) {
-                                    grid.innerHTML = "";
-                                    config.gallery.forEach(src => {
-                                        const img = document.createElement('img');
-                                        img.src = src;
-                                        img.className = "w-full aspect-square object-cover rounded-xl reveal";
-                                        grid.appendChild(img);
-                                    });
-                                }
-
-                                // Banking
-                                const giftContainer = document.getElementById('gift-list');
-                                if (giftContainer && config.banking && config.banking.length > 0) {
-                                    giftContainer.innerHTML = "";
-                                    config.banking.forEach(acc => {
-                                        const logo = BANK_LOGOS[acc.type.toLowerCase()] || "";
-                                        const div = document.createElement('div');
-                                        div.className = "reveal max-w-sm mx-auto gift-card shadow-xl mb-6";
-                                        div.innerHTML = `
-                                            ${logo ? `<img src="${logo}" class="h-6 mx-auto mb-6 grayscale opacity-70">` : ""}
-                                            <p class="text-[10px] font-bold tracking-widest uppercase mb-2">BANK ${acc.type.toUpperCase()}</p>
-                                            <h4 class="text-2xl font-serif mb-1 tracking-wider">${acc.rekening}</h4>
-                                            <p class="text-[11px] uppercase tracking-widest opacity-60 mb-8">A/N ${acc.owner}</p>
-                                            <button onclick="copyToClipboard('${acc.rekening}')" class="text-[9px] font-bold tracking-widest bg-neutral-900 text-white px-8 py-3 rounded-full uppercase">Salin Rekening</button>
-                                        `;
-                                        giftContainer.appendChild(div);
-                                    });
-                                }
-                            }
+                            renderModularPage(config);
                         }
+                    } else {
+                        // Jika tidak ada data tersimpan untuk tema ini, render modular dengan data kosong (Starter Pack)
+                        renderModularPage({});
                     }
+                } else {
+                    renderModularPage({});
                 }
-            } catch (err) { console.error("Init error:", err); }
-            finally {
+            } catch (err) { 
+                console.error("Init error:", err); 
+                renderModularPage({});
+            } finally {
                 document.getElementById('loader').classList.add('hidden');
             }
+        }
         }
 
         function copyToClipboard(text) {
