@@ -621,10 +621,19 @@
                 music_url: document.getElementById('in_music')?.value || "",
                 quote_text: document.getElementById('in_quote_text')?.value || "",
                 quote_ref: document.getElementById('in_quote_ref')?.value || "",
+                styles: {
+                    main: document.getElementById('in_color_main_text')?.value || "",
+                    accent: document.getElementById('in_color_accent_text')?.value || "",
+                    bg1: document.getElementById('in_color_bg1_text')?.value || "",
+                    bg2: document.getElementById('in_color_bg2_text')?.value || "",
+                    font: document.getElementById('in_font_main')?.value || ""
+                },
                 groom: { full_name: document.getElementById('in_pria_full')?.value || "", sibling: document.getElementById('in_pria_sibling')?.value || "", father: document.getElementById('in_pria_father')?.value || "", mother: document.getElementById('in_pria_mother')?.value || "", photo: document.getElementById('in_pria_photo')?.value || "" },
                 bride: { full_name: document.getElementById('in_wanita_full')?.value || "", sibling: document.getElementById('in_wanita_sibling')?.value || "", father: document.getElementById('in_wanita_father')?.value || "", mother: document.getElementById('in_wanita_mother')?.value || "", photo: document.getElementById('in_wanita_photo')?.value || "" },
                 ev1: { time: document.getElementById('in_ev1_time')?.value || "", loc: document.getElementById('in_ev1_loc')?.value || "", maps: document.getElementById('in_ev1_maps')?.value || "" },
                 ev2: { time: document.getElementById('in_ev2_time')?.value || "", loc: document.getElementById('in_ev2_loc')?.value || "", maps: document.getElementById('in_ev2_maps')?.value || "" },
+                story: storyItems,
+                banking: bankItems,
                 sections_order: sectionsOrder.filter(s => activeSections.includes(s))
             };
             try {
@@ -651,6 +660,26 @@
                     document.getElementById('in_music').value = c.music_url || "";
                     document.getElementById('in_quote_text').value = c.quote_text || "";
                     document.getElementById('in_quote_ref').value = c.quote_ref || "";
+                    if(c.styles) {
+                        const s = c.styles;
+                        // Sync Text Inputs
+                        if(document.getElementById('in_color_main_text')) document.getElementById('in_color_main_text').value = s.main || "#1a1a1a";
+                        if(document.getElementById('in_color_accent_text')) document.getElementById('in_color_accent_text').value = s.accent || "#D4AF37";
+                        if(document.getElementById('in_color_bg1_text')) document.getElementById('in_color_bg1_text').value = s.bg1 || "#ffffff";
+                        if(document.getElementById('in_color_bg2_text')) document.getElementById('in_color_bg2_text').value = s.bg2 || "#f8f8f8";
+                        if(document.getElementById('in_font_main')) document.getElementById('in_font_main').value = s.font || "'Plus Jakarta Sans', sans-serif";
+
+                        // Sync Color Pickers
+                        if(document.getElementById('in_color_main')) document.getElementById('in_color_main').value = s.main || "#1a1a1a";
+                        if(document.getElementById('in_color_accent')) document.getElementById('in_color_accent').value = s.accent || "#D4AF37";
+                        if(document.getElementById('in_color_bg1')) document.getElementById('in_color_bg1').value = s.bg1 || "#ffffff";
+                        if(document.getElementById('in_color_bg2')) document.getElementById('in_color_bg2').value = s.bg2 || "#f8f8f8";
+                    }
+                    storyItems = c.story || [];
+                    bankItems = c.banking || [];
+                    renderStoryItems();
+                    renderBankItems();
+
                     if(c.groom) { 
                         document.getElementById('in_pria_full').value = c.groom.full_name || ""; 
                         document.getElementById('in_pria_sibling').value = c.groom.sibling || ""; 

@@ -41,23 +41,68 @@
             document.getElementById('loader').classList.add('hidden');
         }
 
-        function renderForest(c) {
+        function renderForest(data) {
+            const c = data.theme_config || data.config || data;
             const container = document.getElementById('main-content');
+            
+            let storyHtml = "";
+            if(Array.isArray(c.story)) {
+                c.story.forEach(s => {
+                    storyHtml += `
+                        <div class="relative pl-8 border-l-2 border-emerald-100 pb-10 last:pb-0 reveal">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-emerald-600 border-4 border-white shadow-sm"></div>
+                            <p class="text-xs font-bold text-emerald-600 mb-2">${s.date}</p>
+                            <h3 class="text-lg font-bold text-emerald-900 mb-2">${s.title}</h3>
+                            <p class="text-sm text-emerald-700/80 leading-relaxed">${s.desc}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            let bankHtml = "";
+            if(Array.isArray(c.banking)) {
+                c.banking.forEach(b => {
+                    bankHtml += `
+                        <div class="bg-emerald-50 p-8 rounded-[30px] border border-emerald-100 text-center reveal">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600 shadow-sm"><i class="fas fa-university"></i></div>
+                            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.2em] mb-2">${b.bank}</p>
+                            <p class="text-xl font-bold text-emerald-950 mb-1">${b.no}</p>
+                            <p class="text-xs text-emerald-700">a/n ${b.name}</p>
+                        </div>
+                    `;
+                });
+            }
+
             container.innerHTML = `
                 <section class="h-screen flex flex-col items-center justify-center text-center p-10 bg-emerald-950 text-white relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1920" class="absolute inset-0 w-full h-full object-cover opacity-40">
-                    <div class="relative ornament-border">
+                    <img src="${c.bg_image || 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1920'}" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                    <div class="relative ornament-border p-10">
                         <p class="text-xs tracking-[0.5em] mb-6 reveal">WALIMATUL 'URSY</p>
                         <h1 class="text-6xl font-serif mb-8 reveal">${c.pria_short} & ${c.wanita_short}</h1>
                         <p class="text-sm tracking-widest reveal">${c.event_date || ''}</p>
                     </div>
                 </section>
-                <section class="p-20">
-                    <div class="max-w-4xl mx-auto border-2 border-emerald-900/10 p-10 rounded-[60px] text-center bg-white shadow-2xl">
-                        <h2 class="text-3xl font-serif mb-6 text-emerald-900">Mempelai</h2>
-                        <div class="grid grid-cols-2 gap-10">
-                            <div><p class="font-bold text-emerald-800">${c.groom?.full_name}</p></div>
-                            <div><p class="font-bold text-emerald-800">${c.bride?.full_name}</p></div>
+
+                <section class="p-10 md:p-24 bg-[#fdfcf6]">
+                    <div class="max-w-xl mx-auto">
+                        <div class="text-center mb-16">
+                            <span class="text-emerald-600 text-3xl font-serif">♥</span>
+                            <h2 class="text-3xl font-serif text-emerald-900 mt-2">Cerita Kita</h2>
+                        </div>
+                        <div class="space-y-0">
+                            ${storyHtml}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="p-10 md:p-24 bg-white relative">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="text-center mb-16">
+                            <h2 class="text-3xl font-serif text-emerald-900">Kado Digital</h2>
+                            <p class="text-sm text-emerald-600 mt-4 italic">Tanpa mengurangi rasa hormat, bagi tamu yang ingin mengirimkan kado digital dapat melalui rekening berikut:</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            ${bankHtml}
                         </div>
                     </div>
                 </section>
